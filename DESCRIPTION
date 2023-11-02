@@ -19,4 +19,5 @@ Imports:
     jsonlite,
     RJSONIO,
     tibble,
-    tidyr
+    tidyr,
+    utils
