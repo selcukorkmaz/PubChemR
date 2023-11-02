@@ -1,11 +1,11 @@
 #' PubChem API Base URL
-#' 
+#'
 #' @description The base URL for the PubChem API.
 
 api_base <- "https://pubchem.ncbi.nlm.nih.gov/rest/pug"
 
 #' Compound ID Types
-#' 
+#'
 #' @description List of compound ID types.
 
 CompoundIdType <- list(
@@ -20,7 +20,7 @@ CompoundIdType <- list(
 )
 
 #' Bond Types
-#' 
+#'
 #' @description List of bond types.
 
 BondType <- list(
@@ -35,7 +35,7 @@ BondType <- list(
 )
 
 #' Coordinate Types
-#' 
+#'
 #' @description List of coordinate types.
 
 CoordinateType <- list(
@@ -57,7 +57,7 @@ CoordinateType <- list(
 )
 
 #' Project Categories
-#' 
+#'
 #' @description List of project categories.
 
 ProjectCategory <- list(
@@ -75,21 +75,21 @@ ProjectCategory <- list(
 )
 
 #' Elements
-#' 
+#'
 #' @description Vector of chemical elements.
 
 ELEMENTS <- c(
-  'H', 'He', 'Li', 'Be', 'B', 'C', 'N', 'O', 'F', 'Ne', 
-  'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca', 
-  'Sc', 'Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co', 'Ni', 'Cu', 'Zn', 
-  'Ga', 'Ge', 'As', 'Se', 'Br', 'Kr', 'Rb', 'Sr', 'Y', 'Zr', 
-  'Nb', 'Mo', 'Tc', 'Ru', 'Rh', 'Pd', 'Ag', 'Cd', 'In', 'Sn', 
-  'Sb', 'Te', 'I', 'Xe', 'Cs', 'Ba', 'La', 'Ce', 'Pr', 'Nd', 
-  'Pm', 'Sm', 'Eu', 'Gd', 'Tb', 'Dy', 'Ho', 'Er', 'Tm', 'Yb', 
-  'Lu', 'Hf', 'Ta', 'W', 'Re', 'Os', 'Ir', 'Pt', 'Au', 'Hg', 
-  'Tl', 'Pb', 'Bi', 'Po', 'At', 'Rn', 'Fr', 'Ra', 'Ac', 'Th', 
-  'Pa', 'U', 'Np', 'Pu', 'Am', 'Cm', 'Bk', 'Cf', 'Es', 'Fm', 
-  'Md', 'No', 'Lr', 'Rf', 'Db', 'Sg', 'Bh', 'Hs', 'Mt', 'Ds', 
+  'H', 'He', 'Li', 'Be', 'B', 'C', 'N', 'O', 'F', 'Ne',
+  'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca',
+  'Sc', 'Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co', 'Ni', 'Cu', 'Zn',
+  'Ga', 'Ge', 'As', 'Se', 'Br', 'Kr', 'Rb', 'Sr', 'Y', 'Zr',
+  'Nb', 'Mo', 'Tc', 'Ru', 'Rh', 'Pd', 'Ag', 'Cd', 'In', 'Sn',
+  'Sb', 'Te', 'I', 'Xe', 'Cs', 'Ba', 'La', 'Ce', 'Pr', 'Nd',
+  'Pm', 'Sm', 'Eu', 'Gd', 'Tb', 'Dy', 'Ho', 'Er', 'Tm', 'Yb',
+  'Lu', 'Hf', 'Ta', 'W', 'Re', 'Os', 'Ir', 'Pt', 'Au', 'Hg',
+  'Tl', 'Pb', 'Bi', 'Po', 'At', 'Rn', 'Fr', 'Ra', 'Ac', 'Th',
+  'Pa', 'U', 'Np', 'Pu', 'Am', 'Cm', 'Bk', 'Cf', 'Es', 'Fm',
+  'Md', 'No', 'Lr', 'Rf', 'Db', 'Sg', 'Bh', 'Hs', 'Mt', 'Ds',
   'Rg', 'Cp', 'ut', 'uq', 'up', 'uh', 'us', 'uo'
 )
 
@@ -97,7 +97,7 @@ ELEMENTS <- c(
 names(ELEMENTS) <- 1:118
 
 #' Property Map
-#' 
+#'
 #' @description Map of properties to their respective names.
 
 property_map <- list(
@@ -145,9 +145,9 @@ property_map <- list(
 
 
 #' Request Function for PubChem API
-#' 
+#'
 #' @description Constructs a URL for the PubChem API based on the provided parameters.
-#' 
+#'
 #' @param identifier The identifier for the compound.
 #' @param namespace The namespace for the identifier (default: 'cid').
 #' @param domain The domain for the request (default: 'compound').
@@ -155,20 +155,18 @@ property_map <- list(
 #' @param output The desired output format (default: 'JSON').
 #' @param searchtype The type of search to be performed (default: NULL).
 #' @param ... Additional parameters for the request.
-#' 
+#'
 #' @return A constructed URL for the PubChem API.
-#' 
+#'
 #' @examples
 #' request(12345)
 #' request("Aspirin", namespace='name', domain='substance')
-
-
 request <- function(identifier, namespace='cid', domain='compound', operation=NULL, output='JSON', searchtype=NULL, ...) {
   # Check for missing identifier
   if (is.null(identifier)) {
     stop("identifier/cid cannot be NULL")
   }
-  
+
   # If identifier is a list, join with commas into string
   if (is.numeric(identifier)) {
     identifier <- as.character(identifier)
@@ -176,27 +174,27 @@ request <- function(identifier, namespace='cid', domain='compound', operation=NU
   if (is.vector(identifier) && !is.character(identifier)) {
     identifier <- paste(identifier, collapse = ',')
   }
-  
+
   # Build API URL
   urlid <- NULL
   postdata <- NULL
   if (!is.null(namespace) && namespace == 'sourceid') {
     identifier <- gsub("/", ".", identifier)
   }
-  
+
   api_base <- "https://pubchem.ncbi.nlm.nih.gov/rest/pug"
   # Ensure the identifier is URL encoded
   urlid <- URLencode(identifier)
-  
+
   # Adjusting the logic for building the URL components
   # The identifier now comes before the output format
   comps <- Filter(Negate(is.null), list(api_base, domain, searchtype, namespace, urlid, operation, output))
   apiurl <- paste(comps, collapse = '/')
-  
+
   if (length(params) > 0) {
     apiurl <- paste0(apiurl, "?", paste(names(params), params, sep = "=", collapse = "&"))
   }
-  
+
   # Return the constructed URL
   return(apiurl)
 }

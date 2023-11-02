@@ -24,21 +24,21 @@
 #' @importFrom base file.exists charToRaw writeBin getwd
 #'
 #' @export
-download <- function(outformat, path, identifier, namespace = 'cid', domain = 'compound', operation = NULL, 
+download <- function(outformat, path, identifier, namespace = 'cid', domain = 'compound', operation = NULL,
                      searchtype = NULL, overwrite = FALSE, ...) {
   # Use the get function to retrieve the content
   response_content <- get(identifier, namespace, domain, operation, outformat, searchtype, ...)
-  
+
   # Check if the file already exists and if overwrite is FALSE
   if (!overwrite && file.exists(path)) {
     stop(paste(path, "already exists. Use 'overwrite=TRUE' to overwrite it."))
   }
-  
+
   # Write the content to the specified path
   writeBin(charToRaw(response_content), path)
   message(paste("The file has been saved to", paste0(getwd(),"/",path)))
-  
+
 }
 
 
-download("sdf", "14.sdf", identifier = 123, overwrite = F)
+# download("sdf", "14.sdf", identifier = 123, overwrite = F)

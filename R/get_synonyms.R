@@ -29,7 +29,7 @@ get_synonyms <- function(identifier, namespace='cid', domain='compound', searcht
   result <- tryCatch({
     # Assuming 'get_json' is a function you've previously defined, similar to your Python environment
     response_json <- get_json(identifier, namespace, domain, 'synonyms', searchtype)
-    
+
     # Check if the response contains the expected information
     if (!is.null(response_json) && !is.null(response_json$InformationList) && !is.null(response_json$InformationList$Information)) {
       response_json$InformationList$Information
@@ -40,9 +40,9 @@ get_synonyms <- function(identifier, namespace='cid', domain='compound', searcht
     message(paste("An error occurred:", e$message))  # Log the error message
     return(list())  # Return an empty list in case of an error
   })
-  
+
   return(result)
 }
 
-res = get_synonyms(identifier = 'Aspirin', namespace = 'name', domain = 'substance')
-res
+# res = get_synonyms(identifier = 'Aspirin', namespace = 'name', domain = 'substance')
+# res

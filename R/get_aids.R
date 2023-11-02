@@ -27,86 +27,84 @@
 #'
 #' @export
 get_aids <- function(identifier, namespace='cid', domain='compound', searchtype=NULL, as_data_frame = TRUE) {
-  
+
   # Try to get the response and parse JSON
   result <- tryCatch({
     # Assuming 'get_json' is a function you've previously defined, similar to your Python environment
-    
+
     aidsList = list()
-    
+
     for(i in 1:length(identifier)){
-      
+
       response_json <- get_json(identifier[i], namespace, domain, 'aids', searchtype)
-      
+
       # Check if the response contains the expected information
       if (is.null(response_json)) {
         aidsList[[i]] = list(Compound = identifier[i], aid = "No aid")
-        
+
       } else if (!is.null(response_json$IdentifierList) && !is.null(response_json$IdentifierList$aid)) {
-        
+
         aidsList[[i]] = response_json$IdentifierList$aid
-        
-        
+
+
       } else if (!is.null(response_json$InformationList) && !is.null(response_json$InformationList$Information)) {
-        
+
         aidsList[[i]] = response_json$InformationList$Information[[1]]
-        
+
       } else {
         return(list())  # Return an empty list if neither aids nor Information is found
       }
-      
+
     }
   }, error = function(e) {
     message(paste("An error occurred:", e$message))  # Log the error message
     return(list())  # Return an empty list in case of an error
   })
-  
+
   if(as_data_frame){
     # Initialize empty data frame
     df <- data.frame(CID = numeric(), AID = numeric(), stringsAsFactors = FALSE)
-    
+
     # Loop through each list
     for (i in seq_along(aidsList)) {
-      
-        
+
+
         # Extract CID. It assumes there's only one CID per sublist
         current_CID <- aidsList[[i]]$CID
-        
+
         # Check if aids are present and are numeric
         if (is.numeric(aidsList[[i]]$AID)) {
           current_aid <- aidsList[[i]]$AID
-          
+
           # Create a temporary data frame for current CID and its aids
-          temp_df <- data.frame(CID = rep(current_CID, length(current_aid)), 
-                                AID = current_aid, 
+          temp_df <- data.frame(CID = rep(current_CID, length(current_aid)),
+                                AID = current_aid,
                                 stringsAsFactors = FALSE)
-          
+
           # Bind to the main data frame
           df <- bind_rows(df, temp_df)
-          
+
         } else if (is.character(aidsList[[i]]$AID)) {
           # Handle the case for "No aids" or similar cases
           # Here, we add the CID with an NA or a specific indicator for the aid
-          temp_df <- data.frame(CID = current_CID, 
+          temp_df <- data.frame(CID = current_CID,
                                 aid = NA,  # or "No aids" or another indicator
                                 stringsAsFactors = FALSE)
-          
+
           # Bind to the main data frame
           df <- bind_rows(df, temp_df)
         }
-      
+
     }
     result = df%>%as_tibble()
   }else{
-    
+
     names(aidsList) = paste0("CID_", identifier)
     result = aidsList
   }
-  
 
-  
   return(result)
-  
+
 }
 
-get_aids(c(1234), as_data_frame = F)
+# get_aids(c(1234), as_data_frame = F)

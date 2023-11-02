@@ -23,52 +23,52 @@
 #' @importFrom httr GET
 #' @importFrom RJSONIO fromJSON
 #' @export
-  get <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL, 
-                  output = 'JSON', searchtype = NULL, ...) {
-  
-    response <- NULL
-    status <- NULL
-    
-    # If the searchtype is not 'xref' or if the namespace is 'formula', handle it differently
-    if ((!is.null(searchtype) && searchtype != 'xref') || (!is.null(namespace) && namespace == 'formula')) {
-      response <- GET(request(identifier, namespace, domain, NULL, 'JSON', searchtype))
-  
-      content <- rawToChar(response$content)
-      status <- fromJSON(content)
-      
-      # Check if the response is asking to wait and has a ListKey
-      if ('Waiting' %in% names(status) && !is.null(status$Waiting[["ListKey"]])) {
-        identifier <- status$Waiting[["ListKey"]]
-        namespace <- 'listkey'
-        while ('Waiting' %in% names(status) && !is.null(status$Waiting[["ListKey"]])) {
-          # Delay before making the next request
-          Sys.sleep(2)  # delay for 2 seconds
-          # Make the next request
-          response <- GET(request(identifier, namespace, domain, operation, 'JSON'))
-          content <- rawToChar(response$content)
-          status <- fromJSON(content)
-        }
-      }
-      
-      # If the final output is not JSON, we make another request for the correct output format
-      if (output != 'JSON') {
-        response <- GET(request(identifier, namespace, domain, operation, output, searchtype))
-        content <- rawToChar(response$content)  # Assuming 'content' is the field with data
-      }
-    } else {
-      # If it doesn't meet the conditions above, make a standard request
-      response <- GET(request(identifier, namespace, domain, operation, output, searchtype, ...))
-      
-      # Check if the request was successful
-      if (http_status(response)$category != "Success") {
-        stop(paste("HTTP error", http_status(response)$message))
-      }else{
-      content <- rawToChar(response$content)
+get <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL,
+                output = 'JSON', searchtype = NULL, ...) {
+
+  response <- NULL
+  status <- NULL
+
+  # If the searchtype is not 'xref' or if the namespace is 'formula', handle it differently
+  if ((!is.null(searchtype) && searchtype != 'xref') || (!is.null(namespace) && namespace == 'formula')) {
+    response <- GET(request(identifier, namespace, domain, NULL, 'JSON', searchtype))
+
+    content <- rawToChar(response$content)
+    status <- fromJSON(content)
+
+    # Check if the response is asking to wait and has a ListKey
+    if ('Waiting' %in% names(status) && !is.null(status$Waiting[["ListKey"]])) {
+      identifier <- status$Waiting[["ListKey"]]
+      namespace <- 'listkey'
+      while ('Waiting' %in% names(status) && !is.null(status$Waiting[["ListKey"]])) {
+        # Delay before making the next request
+        Sys.sleep(2)  # delay for 2 seconds
+        # Make the next request
+        response <- GET(request(identifier, namespace, domain, operation, 'JSON'))
+        content <- rawToChar(response$content)
+        status <- fromJSON(content)
       }
     }
-    
-    return(content)  
+
+    # If the final output is not JSON, we make another request for the correct output format
+    if (output != 'JSON') {
+      response <- GET(request(identifier, namespace, domain, operation, output, searchtype))
+      content <- rawToChar(response$content)  # Assuming 'content' is the field with data
+    }
+  } else {
+    # If it doesn't meet the conditions above, make a standard request
+    response <- GET(request(identifier, namespace, domain, operation, output, searchtype, ...))
+
+    # Check if the request was successful
+    if (http_status(response)$category != "Success") {
+      stop(paste("HTTP error", http_status(response)$message))
+    }else{
+    content <- rawToChar(response$content)
+    }
   }
+
+  return(content)
+}
 
 
 

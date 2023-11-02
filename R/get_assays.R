@@ -23,36 +23,35 @@
 #'
 #' @export
 get_assays <- function(identifier, namespace = 'aid', ...) {
- 
+
   assays <- list()
   data <- list()
-  
+
   for (i in 1:length(identifier)) {
     # Retrieve the JSON data
     results <-
       get_json(identifier[i], namespace, 'assay', 'description')
-    
+
     # Check if results are not empty
     if (!is.null(results)) {
       # Create a list of assays (here, you might want to define what an 'Assay' contains)
-      
+
       if (!is.null(results$PC_AssayContainer)) {
         assays[[i]] <- results$PC_AssayContainer
       } else{
         assays[[i]] <- "No assay"
-        
+
       }
-      
+
     }}
-    
+
     names(assays) = paste0("AID",as.character(identifier))
 
     results = assays
-    
+
     return(results)
   }
-  
-  res = get_assays(identifier = c(1978, 1675))
-  res$AID1978
-  res$AID1675
-  
+
+# res = get_assays(identifier = c(1978, 1675))
+# res$AID1978
+# res$AID1675

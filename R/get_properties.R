@@ -28,43 +28,43 @@
 #'
 #' @export
 get_properties <- function(properties, identifier, namespace='cid', searchtype=NULL, as_dataframe=FALSE, ...) {
- 
+
   # If properties is a single string, split it into a vector
   # if (is.character(properties) && !grepl(",", properties)) {
   #   properties <- strsplit(properties, ",")[[1]]
   # }
-  
+
   if(any(!(properties %in% unlist(property_map))))
     stop(paste(properties[!(properties %in% unlist(property_map))], collapse = ", "), " is not in the property map!")
-    
+
   # Map properties using the property_map, assuming it's available in your environment
   properties <- sapply(properties, function(p) {
     ifelse(!is.null(property_map[[p]]), property_map[[p]], p)
   })
-  
+
   # Create the properties string for the URL
   properties_str <- paste(properties, collapse = ',')
   properties_endpoint <- paste('property', properties_str, sep = '/')
-  
+
   # Here you would call the function that makes the HTTP request, e.g., get_json()
   # This is a placeholder for that function call, as its implementation depends on your setup.
 
   results <- get_json(identifier = identifier, namespace = namespace, domain='compound', operation = properties_endpoint, output = 'JSON', searchtype = searchtype)
-  
+
   # Check if results are not empty and process them
   properties_results <- list()
   if (!is.null(results) && !is.null(results$PropertyTable) && !is.null(results$PropertyTable$Properties)) {
     properties_results <- results$PropertyTable$Properties
   }
-  
+
   # If as_dataframe is TRUE, convert properties_results to a data frame
   if (as_dataframe) {
     # Assuming each item in properties_results is a list of properties, we bind them into a data frame
     # The actual structure depends on the results' format
-    
+
     tryCatch({
       # Make the request. The 'get' function is expected to return the response content directly.
-      
+
       # Check if the response is not empty or NULL before proceeding
       if (!is.null(properties_results)) {
         # Write the content to a file in SDF format in the current working directory
@@ -73,21 +73,21 @@ get_properties <- function(properties, identifier, namespace='cid', searchtype=N
         return(NULL)
       }
     }, error = function(e) {
-      # Here, you could check for specific types of errors (like NotFoundError) 
+      # Here, you could check for specific types of errors (like NotFoundError)
       # and handle them as needed. For simplicity, we're just printing the error message.
       properties_results  # Return NULL to indicate no result or failure in the process
       message(paste("Error:", e$message))
-      
+
     })
-    
+
     # row.names(properties_df) <- sapply(properties_results, function(x) x$CID)  # if 'CID' is the identifier
   }
-  
+
   return(properties_results)
 }
 
-properties = c("CanonicalSMILES","MolecularFormula", "MolecularWeight", "ConformerCount3D", "FeatureRingCount3D"); identifier = "CC"; 
-namespace = "smiles"; searchtype = "superstructure"; as_dataframe = T
-
-get_properties(properties = c("IsomericSMILES", "XLogP", "RotatableBondCount"), identifier = c('C20H41Br'), 
-               namespace = "formula", as_dataframe = T)
+# properties = c("CanonicalSMILES","MolecularFormula", "MolecularWeight", "ConformerCount3D", "FeatureRingCount3D"); identifier = "CC";
+# namespace = "smiles"; searchtype = "superstructure"; as_dataframe = T
+#
+# get_properties(properties = c("IsomericSMILES", "XLogP", "RotatableBondCount"), identifier = c('C20H41Br'),
+#                namespace = "formula", as_dataframe = T)

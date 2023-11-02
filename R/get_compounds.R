@@ -24,32 +24,32 @@
 get_compounds <- function(identifier, namespace='cid', searchtype=NULL, ...) {
 
   compounds <- list()
-  
+
   for (i in 1:length(identifier)) {
     # Retrieve the JSON data
     results <- get_json(identifier[i], namespace, searchtype=searchtype)
-    
+
     # Check if results are not empty
     if (!is.null(results)) {
       # Create a list of compounds (here, you might want to define what an 'compound' contains)
-      
+
     if (!is.null(results$PC_Compounds)) {
         compounds[[i]] <- results$PC_Compounds
       } else{
         compounds[[i]] <- "No compound"
-        
+
       }
-    
+
     }}
-  
+
   names(compounds) = paste0("ID_", identifier)
-  
+
 
   results = compounds
-  
+
   return(results)
-  
+
 }
 
-res = get_compounds(identifier = "123", namespace = "cid")
-res
+# res = get_compounds(identifier = "123", namespace = "cid")
+# res
