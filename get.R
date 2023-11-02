@@ -1,4 +1,3 @@
-
 #' Get Data from PubChem API
 #'
 #' This function constructs a URL to query the PubChem API based on the provided parameters and returns the response content.
