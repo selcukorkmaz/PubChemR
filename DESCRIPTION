@@ -1,12 +1,17 @@
 Package: PubChemR
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Interface to the PubChem Database for Chemical Data Retrieval
 Version: 0.99-1
 Authors@R: c(person("Selcuk", "Korkmaz", email="selcukorkmaz@gmail.com", role=c("aut", "cre")), 
              person("Dincer", "Goksuluk", email="dincer.goksuluk@gmail.com", role="aut"))
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: GPL
+Description: Provides an R interface to the PubChem database, which is a repository for 
+    chemical information and a resource for finding chemical and biological data. The package 
+    simplifies the process of retrieving and handling chemical compound information from 
+    PubChem. Users can search for compounds, retrieve standard chemical information, 
+    download data in various formats, and query the database using the PubChem 
+    Power User Gateway (PUG) RESTful API. The package aims to facilitate the integration 
+    of chemical data in bioinformatics and cheminformatics workflows.
+License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
