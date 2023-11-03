@@ -14,9 +14,9 @@
 #'
 #' @examples
 #' \dontrun{
-#'   identifiers <- c("Aspirin", "benzene", "axd")
-#'   results <- get_cids(identifiers)
-#'   print(results)
+#'   identifiers <- c("Aspirin", "Benzene")
+#'   result <- get_cids(identifiers)
+#'   print(result)
 #' }
 #'
 #' @importFrom base is.null length list message paste
@@ -25,7 +25,7 @@
 #' @importFrom tidyr unnest_wider unnest_longer
 #'
 #' @export
-get_cids <- function(identifier, namespace='name', domain='compound', searchtype=NULL, params=list()) {
+get_cids <- function(identifier, namespace='name', domain='compound', searchtype=NULL, ...) {
 
   # Try to get the response and parse JSON
   result <- tryCatch({
@@ -35,7 +35,7 @@ get_cids <- function(identifier, namespace='name', domain='compound', searchtype
 
     for(i in 1:length(identifier)){
 
-    response_json <- get_json(identifier[i], namespace, domain, 'cids', searchtype)
+    response_json <- get_json(identifier[i], namespace, domain, 'cids', searchtype, ...)
 
     # Check if the response contains the expected information
     if (is.null(response_json)) {
@@ -78,4 +78,3 @@ get_cids <- function(identifier, namespace='name', domain='compound', searchtype
   return(result)
 }
 
-# get_cids(c("Aspirin", "benzene","axd"))

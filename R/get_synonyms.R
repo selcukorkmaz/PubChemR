@@ -13,22 +13,19 @@
 #'
 #' @examples
 #' \dontrun{
-#'   identifier <- 'Aspirin'
-#'   namespace <- 'name'
-#'   domain <- 'substance'
-#'   results <- get_synonyms(identifier, namespace, domain)
-#'   print(results)
+#'   result <- get_synonyms(identifier = "aspirin", namespace = "name", domain = "substance")
+#'   print(result)
 #' }
 #'
 #' @importFrom RJSONIO fromJSON
 #'
 #' @export
-get_synonyms <- function(identifier, namespace='cid', domain='compound', searchtype=NULL) {
+get_synonyms <- function(identifier, namespace='cid', domain='compound', searchtype=NULL, ...) {
 
   # Try to get the response and parse JSON
   result <- tryCatch({
     # Assuming 'get_json' is a function you've previously defined, similar to your Python environment
-    response_json <- get_json(identifier, namespace, domain, 'synonyms', searchtype)
+    response_json <- get_json(identifier, namespace, domain, 'synonyms', searchtype, ...)
 
     # Check if the response contains the expected information
     if (!is.null(response_json) && !is.null(response_json$InformationList) && !is.null(response_json$InformationList$Information)) {
@@ -44,5 +41,3 @@ get_synonyms <- function(identifier, namespace='cid', domain='compound', searcht
   return(result)
 }
 
-# res = get_synonyms(identifier = 'Aspirin', namespace = 'name', domain = 'substance')
-# res

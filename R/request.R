@@ -161,6 +161,10 @@ property_map <- list(
 #' @examples
 #' request(12345)
 #' request("Aspirin", namespace='name', domain='substance')
+#' @importFrom utils URLencode
+#' @importFrom stats setNames
+#' @importFrom base stop is.null is.numeric is.vector paste paste0 Filter Negate
+
 request <- function(identifier, namespace='cid', domain='compound', operation=NULL, output='JSON', searchtype=NULL, ...) {
   # Check for missing identifier
   if (is.null(identifier)) {
@@ -191,9 +195,9 @@ request <- function(identifier, namespace='cid', domain='compound', operation=NU
   comps <- Filter(Negate(is.null), list(api_base, domain, searchtype, namespace, urlid, operation, output))
   apiurl <- paste(comps, collapse = '/')
 
-  if (length(params) > 0) {
-    apiurl <- paste0(apiurl, "?", paste(names(params), params, sep = "=", collapse = "&"))
-  }
+  # if (length(params) > 0) {
+  #   apiurl <- paste0(apiurl, "?", paste(names(params), params, sep = "=", collapse = "&"))
+  # }
 
   # Return the constructed URL
   return(apiurl)

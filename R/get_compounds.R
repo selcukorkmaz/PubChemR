@@ -14,8 +14,8 @@
 #'
 #' @examples
 #' \dontrun{
-#'   res <- get_compounds(identifier = c("123", "456"), namespace = "cid")
-#'   print(res)
+#'   result <- get_compounds(identifier = c("123", "456"), namespace = "cid")
+#'   print(result)
 #' }
 #'
 #' @importFrom base is.null length list paste
@@ -27,7 +27,7 @@ get_compounds <- function(identifier, namespace='cid', searchtype=NULL, ...) {
 
   for (i in 1:length(identifier)) {
     # Retrieve the JSON data
-    results <- get_json(identifier[i], namespace, searchtype=searchtype)
+    results <- get_json(identifier[i], namespace, searchtype=searchtype, ...)
 
     # Check if results are not empty
     if (!is.null(results)) {
@@ -42,8 +42,7 @@ get_compounds <- function(identifier, namespace='cid', searchtype=NULL, ...) {
 
     }}
 
-  names(compounds) = paste0("ID_", identifier)
-
+  names(compounds) = paste0("'",identifier,"'")
 
   results = compounds
 
@@ -51,5 +50,3 @@ get_compounds <- function(identifier, namespace='cid', searchtype=NULL, ...) {
 
 }
 
-# res = get_compounds(identifier = "123", namespace = "cid")
-# res

@@ -19,8 +19,8 @@
 #'   properties <- c("IsomericSMILES", "XLogP", "RotatableBondCount")
 #'   identifier <- c('C20H41Br')
 #'   namespace <- "formula"
-#'   results <- get_properties(properties, identifier, namespace, as_dataframe = TRUE)
-#'   print(results)
+#'   result <- get_properties(properties, identifier, namespace, as_dataframe = TRUE)
+#'   print(result)
 #' }
 #'
 #' @importFrom RJSONIO fromJSON
@@ -49,7 +49,7 @@ get_properties <- function(properties, identifier, namespace='cid', searchtype=N
   # Here you would call the function that makes the HTTP request, e.g., get_json()
   # This is a placeholder for that function call, as its implementation depends on your setup.
 
-  results <- get_json(identifier = identifier, namespace = namespace, domain='compound', operation = properties_endpoint, output = 'JSON', searchtype = searchtype)
+  results <- get_json(identifier = identifier, namespace = namespace, domain='compound', operation = properties_endpoint, output = 'JSON', searchtype = searchtype, ...)
 
   # Check if results are not empty and process them
   properties_results <- list()
@@ -86,8 +86,3 @@ get_properties <- function(properties, identifier, namespace='cid', searchtype=N
   return(properties_results)
 }
 
-# properties = c("CanonicalSMILES","MolecularFormula", "MolecularWeight", "ConformerCount3D", "FeatureRingCount3D"); identifier = "CC";
-# namespace = "smiles"; searchtype = "superstructure"; as_dataframe = T
-#
-# get_properties(properties = c("IsomericSMILES", "XLogP", "RotatableBondCount"), identifier = c('C20H41Br'),
-#                namespace = "formula", as_dataframe = T)

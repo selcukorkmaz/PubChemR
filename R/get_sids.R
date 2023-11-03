@@ -15,8 +15,8 @@
 #' @examples
 #' \dontrun{
 #'   identifiers <- c(123, 12345)
-#'   results <- get_sids(identifiers)
-#'   print(results)
+#'   result <- get_sids(identifiers)
+#'   print(result)
 #' }
 #'
 #' @importFrom RJSONIO fromJSON
@@ -24,7 +24,7 @@
 #' @importFrom tidyr as_tibble
 #'
 #' @export
-get_sids <- function(identifier, namespace='cid', domain='compound', searchtype=NULL, params=list()) {
+get_sids <- function(identifier, namespace='cid', domain='compound', searchtype=NULL, ...) {
 
   # Try to get the response and parse JSON
   result <- tryCatch({
@@ -34,7 +34,7 @@ get_sids <- function(identifier, namespace='cid', domain='compound', searchtype=
 
     for(i in 1:length(identifier)){
 
-      response_json <- get_json(identifier[i], namespace, domain, 'sids', searchtype)
+      response_json <- get_json(identifier[i], namespace, domain, 'sids', searchtype, ...)
 
       # Check if the response contains the expected information
       if (is.null(response_json)) {
@@ -61,6 +61,7 @@ get_sids <- function(identifier, namespace='cid', domain='compound', searchtype=
 
   # Initialize empty data frame
   df <- data.frame(CID = numeric(), SID = numeric(), stringsAsFactors = FALSE)
+  resultList <- list()
 
   # Loop through each list
   for (i in seq_along(sidsList)) {
@@ -79,7 +80,16 @@ get_sids <- function(identifier, namespace='cid', domain='compound', searchtype=
                               stringsAsFactors = FALSE)
 
         # Bind to the main data frame
-        df <- bind_rows(df, temp_df)
+        if(namespace == "name"){
+
+          temp_df = cbind(Identifier = identifier[i], temp_df)
+          names(temp_df)[1] = str_to_title(domain)
+
+        }
+
+        # Bind to the main data frame
+        # df <- bind_rows(df, temp_df)
+        resultList[[i]] = temp_df
 
       } else if (is.character(sidsList[[i]][[j]]$SID)) {
         # Handle the case for "No SIDs" or similar cases
@@ -89,14 +99,25 @@ get_sids <- function(identifier, namespace='cid', domain='compound', searchtype=
                               stringsAsFactors = FALSE)
 
         # Bind to the main data frame
-        df <- bind_rows(df, temp_df)
+        if(namespace == "name"){
+
+          temp_df = cbind(Identifier = identifier[i], temp_df)
+          names(temp_df)[1] = str_to_title(domain)
+
+
+        }
+
+        # Bind to the main data frame
+        # df <- bind_rows(df, temp_df)
+        resultList[[i]] = temp_df
       }
     }
   }
+
+  df = do.call(rbind.data.frame, resultList)
 
   result = df%>%as_tibble()
 
   return(result)
 }
 
-# get_sids(c(123, 12345))

@@ -13,9 +13,9 @@
 #'
 #' @examples
 #' \dontrun{
-#'   res <- get_assays(identifier = c(1978, 1675))
-#'   print(res$AID1978)
-#'   print(res$AID1675)
+#'   result <- get_assays(identifier = c(1978, 1675))
+#'   print(result$`'1978'`)
+#'   print(result$`'1675'`)
 #' }
 #'
 #' @importFrom base is.null length list
@@ -30,7 +30,7 @@ get_assays <- function(identifier, namespace = 'aid', ...) {
   for (i in 1:length(identifier)) {
     # Retrieve the JSON data
     results <-
-      get_json(identifier[i], namespace, 'assay', 'description')
+      get_json(identifier[i], namespace, 'assay', 'description', ...)
 
     # Check if results are not empty
     if (!is.null(results)) {
@@ -45,13 +45,9 @@ get_assays <- function(identifier, namespace = 'aid', ...) {
 
     }}
 
-    names(assays) = paste0("AID",as.character(identifier))
+    names(assays) = paste0("'",identifier,"'")
 
     results = assays
 
     return(results)
   }
-
-# res = get_assays(identifier = c(1978, 1675))
-# res$AID1978
-# res$AID1675

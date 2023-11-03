@@ -13,8 +13,8 @@
 #'
 #' @examples
 #' \dontrun{
-#'   res <- get_substances(identifier = c("4594"), namespace = "sid")
-#'   print(res$Substance_4594)
+#'   result <- get_substances(identifier = c("4594"), namespace = "sid")
+#'   print(result$Substance_4594)
 #' }
 #'
 #' @importFrom RJSONIO fromJSON
@@ -26,7 +26,7 @@ get_substances <- function(identifier, namespace='sid', ...) {
 
   for (i in 1:length(identifier)) {
     # Retrieve the JSON data
-    results <- get_json(identifier[i], namespace, 'substance', operation = NULL, searchtype = NULL)
+    results <- get_json(identifier[i], namespace, 'substance', operation = NULL, searchtype = NULL, ...)
 
     # Check if results are not empty
     if (!is.null(results)) {
@@ -47,9 +47,5 @@ get_substances <- function(identifier, namespace='sid', ...) {
 
   return(results)
 }
-
-# res = get_substances(c("4594"), "sid")
-# res$Substance_4594
-
 
 

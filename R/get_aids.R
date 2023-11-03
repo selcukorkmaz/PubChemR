@@ -16,9 +16,8 @@
 #'
 #' @examples
 #' \dontrun{
-#'   identifiers <- c(1234)
-#'   results <- get_aids(identifiers, as_data_frame = FALSE)
-#'   print(results)
+#'   result <- get_aids(identifier = 1234, as_data_frame = FALSE)
+#'   print(result)
 #' }
 #'
 #' @importFrom utils message
@@ -26,7 +25,7 @@
 #' @importFrom tibble as_tibble
 #'
 #' @export
-get_aids <- function(identifier, namespace='cid', domain='compound', searchtype=NULL, as_data_frame = TRUE) {
+get_aids <- function(identifier, namespace='cid', domain='compound', searchtype=NULL, as_data_frame = TRUE, ...) {
 
   # Try to get the response and parse JSON
   result <- tryCatch({
@@ -36,7 +35,7 @@ get_aids <- function(identifier, namespace='cid', domain='compound', searchtype=
 
     for(i in 1:length(identifier)){
 
-      response_json <- get_json(identifier[i], namespace, domain, 'aids', searchtype)
+      response_json <- get_json(identifier[i], namespace, domain, 'aids', searchtype, ...)
 
       # Check if the response contains the expected information
       if (is.null(response_json)) {
@@ -65,12 +64,14 @@ get_aids <- function(identifier, namespace='cid', domain='compound', searchtype=
     # Initialize empty data frame
     df <- data.frame(CID = numeric(), AID = numeric(), stringsAsFactors = FALSE)
 
+    resultList <- list()
+
     # Loop through each list
     for (i in seq_along(aidsList)) {
 
-
         # Extract CID. It assumes there's only one CID per sublist
         current_CID <- aidsList[[i]]$CID
+
 
         # Check if aids are present and are numeric
         if (is.numeric(aidsList[[i]]$AID)) {
@@ -81,8 +82,16 @@ get_aids <- function(identifier, namespace='cid', domain='compound', searchtype=
                                 AID = current_aid,
                                 stringsAsFactors = FALSE)
 
+          if(namespace == "name"){
+
+            temp_df = cbind(Identifier = identifier[i], temp_df)
+            names(temp_df)[1] = str_to_title(domain)
+
+          }
+
           # Bind to the main data frame
-          df <- bind_rows(df, temp_df)
+          # df <- bind_rows(df, temp_df)
+          resultList[[i]] = temp_df
 
         } else if (is.character(aidsList[[i]]$AID)) {
           # Handle the case for "No aids" or similar cases
@@ -91,20 +100,43 @@ get_aids <- function(identifier, namespace='cid', domain='compound', searchtype=
                                 aid = NA,  # or "No aids" or another indicator
                                 stringsAsFactors = FALSE)
 
+          if(namespace == "name"){
+
+              temp_df = cbind(Identifier = identifier[i], temp_df)
+              names(temp_df)[1] = str_to_title(domain)
+
+
+          }
+
           # Bind to the main data frame
-          df <- bind_rows(df, temp_df)
+          # df <- bind_rows(df, temp_df)
+          resultList[[i]] = temp_df
+
         }
+
+        else if (is.character(aidsList[[i]]$AID)) {
+          # Handle the case for "No aids" or similar cases
+          # Here, we add the CID with an NA or a specific indicator for the aid
+          temp_df <- data.frame(CID = current_CID,
+                                aid = NA,  # or "No aids" or another indicator
+                                stringsAsFactors = FALSE)
+
+          # Bind to the main data frame
+          # df <- bind_rows(df, temp_df)
+          resultList[[i]] = temp_df
+
+        }
+
+      df = do.call(rbind.data.frame, resultList)
 
     }
     result = df%>%as_tibble()
   }else{
 
-    names(aidsList) = paste0("CID_", identifier)
+    names(aidsList) = paste0("'",identifier,"'")
     result = aidsList
   }
 
   return(result)
 
 }
-
-# get_aids(c(1234), as_data_frame = F)
