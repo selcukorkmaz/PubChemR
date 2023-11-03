@@ -7,6 +7,7 @@
 #' @param namespace A character string specifying the namespace for the request. Default is 'cid'.
 #' @param domain A character string specifying the domain for the request. Default is 'compound'.
 #' @param searchtype A character string specifying the search type. Default is NULL.
+#' @param ... Additional arguments.
 #'
 #' @return A list where each element corresponds to the synonyms retrieved from PubChem for the provided identifier.
 #'         The names of the list elements are based on the provided identifier.

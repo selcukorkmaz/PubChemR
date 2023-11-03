@@ -7,7 +7,7 @@
 get_all_sources(domain = "substance")
 }
 \arguments{
-\item{domain}{A character string specifying the domain for which sources ('substance', 'assay') are to be retrieved. 
+\item{domain}{A character string specifying the domain for which sources ('substance', 'assay') are to be retrieved.
 Default is 'substance'.}
 }
 \value{

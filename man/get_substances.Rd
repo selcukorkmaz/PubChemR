@@ -24,8 +24,8 @@ It returns a list of substances corresponding to the provided identifiers.
 }
 \examples{
 \dontrun{
-  res <- get_substances(identifier = c("4594"), namespace = "sid")
-  print(res$Substance_4594)
+  result <- get_substances(identifier = c("4594"), namespace = "sid")
+  print(result$Substance_4594)
 }
 
 }

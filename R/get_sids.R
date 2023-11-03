@@ -7,7 +7,7 @@
 #' @param namespace A character string specifying the namespace for the request. Default is 'cid'.
 #' @param domain A character string specifying the domain for the request. Default is 'compound'.
 #' @param searchtype A character string specifying the search type. Default is NULL.
-#' @param params A list of additional parameters to be passed to the request. Default is an empty list.
+#' @param ... Additional arguments.
 #'
 #' @return A tibble (data frame) where each row corresponds to a provided identifier and its SID.
 #'         The tibble has columns 'CID' and 'SID'.
@@ -22,6 +22,9 @@
 #' @importFrom RJSONIO fromJSON
 #' @importFrom dplyr bind_rows
 #' @importFrom tidyr as_tibble
+#' @importFrom stringr str_to_title
+#' @importFrom magrittr %>%
+#'
 #'
 #' @export
 get_sids <- function(identifier, namespace='cid', domain='compound', searchtype=NULL, ...) {

@@ -22,6 +22,8 @@ get_properties(
 
 \item{searchtype}{Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.}
 
+\item{as_dataframe}{If TRUE it return a dataframe.}
+
 \item{...}{Additional arguments.}
 }
 \value{
@@ -38,8 +40,8 @@ It returns a list or dataframe of properties corresponding to the provided ident
   properties <- c("IsomericSMILES", "XLogP", "RotatableBondCount")
   identifier <- c('C20H41Br')
   namespace <- "formula"
-  results <- get_properties(properties, identifier, namespace, as_dataframe = TRUE)
-  print(results)
+  result <- get_properties(properties, identifier, namespace, as_dataframe = TRUE)
+  print(result)
 }
 
 }

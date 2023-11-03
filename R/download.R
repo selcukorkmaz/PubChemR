@@ -17,11 +17,8 @@
 #'
 #' @examples
 #' \dontrun{
-#'   download("sdf", "14.sdf", identifier = 123, overwrite = FALSE)
+#'   download("sdf", "glucose.sdf", identifier = "glucose", namespace = "name", overwrite = FALSE)
 #' }
-#'
-#' @importFrom utils stop message
-#' @importFrom base file.exists charToRaw writeBin getwd
 #'
 #' @export
 download <- function(outformat, path, identifier, namespace = 'cid', domain = 'compound', operation = NULL,
@@ -40,5 +37,3 @@ download <- function(outformat, path, identifier, namespace = 'cid', domain = 'c
 
 }
 
-
-# download("sdf", "14.sdf", identifier = 123, overwrite = F)

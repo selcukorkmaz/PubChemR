@@ -26,8 +26,9 @@ It returns a list of compounds corresponding to the provided identifiers.
 }
 \examples{
 \dontrun{
-  res <- get_compounds(identifier = c("123", "456"), namespace = "cid")
-  print(res)
+  result <- get_compounds(identifier = c("123", "456"), namespace = "cid")
+  print(result)
 }
+
 
 }

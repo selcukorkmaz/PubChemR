@@ -9,7 +9,7 @@ get_sids(
   namespace = "cid",
   domain = "compound",
   searchtype = NULL,
-  params = list()
+  ...
 )
 }
 \arguments{
@@ -21,7 +21,7 @@ get_sids(
 
 \item{searchtype}{A character string specifying the search type. Default is NULL.}
 
-\item{params}{A list of additional parameters to be passed to the request. Default is an empty list.}
+\item{...}{Additional arguments.}
 }
 \value{
 A tibble (data frame) where each row corresponds to a provided identifier and its SID.
@@ -34,8 +34,8 @@ It returns a tibble (data frame) with the provided identifier and the correspond
 \examples{
 \dontrun{
   identifiers <- c(123, 12345)
-  results <- get_sids(identifiers)
-  print(results)
+  result <- get_sids(identifiers)
+  print(result)
 }
 
 }

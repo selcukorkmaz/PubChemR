@@ -24,9 +24,10 @@ It returns a list of assays corresponding to the provided identifiers.
 }
 \examples{
 \dontrun{
-  res <- get_assays(identifier = c(1978, 1675))
-  print(res$AID1978)
-  print(res$AID1675)
+  result <- get_assays(identifier = c(1978, 1675))
+  print(result$`'1978'`)
+  print(result$`'1675'`)
 }
+
 
 }

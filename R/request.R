@@ -163,7 +163,6 @@ property_map <- list(
 #' request("Aspirin", namespace='name', domain='substance')
 #' @importFrom utils URLencode
 #' @importFrom stats setNames
-#' @importFrom base stop is.null is.numeric is.vector paste paste0 Filter Negate
 
 request <- function(identifier, namespace='cid', domain='compound', operation=NULL, output='JSON', searchtype=NULL, ...) {
   # Check for missing identifier

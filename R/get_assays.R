@@ -18,8 +18,6 @@
 #'   print(result$`'1675'`)
 #' }
 #'
-#' @importFrom base is.null length list
-#' @importFrom utils stop
 #'
 #' @export
 get_assays <- function(identifier, namespace = 'aid', ...) {

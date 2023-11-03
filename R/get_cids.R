@@ -19,10 +19,11 @@
 #'   print(result)
 #' }
 #'
-#' @importFrom base is.null length list message paste
 #' @importFrom tibble tibble
 #' @importFrom dplyr mutate row_number select
 #' @importFrom tidyr unnest_wider unnest_longer
+#' @importFrom magrittr %>%
+#'
 #'
 #' @export
 get_cids <- function(identifier, namespace='name', domain='compound', searchtype=NULL, ...) {

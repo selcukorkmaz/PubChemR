@@ -18,7 +18,6 @@
 #'   print(result)
 #' }
 #'
-#' @importFrom base is.null length list paste
 #'
 #' @export
 get_compounds <- function(identifier, namespace='cid', searchtype=NULL, ...) {

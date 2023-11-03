@@ -8,7 +8,8 @@ get_synonyms(
   identifier,
   namespace = "cid",
   domain = "compound",
-  searchtype = NULL
+  searchtype = NULL,
+  ...
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ get_synonyms(
 \item{domain}{A character string specifying the domain for the request. Default is 'compound'.}
 
 \item{searchtype}{A character string specifying the search type. Default is NULL.}
+
+\item{...}{Additional arguments.}
 }
 \value{
 A list where each element corresponds to the synonyms retrieved from PubChem for the provided identifier.
@@ -30,11 +33,8 @@ It returns a list of synonyms corresponding to the provided identifier.
 }
 \examples{
 \dontrun{
-  identifier <- 'Aspirin'
-  namespace <- 'name'
-  domain <- 'substance'
-  results <- get_synonyms(identifier, namespace, domain)
-  print(results)
+  result <- get_synonyms(identifier = "aspirin", namespace = "name", domain = "substance")
+  print(result)
 }
 
 }

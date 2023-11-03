@@ -9,7 +9,8 @@ get_aids(
   namespace = "cid",
   domain = "compound",
   searchtype = NULL,
-  as_data_frame = TRUE
+  as_data_frame = TRUE,
+  ...
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ get_aids(
 \item{searchtype}{Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.}
 
 \item{as_data_frame}{A logical value indicating whether to return the results as a tibble (data frame). Default is TRUE.}
+
+\item{...}{Additional arguments}
 }
 \value{
 If `as_data_frame` is TRUE, a tibble (data frame) where each row corresponds to a provided identifier and its AID.
@@ -34,9 +37,8 @@ or a list of AIDs, depending on the `as_data_frame` parameter.
 }
 \examples{
 \dontrun{
-  identifiers <- c(1234)
-  results <- get_aids(identifiers, as_data_frame = FALSE)
-  print(results)
+  result <- get_aids(identifier = 1234, as_data_frame = FALSE)
+  print(result)
 }
 
 }

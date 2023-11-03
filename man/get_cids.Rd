@@ -9,7 +9,7 @@ get_cids(
   namespace = "name",
   domain = "compound",
   searchtype = NULL,
-  params = list()
+  ...
 )
 }
 \arguments{
@@ -33,9 +33,9 @@ It returns a tibble (data frame) with the provided identifier and the correspond
 }
 \examples{
 \dontrun{
-  identifiers <- c("Aspirin", "benzene", "axd")
-  results <- get_cids(identifiers)
-  print(results)
+  identifiers <- c("Aspirin", "Benzene")
+  result <- get_cids(identifiers)
+  print(result)
 }
 
 }

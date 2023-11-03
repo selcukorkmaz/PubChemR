@@ -20,7 +20,7 @@
 #' @seealso
 #' \url{https://pubchem.ncbi.nlm.nih.gov/rest/pug/}
 #'
-#' @importFrom httr GET
+#' @importFrom httr GET http_status
 #' @importFrom RJSONIO fromJSON
 #' @export
 get <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL,
