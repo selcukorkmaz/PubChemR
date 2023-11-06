@@ -11,13 +11,6 @@
 #'         The names of the list elements are based on the provided identifiers.
 #'         If no assay is found for a given identifier, the corresponding list element will contain the string "No assay".
 #'
-#' @examples
-#' \dontrun{
-#'   result <- get_assays(identifier = c(1978, 1675))
-#'   print(result$`'1978'`)
-#'   print(result$`'1675'`)
-#' }
-#'
 #'
 #' @export
 get_assays <- function(identifier, namespace = 'aid', ...) {

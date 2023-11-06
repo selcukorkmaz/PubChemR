@@ -12,12 +12,6 @@
 #' @return A tibble (data frame) where each row corresponds to a provided identifier and its CID.
 #'         The tibble has columns 'Compound' and 'CID'.
 #'
-#' @examples
-#' \dontrun{
-#'   identifiers <- c("Aspirin", "Benzene")
-#'   result <- get_cids(identifiers)
-#'   print(result)
-#' }
 #'
 #' @importFrom tibble tibble
 #' @importFrom dplyr mutate row_number select

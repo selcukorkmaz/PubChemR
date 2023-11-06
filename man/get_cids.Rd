@@ -31,11 +31,3 @@ A tibble (data frame) where each row corresponds to a provided identifier and it
 This function sends a request to PubChem to retrieve Compound IDs (CIDs) for a given identifier.
 It returns a tibble (data frame) with the provided identifier and the corresponding CIDs.
 }
-\examples{
-\dontrun{
-  identifiers <- c("Aspirin", "Benzene")
-  result <- get_cids(identifiers)
-  print(result)
-}
-
-}

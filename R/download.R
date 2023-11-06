@@ -15,10 +15,6 @@
 #'
 #' @return No return value. The function writes the content to the specified file path and prints a message indicating the save location.
 #'
-#' @examples
-#' \dontrun{
-#'   download("sdf", "glucose.sdf", identifier = "glucose", namespace = "name", overwrite = FALSE)
-#' }
 #'
 #' @export
 download <- function(outformat, path, identifier, namespace = 'cid', domain = 'compound', operation = NULL,

@@ -31,11 +31,3 @@ A tibble (data frame) where each row corresponds to a provided identifier and it
 This function sends a request to PubChem to retrieve Substance IDs (SIDs) for a given identifier.
 It returns a tibble (data frame) with the provided identifier and the corresponding SIDs.
 }
-\examples{
-\dontrun{
-  identifiers <- c(123, 12345)
-  result <- get_sids(identifiers)
-  print(result)
-}
-
-}

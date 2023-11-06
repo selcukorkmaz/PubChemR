@@ -12,11 +12,6 @@
 #'
 #' @return NULL. The function saves the retrieved data as an SDF file in the current working directory and prints a message indicating the file's location.
 #'
-#' @examples
-#' \dontrun{
-#'   get_sdf(identifier = "glucose", namespace = "name", domain = "compound")
-#' }
-#'
 #' @importFrom utils download.file
 #'
 #' @export

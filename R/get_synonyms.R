@@ -12,11 +12,6 @@
 #' @return A list where each element corresponds to the synonyms retrieved from PubChem for the provided identifier.
 #'         The names of the list elements are based on the provided identifier.
 #'
-#' @examples
-#' \dontrun{
-#'   result <- get_synonyms(identifier = "aspirin", namespace = "name", domain = "substance")
-#'   print(result)
-#' }
 #'
 #' @importFrom RJSONIO fromJSON
 #'

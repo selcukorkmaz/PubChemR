@@ -11,12 +11,6 @@
 #'         The names of the list elements are based on the provided identifiers.
 #'         If no substance is found for a given identifier, the corresponding list element will contain the string "No substance".
 #'
-#' @examples
-#' \dontrun{
-#'   result <- get_substances(identifier = c("4594"), namespace = "sid")
-#'   print(result$Substance_4594)
-#' }
-#'
 #' @importFrom RJSONIO fromJSON
 #'
 #' @export

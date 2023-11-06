@@ -31,10 +31,3 @@ A list where each element corresponds to the synonyms retrieved from PubChem for
 This function sends a request to PubChem to retrieve synonyms for a given identifier.
 It returns a list of synonyms corresponding to the provided identifier.
 }
-\examples{
-\dontrun{
-  result <- get_synonyms(identifier = "aspirin", namespace = "name", domain = "substance")
-  print(result)
-}
-
-}

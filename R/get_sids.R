@@ -12,12 +12,6 @@
 #' @return A tibble (data frame) where each row corresponds to a provided identifier and its SID.
 #'         The tibble has columns 'CID' and 'SID'.
 #'
-#' @examples
-#' \dontrun{
-#'   identifiers <- c(123, 12345)
-#'   result <- get_sids(identifiers)
-#'   print(result)
-#' }
 #'
 #' @importFrom RJSONIO fromJSON
 #' @importFrom dplyr bind_rows

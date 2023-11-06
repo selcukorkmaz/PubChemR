@@ -22,12 +22,3 @@ A named list where each element corresponds to an assay retrieved from PubChem.
 This function sends a request to PubChem to retrieve assay data based on the specified parameters.
 It returns a list of assays corresponding to the provided identifiers.
 }
-\examples{
-\dontrun{
-  result <- get_assays(identifier = c(1978, 1675))
-  print(result$`'1978'`)
-  print(result$`'1675'`)
-}
-
-
-}

@@ -33,10 +33,3 @@ A list containing the parsed JSON response from PubChem. Returns NULL if an erro
 This function sends a request to PubChem to retrieve JSON data based on the specified parameters.
 It handles errors and warnings gracefully, providing informative messages when they occur.
 }
-\examples{
-\dontrun{
-  json_data <- get_json(identifier = "glucose", namespace = "name", domain = "compound")
-  print(json_data)
-}
-
-}

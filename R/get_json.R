@@ -12,12 +12,6 @@
 #'
 #' @return A list containing the parsed JSON response from PubChem. Returns NULL if an error or warning occurs.
 #'
-#' @examples
-#' \dontrun{
-#'   json_data <- get_json(identifier = "glucose", namespace = "name", domain = "compound")
-#'   print(json_data)
-#' }
-#'
 #' @importFrom RJSONIO fromJSON
 #'
 #' @export

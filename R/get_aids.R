@@ -15,11 +15,6 @@
 #' @return If `as_data_frame` is TRUE, a tibble (data frame) where each row corresponds to a provided identifier and its AID.
 #'         The tibble has columns 'CID' and 'AID'. If `as_data_frame` is FALSE, a list of AIDs is returned.
 #'
-#' @examples
-#' \dontrun{
-#'   result <- get_aids(identifier = 1234, as_data_frame = FALSE)
-#'   print(result)
-#' }
 #'
 #' @importFrom dplyr bind_rows
 #' @importFrom tibble as_tibble

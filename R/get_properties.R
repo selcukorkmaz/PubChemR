@@ -15,14 +15,6 @@
 #'         If `as_dataframe` is TRUE, a dataframe where each row corresponds to the properties retrieved from PubChem.
 #'         The names of the list elements or row names of the dataframe are based on the provided identifiers.
 #'
-#' @examples
-#' \dontrun{
-#'   properties <- c("IsomericSMILES", "XLogP", "RotatableBondCount")
-#'   identifier <- c('C20H41Br')
-#'   namespace <- "formula"
-#'   result <- get_properties(properties, identifier, namespace, as_dataframe = TRUE)
-#'   print(result)
-#' }
 #'
 #' @importFrom RJSONIO fromJSON
 #' @importFrom dplyr as_tibble

@@ -22,10 +22,3 @@ A named list where each element corresponds to a substance retrieved from PubChe
 This function sends a request to PubChem to retrieve substance data based on the specified parameters.
 It returns a list of substances corresponding to the provided identifiers.
 }
-\examples{
-\dontrun{
-  result <- get_substances(identifier = c("4594"), namespace = "sid")
-  print(result$Substance_4594)
-}
-
-}

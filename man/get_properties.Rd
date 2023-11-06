@@ -35,13 +35,3 @@ If `as_dataframe` is FALSE, a named list where each element corresponds to the p
 This function sends a request to PubChem to retrieve compound properties based on the specified parameters.
 It returns a list or dataframe of properties corresponding to the provided identifiers.
 }
-\examples{
-\dontrun{
-  properties <- c("IsomericSMILES", "XLogP", "RotatableBondCount")
-  identifier <- c('C20H41Br')
-  namespace <- "formula"
-  result <- get_properties(properties, identifier, namespace, as_dataframe = TRUE)
-  print(result)
-}
-
-}

@@ -7,11 +7,6 @@
 #'
 #' @return A character vector containing the names of all sources for the specified domain.
 #'
-#' @examples
-#' \dontrun{
-#'   sources <- get_all_sources(domain = 'substance')
-#'   print(sources)
-#' }
 #'
 #' @importFrom RJSONIO fromJSON
 #'

@@ -158,9 +158,6 @@ property_map <- list(
 #'
 #' @return A constructed URL for the PubChem API.
 #'
-#' @examples
-#' request(12345)
-#' request("Aspirin", namespace='name', domain='substance')
 #' @importFrom utils URLencode
 #' @importFrom stats setNames
 

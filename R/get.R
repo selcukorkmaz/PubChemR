@@ -12,10 +12,6 @@
 #'
 #' @return Returns the response content from the PubChem API based on the constructed URL.
 #'
-#' @examples
-#' \dontrun{
-#' get(2244, namespace = 'cid', domain = 'compound', operation = 'property/MolecularFormula', output = 'JSON')
-#' }
 #'
 #' @seealso
 #' \url{https://pubchem.ncbi.nlm.nih.gov/rest/pug/}

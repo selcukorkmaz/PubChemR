@@ -35,12 +35,6 @@ Returns the response content from the PubChem API based on the constructed URL.
 \description{
 This function constructs a URL to query the PubChem API based on the provided parameters and returns the response content.
 }
-\examples{
-\dontrun{
-get(2244, namespace = 'cid', domain = 'compound', operation = 'property/MolecularFormula', output = 'JSON')
-}
-
-}
 \seealso{
 \url{https://pubchem.ncbi.nlm.nih.gov/rest/pug/}
 }
