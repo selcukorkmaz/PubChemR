@@ -8,17 +8,17 @@
 #' @param domain Specifies the domain of the query. Possible values are 'substance', 'compound', 'assay', 'gene', 'protein', 'pathway', 'taxonomy', 'cell', 'sources', 'sourcetable', 'conformers', 'annotations', 'classification', and 'standardize'.
 #' @param operation Specifies the operation to be performed on the input records. For the 'compound' domain, possible operations include 'record', 'property', 'synonyms', 'sids', 'cids', 'aids', 'assaysummary', 'classification', 'xrefs', and 'description'. The available operations are domain-specific.
 #' @param searchtype Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.
-#' @param ... Additional arguments.
+#' @param ... Additional arguments passed to \code{\link[RJSONIO]{fromJSON}}.
 #'
 #' @return A list containing the parsed JSON response from PubChem. Returns NULL if an error or warning occurs.
 #'
 #' @importFrom RJSONIO fromJSON
 #'
 #' @export
-get_json <- function(identifier, namespace='cid', domain='compound', operation=NULL, searchtype=NULL, ...) {
+get_json <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL, searchtype = NULL, ...) {
 
   result <- tryCatch({
-    response <- fromJSON(get(identifier, namespace, domain, operation, 'JSON', searchtype))
+    response <- fromJSON(get(identifier, namespace, domain, operation, 'JSON', searchtype, ...))
     return(response)
   },
   error = function(e) {

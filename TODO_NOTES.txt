@@ -1,0 +1,3 @@
+TO DO Notes for Forthcoming Releases
+
+#1 - Replace base "do.call" function with faster alternative "DoCall" under DescTools package.

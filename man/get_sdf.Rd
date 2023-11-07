@@ -24,10 +24,11 @@ get_sdf(
 
 \item{searchtype}{An optional character string specifying the search type.}
 
-\item{...}{Additional parameters to be passed to the request.}
+\item{...}{Additional parameters to be passed to the \code{\link{request}}.}
 }
 \value{
-NULL. The function saves the retrieved data as an SDF file in the current working directory and prints a message indicating the file's location.
+NULL. The function saves the retrieved data as an SDF file in the current working directory and prints a
+message indicating the file's location.
 }
 \description{
 This function sends a request to PubChem to retrieve data in SDF format based on the specified parameters.

@@ -7,7 +7,6 @@
 #'
 #' @return A character vector containing the names of all sources for the specified domain.
 #'
-#'
 #' @importFrom RJSONIO fromJSON
 #'
 #' @export

@@ -8,27 +8,24 @@
 #' @param namespace Specifies the namespace for the query. For the 'compound' domain, possible values include 'cid', 'name', 'smiles', 'inchi', 'sdf', 'inchikey', 'formula', 'substructure', 'superstructure', 'similarity', 'identity', 'xref', 'listkey', 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure', and 'fastformula'. For other domains, the possible namespaces are domain-specific.
 #' @param searchtype Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.
 #' @param as_dataframe If TRUE it return a dataframe.
-#' @param ... Additional arguments.
-
+#' @param ... Additional arguments passed to \code{\link{get_json}}.
 #'
 #' @return If `as_dataframe` is FALSE, a named list where each element corresponds to the properties retrieved from PubChem.
 #'         If `as_dataframe` is TRUE, a dataframe where each row corresponds to the properties retrieved from PubChem.
 #'         The names of the list elements or row names of the dataframe are based on the provided identifiers.
-#'
 #'
 #' @importFrom RJSONIO fromJSON
 #' @importFrom dplyr as_tibble
 #' @importFrom magrittr %>%
 #'
 #' @export
-get_properties <- function(properties, identifier, namespace='cid', searchtype=NULL, as_dataframe=FALSE, ...) {
-
+get_properties <- function(properties, identifier, namespace = 'cid', searchtype = NULL, as_dataframe = FALSE, ...) {
   # If properties is a single string, split it into a vector
   # if (is.character(properties) && !grepl(",", properties)) {
   #   properties <- strsplit(properties, ",")[[1]]
   # }
 
-  if(any(!(properties %in% unlist(property_map))))
+  if (any(!(properties %in% unlist(property_map))))
     stop(paste(properties[!(properties %in% unlist(property_map))], collapse = ", "), " is not in the property map!")
 
   # Map properties using the property_map, assuming it's available in your environment
@@ -42,8 +39,9 @@ get_properties <- function(properties, identifier, namespace='cid', searchtype=N
 
   # Here you would call the function that makes the HTTP request, e.g., get_json()
   # This is a placeholder for that function call, as its implementation depends on your setup.
-
-  results <- get_json(identifier = identifier, namespace = namespace, domain='compound', operation = properties_endpoint, output = 'JSON', searchtype = searchtype, ...)
+  results <- get_json(identifier = identifier, namespace = namespace, domain = 'compound',
+                      operation = properties_endpoint, output = 'JSON',
+                      searchtype = searchtype, ...)
 
   # Check if results are not empty and process them
   properties_results <- list()
@@ -58,7 +56,6 @@ get_properties <- function(properties, identifier, namespace='cid', searchtype=N
 
     tryCatch({
       # Make the request. The 'get' function is expected to return the response content directly.
-
       # Check if the response is not empty or NULL before proceeding
       if (!is.null(properties_results)) {
         # Write the content to a file in SDF format in the current working directory
@@ -73,7 +70,6 @@ get_properties <- function(properties, identifier, namespace='cid', searchtype=N
       message(paste("Error:", e$message))
 
     })
-
     # row.names(properties_df) <- sapply(properties_results, function(x) x$CID)  # if 'CID' is the identifier
   }
 

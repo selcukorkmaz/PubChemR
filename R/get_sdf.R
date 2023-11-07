@@ -8,19 +8,20 @@
 #' @param domain A character string specifying the domain for the request. Default is 'compound'.
 #' @param operation An optional character string specifying the operation for the request.
 #' @param searchtype An optional character string specifying the search type.
-#' @param ... Additional parameters to be passed to the request.
+#' @param ... Additional parameters to be passed to the \code{\link{request}}.
 #'
-#' @return NULL. The function saves the retrieved data as an SDF file in the current working directory and prints a message indicating the file's location.
+#' @return NULL. The function saves the retrieved data as an SDF file in the current working directory and prints a
+#' message indicating the file's location.
 #'
 #' @importFrom utils download.file
 #'
 #' @export
-get_sdf <- function(identifier, namespace='cid', domain='compound', operation=NULL, searchtype=NULL, ...) {
+get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL, searchtype = NULL, ...) {
 
   # Generate a file name based on the identifier, ensuring it ends with the .sdf extension
   file_name <- paste0(identifier, "_", Sys.time(), ".sdf")  # Adding a timestamp for uniqueness
-  file_name <- gsub(" ", "_",
-               gsub(":", "_", file_name))  # Replace spaces with underscores, if any
+  file_name <- trimws(file_name) # Remove leading and trailing white spaces.
+  file_name <- gsub(" ", "_", gsub(":", "_", file_name))  # Replace spaces with underscores, if any
 
   # Use tryCatch to handle errors gracefully
   result <- tryCatch({
@@ -30,8 +31,8 @@ get_sdf <- function(identifier, namespace='cid', domain='compound', operation=NU
     # Check if the response is not empty or NULL before proceeding
     if (!is.null(response_sdf) && nzchar(response_sdf)) {
       # Write the content to a file in SDF format in the current working directory
-      download.file(response_sdf, paste0("./",file_name))
-      message(paste("SDF file has been saved in the current working directory as:", paste0(getwd(),"/",file_name)))
+      download.file(response_sdf, paste0("./", file_name))
+      message(paste("SDF file has been saved in the current working directory as:", paste0(getwd(), "/", file_name)))
     } else {
       message("Received no content to write to the SDF file.")
       return(NULL)
@@ -43,5 +44,6 @@ get_sdf <- function(identifier, namespace='cid', domain='compound', operation=NU
     return(NULL)  # Return NULL to indicate no result or failure in the process
   })
 
+  return(result)
 }
 

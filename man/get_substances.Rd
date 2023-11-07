@@ -11,7 +11,7 @@ get_substances(identifier, namespace = "sid", ...)
 
 \item{namespace}{A character string specifying the namespace for the request. Default is 'sid'.}
 
-\item{...}{Additional parameters to be passed to the request.}
+\item{...}{Additional parameters passed to \code{\link{get_json}}.}
 }
 \value{
 A named list where each element corresponds to a substance retrieved from PubChem.

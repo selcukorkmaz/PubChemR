@@ -1,3 +1,7 @@
+# Global Variables and/or Functions
+utils::globalVariables(c("data", "CID"))
+
+
 #' Retrieve Compound IDs (CIDs) from PubChem
 #'
 #' This function sends a request to PubChem to retrieve Compound IDs (CIDs) for a given identifier.
@@ -7,48 +11,41 @@
 #' @param namespace Specifies the namespace for the query. For the 'compound' domain, possible values include 'cid', 'name', 'smiles', 'inchi', 'sdf', 'inchikey', 'formula', 'substructure', 'superstructure', 'similarity', 'identity', 'xref', 'listkey', 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure', and 'fastformula'. For other domains, the possible namespaces are domain-specific.
 #' @param domain Specifies the domain of the query. Possible values are 'substance', 'compound', 'assay', 'gene', 'protein', 'pathway', 'taxonomy', 'cell', 'sources', 'sourcetable', 'conformers', 'annotations', 'classification', and 'standardize'.
 #' @param searchtype Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.
-#' @param ... Additional arguments.
+#' @param ... Additional arguments passed to \code{\link{get_json}}.
 #'
 #' @return A tibble (data frame) where each row corresponds to a provided identifier and its CID.
 #'         The tibble has columns 'Compound' and 'CID'.
-#'
 #'
 #' @importFrom tibble tibble
 #' @importFrom dplyr mutate row_number select
 #' @importFrom tidyr unnest_wider unnest_longer
 #' @importFrom magrittr %>%
 #'
-#'
 #' @export
-get_cids <- function(identifier, namespace='name', domain='compound', searchtype=NULL, ...) {
+get_cids <- function(identifier, namespace = 'name', domain = 'compound', searchtype = NULL, ...) {
 
   # Try to get the response and parse JSON
   result <- tryCatch({
     # Assuming 'get_json' is a function you've previously defined, similar to your Python environment
 
-    cidsList = list()
+    cidsList <- list()
 
-    for(i in 1:length(identifier)){
-
+    for (i in 1:length(identifier)){
     response_json <- get_json(identifier[i], namespace, domain, 'cids', searchtype, ...)
 
     # Check if the response contains the expected information
     if (is.null(response_json)) {
-      cidsList[[i]] = list(Compound = identifier[i], CID = "No CID")
+      cidsList[[i]] <- list(Compound = identifier[i], CID = "No CID")
 
     } else if (!is.null(response_json$IdentifierList) && !is.null(response_json$IdentifierList$CID)) {
-
-      cidsList[[i]] = list(Compound = identifier[i], CID = response_json$IdentifierList$CID)
-
+      cidsList[[i]] <- list(Compound = identifier[i], CID = response_json$IdentifierList$CID)
 
     } else if (!is.null(response_json$InformationList) && !is.null(response_json$InformationList$Information)) {
-
-      cidsList[[i]] = list(Compound = identifier[i], Info = response_json$InformationList$Information)
+      cidsList[[i]] <- list(Compound = identifier[i], Info = response_json$InformationList$Information)
 
     } else {
       return(list())  # Return an empty list if neither CIDs nor Information is found
     }
-
     }
   }, error = function(e) {
     message(paste("An error occurred:", e$message))  # Log the error message

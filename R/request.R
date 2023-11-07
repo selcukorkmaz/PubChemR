@@ -154,14 +154,16 @@ property_map <- list(
 #' @param operation The operation to be performed (default: NULL).
 #' @param output The desired output format (default: 'JSON').
 #' @param searchtype The type of search to be performed (default: NULL).
-#' @param ... Additional parameters for the request.
+#' @param ... Additional parameters. Currently has no effect on the results.
 #'
 #' @return A constructed URL for the PubChem API.
 #'
 #' @importFrom utils URLencode
 #' @importFrom stats setNames
 
-request <- function(identifier, namespace='cid', domain='compound', operation=NULL, output='JSON', searchtype=NULL, ...) {
+request <- function(identifier, namespace = 'cid', domain = 'compound',
+                    operation = NULL, output = 'JSON', searchtype = NULL, ...) {
+
   # Check for missing identifier
   if (is.null(identifier)) {
     stop("identifier/cid cannot be NULL")
@@ -171,6 +173,7 @@ request <- function(identifier, namespace='cid', domain='compound', operation=NU
   if (is.numeric(identifier)) {
     identifier <- as.character(identifier)
   }
+
   if (is.vector(identifier) && !is.character(identifier)) {
     identifier <- paste(identifier, collapse = ',')
   }
@@ -178,11 +181,13 @@ request <- function(identifier, namespace='cid', domain='compound', operation=NU
   # Build API URL
   urlid <- NULL
   postdata <- NULL
+
   if (!is.null(namespace) && namespace == 'sourceid') {
     identifier <- gsub("/", ".", identifier)
   }
 
   api_base <- "https://pubchem.ncbi.nlm.nih.gov/rest/pug"
+
   # Ensure the identifier is URL encoded
   urlid <- URLencode(identifier)
 

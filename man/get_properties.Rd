@@ -24,7 +24,7 @@ get_properties(
 
 \item{as_dataframe}{If TRUE it return a dataframe.}
 
-\item{...}{Additional arguments.}
+\item{...}{Additional arguments passed to \code{\link{get_json}}.}
 }
 \value{
 If `as_dataframe` is FALSE, a named list where each element corresponds to the properties retrieved from PubChem.

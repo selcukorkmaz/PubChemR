@@ -21,7 +21,7 @@ get_cids(
 
 \item{searchtype}{Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.}
 
-\item{...}{Additional arguments.}
+\item{...}{Additional arguments passed to \code{\link{get_json}}.}
 }
 \value{
 A tibble (data frame) where each row corresponds to a provided identifier and its CID.

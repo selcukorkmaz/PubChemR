@@ -30,6 +30,5 @@ download <- function(outformat, path, identifier, namespace = 'cid', domain = 'c
   # Write the content to the specified path
   writeBin(charToRaw(response_content), path)
   message(paste("The file has been saved to", paste0(getwd(),"/",path)))
-
 }
 

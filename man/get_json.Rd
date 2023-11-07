@@ -24,7 +24,7 @@ get_json(
 
 \item{searchtype}{Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.}
 
-\item{...}{Additional arguments.}
+\item{...}{Additional arguments passed to \code{\link[RJSONIO]{fromJSON}}.}
 }
 \value{
 A list containing the parsed JSON response from PubChem. Returns NULL if an error or warning occurs.

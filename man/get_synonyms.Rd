@@ -21,7 +21,7 @@ get_synonyms(
 
 \item{searchtype}{A character string specifying the search type. Default is NULL.}
 
-\item{...}{Additional arguments.}
+\item{...}{Additional arguments passed to \code{\link{get_json}}.}
 }
 \value{
 A list where each element corresponds to the synonyms retrieved from PubChem for the provided identifier.

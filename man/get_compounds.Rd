@@ -13,7 +13,7 @@ get_compounds(identifier, namespace = "cid", searchtype = NULL, ...)
 
 \item{searchtype}{Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.}
 
-\item{...}{Additional parameters.}
+\item{...}{Additional parameters passed to \code{\link{get_json}}.}
 }
 \value{
 A named list where each element corresponds to a compound retrieved from PubChem.
