@@ -18,6 +18,14 @@
 #' @importFrom stringr str_to_title
 #' @importFrom magrittr %>%
 #'
+#' @examples
+#' \dontrun{
+#' get_sids(
+#'   identifier = "aspirin",
+#'   namespace = "name",
+#'  )
+#' }
+#'
 #' @export
 get_sids <- function(identifier, namespace = 'cid', domain = 'compound', searchtype = NULL, ...) {
 

@@ -21,6 +21,14 @@ utils::globalVariables(c("data", "CID"))
 #' @importFrom tidyr unnest_wider unnest_longer
 #' @importFrom magrittr %>%
 #'
+#' @examples
+#' \dontrun{
+#'  get_cids(
+#'   identifier = "aspirin",
+#'   namespace = "name",
+#'  )
+#' }
+#'
 #' @export
 get_cids <- function(identifier, namespace = 'name', domain = 'compound', searchtype = NULL, ...) {
 

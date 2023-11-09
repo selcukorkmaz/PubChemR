@@ -15,6 +15,14 @@
 #'
 #' @importFrom utils download.file
 #'
+#' @examples
+#' \dontrun{
+#'  get_sdf(
+#'   identifier = "aspirin",
+#'   namespace = "name",
+#'  )
+#' }
+#'
 #' @export
 get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL, searchtype = NULL, ...) {
 

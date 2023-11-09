@@ -11,6 +11,14 @@
 #'         The names of the list elements are based on the provided identifiers.
 #'         If no assay is found for a given identifier, the corresponding list element will contain the string "No assay".
 #'
+#' @examples
+#' \dontrun{
+#'  get_assays(
+#'   identifier = 1234,
+#'   namespace = "aid",
+#'  )
+#' }
+#'
 #' @export
 get_assays <- function(identifier, namespace = 'aid', ...) {
 

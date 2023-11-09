@@ -14,6 +14,14 @@
 #'
 #' @importFrom RJSONIO fromJSON
 #'
+#' @examples
+#' \dontrun{
+#'. get_synonyms(
+#'   identifier = "aspirin",
+#'   namespace = "name",
+#'  )
+#' }
+#'
 #' @export
 get_synonyms <- function(identifier, namespace = 'cid', domain = 'compound', searchtype = NULL, ...) {
 

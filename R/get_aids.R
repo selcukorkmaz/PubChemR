@@ -20,6 +20,14 @@
 #' @importFrom stringr str_to_title
 #' @importFrom magrittr %>%
 #'
+#' @examples
+#' \dontrun{
+#'. get_aids(
+#'   identifier = "aspirin",
+#'   namespace = "name",
+#'  )
+#' }
+#'
 #' @export
 get_aids <- function(identifier, namespace = 'cid', domain = 'compound', searchtype = NULL, as_data_frame = TRUE, ...) {
 

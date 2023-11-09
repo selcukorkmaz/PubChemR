@@ -14,18 +14,18 @@
 #' @param ... Additional arguments.
 #'
 #'@examples
-#'\dontrun{
-#'download(
-#' outformat = "json",
-#' path = "/Users/selcukkorkmaz/Documents/aspirin.json",
-#' identifier = "aspirin",
-#' namespace = "name",
-#' domain = "compound",
-#' operation = NULL,
-#' searchtype = NULL,
-#' overwrite = FALSE
-#')
-#'}
+#' \dontrun{
+#'  download(
+#'   outformat = "json",
+#'   path = "/Users/selcukkorkmaz/Documents/aspirin.json",
+#'   identifier = "aspirin",
+#'   namespace = "name",
+#'   domain = "compound",
+#'   operation = NULL,
+#'   searchtype = NULL,
+#'   overwrite = FALSE
+#'  )
+#' }
 #'
 #' @return No return value. The function writes the content to the specified file path and prints a message indicating the save location.
 #'

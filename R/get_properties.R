@@ -18,6 +18,15 @@
 #' @importFrom dplyr as_tibble
 #' @importFrom magrittr %>%
 #'
+#' @examples
+#' \dontrun{
+#'  get_properties(
+#'   properties = "IsomericSMILES",
+#'   identifier = "aspirin",
+#'   namespace = "name",
+#'  )
+#' }
+#'
 #' @export
 get_properties <- function(properties, identifier, namespace = 'cid', searchtype = NULL, as_dataframe = FALSE, ...) {
   # If properties is a single string, split it into a vector
@@ -40,7 +49,7 @@ get_properties <- function(properties, identifier, namespace = 'cid', searchtype
   # Here you would call the function that makes the HTTP request, e.g., get_json()
   # This is a placeholder for that function call, as its implementation depends on your setup.
   results <- get_json(identifier = identifier, namespace = namespace, domain = 'compound',
-                      operation = properties_endpoint, output = 'JSON',
+                      operation = properties_endpoint,
                       searchtype = searchtype, ...)
 
   # Check if results are not empty and process them

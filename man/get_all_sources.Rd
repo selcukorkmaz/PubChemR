@@ -16,3 +16,11 @@ A character vector containing the names of all sources for the specified domain.
 \description{
 This function retrieves a list of all current depositors of substances or assays from PubChem.
 }
+\examples{
+\dontrun{
+ get_all_sources(
+  domain = 'substance'
+. )
+}
+
+}

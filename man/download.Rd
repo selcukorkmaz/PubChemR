@@ -44,16 +44,16 @@ It then writes the content to a specified file path.
 }
 \examples{
 \dontrun{
-download(
-outformat = "json",
-path = "/Users/selcukkorkmaz/Documents/aspirin.json",
-identifier = "aspirin",
-namespace = "name",
-domain = "compound",
-operation = NULL,
-searchtype = NULL,
-overwrite = FALSE
-)
+ download(
+  outformat = "json",
+  path = "/Users/selcukkorkmaz/Documents/aspirin.json",
+  identifier = "aspirin",
+  namespace = "name",
+  domain = "compound",
+  operation = NULL,
+  searchtype = NULL,
+  overwrite = FALSE
+ )
 }
 
 }

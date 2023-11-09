@@ -160,6 +160,14 @@ property_map <- list(
 #'
 #' @importFrom utils URLencode
 #' @importFrom stats setNames
+#'
+#' @examples
+#' \dontrun{
+#'  request(
+#'   identifier = "aspirin",
+#'   namespace = "name",
+#'  )
+#' }
 
 request <- function(identifier, namespace = 'cid', domain = 'compound',
                     operation = NULL, output = 'JSON', searchtype = NULL, ...) {

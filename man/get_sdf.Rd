@@ -34,3 +34,12 @@ message indicating the file's location.
 This function sends a request to PubChem to retrieve data in SDF format based on the specified parameters.
 It then saves the retrieved data as an SDF file in the current working directory.
 }
+\examples{
+\dontrun{
+ get_sdf(
+  identifier = "aspirin",
+  namespace = "name",
+ )
+}
+
+}
