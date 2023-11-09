@@ -42,3 +42,18 @@ No return value. The function writes the content to the specified file path and 
 This function sends a request to PubChem to retrieve content in the specified format for a given identifier.
 It then writes the content to a specified file path.
 }
+\examples{
+\dontrun{
+download(
+outformat = "json",
+path = "/Users/selcukkorkmaz/Documents/aspirin.json",
+identifier = "aspirin",
+namespace = "name",
+domain = "compound",
+operation = NULL,
+searchtype = NULL,
+overwrite = FALSE
+)
+}
+
+}
