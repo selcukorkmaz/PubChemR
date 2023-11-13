@@ -18,15 +18,6 @@
 #' @importFrom dplyr as_tibble
 #' @importFrom magrittr %>%
 #'
-#' @examples
-#' \dontrun{
-#'  get_properties(
-#'   properties = "IsomericSMILES",
-#'   identifier = "aspirin",
-#'   namespace = "name",
-#'  )
-#' }
-#'
 #' @export
 get_properties <- function(properties, identifier, namespace = 'cid', searchtype = NULL, as_dataframe = FALSE, ...) {
   # If properties is a single string, split it into a vector

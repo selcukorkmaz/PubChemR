@@ -13,6 +13,7 @@
 #' @param overwrite A logical value indicating whether to overwrite the file if it already exists. Default is FALSE.
 #' @param ... Additional arguments.
 #'
+<<<<<<< HEAD
 #'@examples
 #' \dontrun{
 #' tryCatch({
@@ -32,8 +33,9 @@
 #'  })
 #'}
 #'
+=======
+>>>>>>> 195c9c4c4460211df42a9aafd1d7f494bf2aeeff
 #' @return No return value. The function writes the content to the specified file path and prints a message indicating the save location.
-#'
 #'
 #' @export
 download <- function(outformat, path, identifier, namespace = 'cid', domain = 'compound', operation = NULL,

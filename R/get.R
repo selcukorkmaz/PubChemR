@@ -18,6 +18,7 @@
 #' @importFrom httr GET http_status
 #' @importFrom RJSONIO fromJSON
 #'
+<<<<<<< HEAD
 #' @examples
 #' \donttest{
 #' if(!curl::has_internet()) {
@@ -38,6 +39,8 @@
 #' }
 #'}
 #'
+=======
+>>>>>>> 195c9c4c4460211df42a9aafd1d7f494bf2aeeff
 #' @export
 get <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL,
                 output = 'JSON', searchtype = NULL, ...) {

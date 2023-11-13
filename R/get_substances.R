@@ -13,14 +13,6 @@
 #'
 #' @importFrom RJSONIO fromJSON
 #'
-#' @examples
-#' \dontrun{
-#'  get_substances(
-#'   identifier = "aspirin",
-#'   namespace = "name",
-#'  )
-#' }
-#'
 #' @export
 get_substances <- function(identifier, namespace = 'sid', ...) {
 

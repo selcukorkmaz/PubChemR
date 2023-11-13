@@ -35,6 +35,7 @@ Returns the response content from the PubChem API based on the constructed URL.
 \description{
 This function constructs a URL to query the PubChem API based on the provided parameters and returns the response content.
 }
+<<<<<<< HEAD
 \examples{
 \donttest{
 if(!curl::has_internet()) {
@@ -56,6 +57,8 @@ if(!curl::has_internet()) {
 }
 
 }
+=======
+>>>>>>> 195c9c4c4460211df42a9aafd1d7f494bf2aeeff
 \seealso{
 \url{https://pubchem.ncbi.nlm.nih.gov/rest/pug/}
 }

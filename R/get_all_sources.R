@@ -9,13 +9,6 @@
 #'
 #' @importFrom RJSONIO fromJSON
 #'
-#' @examples
-#' \dontrun{
-#'  get_all_sources(
-#'   domain = 'substance'
-#'. )
-#' }
-#'
 #' @export
 get_all_sources <- function(domain = 'substance') {
   # Use the get function to retrieve the sources

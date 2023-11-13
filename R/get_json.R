@@ -14,14 +14,6 @@
 #'
 #' @importFrom RJSONIO fromJSON
 #'
-#' @examples
-#'  \dontrun{
-#'   get_json(
-#'   identifier = "aspirin",
-#'   namespace = "name",
-#'  )
-#' }
-#'
 #' @export
 get_json <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL, searchtype = NULL, ...) {
 

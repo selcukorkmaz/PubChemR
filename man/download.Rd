@@ -42,6 +42,7 @@ No return value. The function writes the content to the specified file path and 
 This function sends a request to PubChem to retrieve content in the specified format for a given identifier.
 It then writes the content to a specified file path.
 }
+<<<<<<< HEAD
 \examples{
 \dontrun{
 tryCatch({
@@ -62,3 +63,5 @@ overwrite = TRU
 }
 
 }
+=======
+>>>>>>> 195c9c4c4460211df42a9aafd1d7f494bf2aeeff
