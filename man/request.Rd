@@ -35,11 +35,3 @@ A constructed URL for the PubChem API.
 \description{
 Constructs a URL for the PubChem API based on the provided parameters.
 }
-\examples{
-\dontrun{
- request(
-  identifier = "aspirin",
-  namespace = "name",
- )
-}
-}

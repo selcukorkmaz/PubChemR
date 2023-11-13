@@ -35,12 +35,3 @@ This function sends a request to PubChem to retrieve Assay IDs (AIDs) for a give
 It returns either a tibble (data frame) with the provided identifier and the corresponding AIDs
 or a list of AIDs, depending on the `as_data_frame` parameter.
 }
-\examples{
-\dontrun{
-. get_aids(
-  identifier = "aspirin",
-  namespace = "name",
- )
-}
-
-}

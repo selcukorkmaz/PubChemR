@@ -13,22 +13,7 @@
 #' @param overwrite A logical value indicating whether to overwrite the file if it already exists. Default is FALSE.
 #' @param ... Additional arguments.
 #'
-#'@examples
-#' \dontrun{
-#'  download(
-#'   outformat = "json",
-#'   path = "/Users/selcukkorkmaz/Documents/aspirin.json",
-#'   identifier = "aspirin",
-#'   namespace = "name",
-#'   domain = "compound",
-#'   operation = NULL,
-#'   searchtype = NULL,
-#'   overwrite = FALSE
-#'  )
-#' }
-#'
 #' @return No return value. The function writes the content to the specified file path and prints a message indicating the save location.
-#'
 #'
 #' @export
 download <- function(outformat, path, identifier, namespace = 'cid', domain = 'compound', operation = NULL,

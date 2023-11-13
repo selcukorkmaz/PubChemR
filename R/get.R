@@ -18,14 +18,6 @@
 #' @importFrom httr GET http_status
 #' @importFrom RJSONIO fromJSON
 #'
-#' @examples
-#' \dontrun{
-#'  get(
-#'   identifier = "aspirin",
-#'   namespace = "name",
-#'  )
-#' }
-#'
 #' @export
 get <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL,
                 output = 'JSON', searchtype = NULL, ...) {
