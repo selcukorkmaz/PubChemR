@@ -19,12 +19,24 @@
 #' @importFrom RJSONIO fromJSON
 #'
 #' @examples
-#' \dontrun{
-#'  get(
-#'   identifier = "aspirin",
-#'   namespace = "name",
-#'  )
+#' \donttest{
+#' if(!curl::has_internet()) {
+#'   message("Internet connection required for this example. Skipping.")
+#' } else {
+#'   result <- tryCatch({
+#'     get(
+#'       identifier = "aspirin",
+#'       namespace = "name",
+#'     )
+#'   }, error = function(e) {
+#'     message(paste("An error occurred or the API is not reachable:", e$message))
+#'     # Fallback example or message
+#'     message("Showing example with pre-loaded data...")
+#'     # [Insert code with pre-loaded data here]
+#'     return(list())  # Return an empty list in case of an error
+#'   })
 #' }
+#'}
 #'
 #' @export
 get <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL,

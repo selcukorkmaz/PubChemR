@@ -44,16 +44,21 @@ It then writes the content to a specified file path.
 }
 \examples{
 \dontrun{
- download(
-  outformat = "json",
-  path = "/Users/selcukkorkmaz/Documents/aspirin.json",
-  identifier = "aspirin",
-  namespace = "name",
-  domain = "compound",
-  operation = NULL,
-  searchtype = NULL,
-  overwrite = FALSE
- )
+tryCatch({
+download(
+outformat = "json",
+path = "aspirin.json",
+identifier = "aspirin",
+namespace = "name",
+domain = "compound",
+operation = NULL,
+searchtype = NULL,
+overwrite = TRU
+)
+}, error = function(e) {
+ message(paste("An error occurred:", e$message))  # Log the error message
+ return(list())  # Return an empty list in case of an error
+ })
 }
 
 }
