@@ -18,29 +18,6 @@
 #' @importFrom httr GET http_status
 #' @importFrom RJSONIO fromJSON
 #'
-<<<<<<< HEAD
-#' @examples
-#' \donttest{
-#' if(!curl::has_internet()) {
-#'   message("Internet connection required for this example. Skipping.")
-#' } else {
-#'   result <- tryCatch({
-#'     get(
-#'       identifier = "aspirin",
-#'       namespace = "name",
-#'     )
-#'   }, error = function(e) {
-#'     message(paste("An error occurred or the API is not reachable:", e$message))
-#'     # Fallback example or message
-#'     message("Showing example with pre-loaded data...")
-#'     # [Insert code with pre-loaded data here]
-#'     return(list())  # Return an empty list in case of an error
-#'   })
-#' }
-#'}
-#'
-=======
->>>>>>> 195c9c4c4460211df42a9aafd1d7f494bf2aeeff
 #' @export
 get <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL,
                 output = 'JSON', searchtype = NULL, ...) {

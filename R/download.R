@@ -13,28 +13,6 @@
 #' @param overwrite A logical value indicating whether to overwrite the file if it already exists. Default is FALSE.
 #' @param ... Additional arguments.
 #'
-<<<<<<< HEAD
-#'@examples
-#' \dontrun{
-#' tryCatch({
-#' download(
-#' outformat = "json",
-#' path = "aspirin.json",
-#' identifier = "aspirin",
-#' namespace = "name",
-#' domain = "compound",
-#' operation = NULL,
-#' searchtype = NULL,
-#' overwrite = TRU
-#' )
-#' }, error = function(e) {
-#'  message(paste("An error occurred:", e$message))  # Log the error message
-#'  return(list())  # Return an empty list in case of an error
-#'  })
-#'}
-#'
-=======
->>>>>>> 195c9c4c4460211df42a9aafd1d7f494bf2aeeff
 #' @return No return value. The function writes the content to the specified file path and prints a message indicating the save location.
 #'
 #' @export
