@@ -1,3 +1,4 @@
 TO DO Notes for Forthcoming Releases
 
 #1 - Replace base "do.call" function with faster alternative "DoCall" under DescTools package.
+#2 - get_properties fonksiyonunda birden fazla identifier verildiğinde sonuç ver.
