@@ -18,7 +18,7 @@
 get_json <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL, searchtype = NULL, ...) {
 
   result <- tryCatch({
-    response <- fromJSON(get(identifier, namespace, domain, operation, 'JSON', searchtype, ...))
+    response <- fromJSON(get_pubchem(identifier, namespace, domain, operation, 'JSON', searchtype, ...))
     return(response)
   },
   error = function(e) {

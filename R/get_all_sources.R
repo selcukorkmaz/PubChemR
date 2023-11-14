@@ -12,7 +12,7 @@
 #' @export
 get_all_sources <- function(domain = 'substance') {
   # Use the get function to retrieve the sources
-  response_content <- get(identifier = domain, namespace = NULL, domain = 'sources')
+  response_content <- get_pubchem(identifier = domain, namespace = NULL, domain = 'sources')
 
   # Convert the response content to a list using fromJSON
   results <- fromJSON(response_content)

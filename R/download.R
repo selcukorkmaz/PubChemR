@@ -19,7 +19,7 @@
 download <- function(outformat, path, identifier, namespace = 'cid', domain = 'compound', operation = NULL,
                      searchtype = NULL, overwrite = FALSE, ...) {
   # Use the get function to retrieve the content
-  response_content <- get(identifier, namespace, domain, operation, outformat, searchtype, ...)
+  response_content <- get_pubchem(identifier, namespace, domain, operation, outformat, searchtype, ...)
 
   # Check if the file already exists and if overwrite is FALSE
   if (!overwrite && file.exists(path)) {

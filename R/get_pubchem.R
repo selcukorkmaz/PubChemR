@@ -19,8 +19,8 @@
 #' @importFrom RJSONIO fromJSON
 #'
 #' @export
-get <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL,
-                output = 'JSON', searchtype = NULL, ...) {
+get_pubchem <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL,
+                        output = 'JSON', searchtype = NULL, ...) {
 
   response <- NULL
   status <- NULL
