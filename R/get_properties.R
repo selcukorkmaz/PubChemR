@@ -76,3 +76,4 @@ get_properties <- function(properties, identifier, namespace = 'cid', searchtype
   return(properties_results)
 }
 
+

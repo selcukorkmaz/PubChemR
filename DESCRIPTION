@@ -25,6 +25,7 @@ Imports:
     dplyr,
     httr,
     RJSONIO,
+    RCurl,
     tibble,
     tidyr,
     utils,

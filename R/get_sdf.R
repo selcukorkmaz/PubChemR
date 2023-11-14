@@ -29,7 +29,7 @@ get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operatio
     response_sdf <- request(identifier, namespace, domain, operation, 'SDF', searchtype, ...)
 
     # Check if the response is not empty or NULL before proceeding
-    if (!is.null(response_sdf) && nzchar(response_sdf)) {
+    if (url.exists(response_sdf) ) {
       # Write the content to a file in SDF format in the current working directory
       download.file(response_sdf, paste0("./", file_name))
       message(paste("SDF file has been saved in the current working directory as:", paste0(getwd(), "/", file_name)))
@@ -41,7 +41,7 @@ get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operatio
     # Here, you could check for specific types of errors (like NotFoundError)
     # and handle them as needed. For simplicity, we're just printing the error message.
     message(paste("Info:", e$message))
-    return(NULL)  # Return NULL to indicate no result or failure in the process
+    # return(NULL)  # Return NULL to indicate no result or failure in the process
   })
 
   return(result)
