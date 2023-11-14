@@ -37,7 +37,7 @@ or a list of AIDs, depending on the `as_data_frame` parameter.
 }
 \examples{
 \dontrun{
-. get_aids(
+get_aids(
   identifier = "aspirin",
   namespace = "name",
  )

@@ -23,7 +23,7 @@
 #'
 #' @examples
 #' \dontrun{
-#'. get_aids(
+#' get_aids(
 #'   identifier = "aspirin",
 #'   namespace = "name",
 #'  )
