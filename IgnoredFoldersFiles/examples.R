@@ -100,7 +100,7 @@
 #'  )
 #' }
 
-# get ----
+# get_pubchem ----
 #' \dontrun{
 #'  get(
 #'   identifier = "aspirin",

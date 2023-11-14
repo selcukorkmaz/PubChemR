@@ -13,6 +13,14 @@
 #'         If no compound is found for a given identifier, the corresponding list element will contain the string "No compound".
 #'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#'  get_compounds(
+#'   identifier = "aspirin",
+#'   namespace = "name",
+#'  )
+#' }
 get_compounds <- function(identifier, namespace = 'cid', searchtype = NULL, ...) {
   compounds <- list()
 

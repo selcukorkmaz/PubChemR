@@ -16,6 +16,20 @@
 #' @return No return value. The function writes the content to the specified file path and prints a message indicating the save location.
 #'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#'  download(
+#'   outformat = "json",
+#'   path = "/Users/selcukkorkmaz/Documents/aspirin.json",
+#'   identifier = "aspirin",
+#'   namespace = "name",
+#'   domain = "compound",
+#'   operation = NULL,
+#'   searchtype = NULL,
+#'   overwrite = FALSE
+#'  )
+#' }
 download <- function(outformat, path, identifier, namespace = 'cid', domain = 'compound', operation = NULL,
                      searchtype = NULL, overwrite = FALSE, ...) {
   # Use the get function to retrieve the content

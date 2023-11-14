@@ -17,8 +17,15 @@
 #'
 #' @importFrom httr GET http_status
 #' @importFrom RJSONIO fromJSON
-#'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#'  get_pubchem(
+#'   identifier = "aspirin",
+#'   namespace = "name",
+#'  )
+#' }
 get_pubchem <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL,
                         output = 'JSON', searchtype = NULL, ...) {
 

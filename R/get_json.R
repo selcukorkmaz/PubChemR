@@ -13,8 +13,15 @@
 #' @return A list containing the parsed JSON response from PubChem. Returns NULL if an error or warning occurs.
 #'
 #' @importFrom RJSONIO fromJSON
-#'
 #' @export
+#'
+#' @examples
+#'  \dontrun{
+#'   get_json(
+#'   identifier = "aspirin",
+#'   namespace = "name",
+#'  )
+#' }
 get_json <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL, searchtype = NULL, ...) {
 
   result <- tryCatch({

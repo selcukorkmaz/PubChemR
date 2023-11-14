@@ -42,26 +42,17 @@ No return value. The function writes the content to the specified file path and 
 This function sends a request to PubChem to retrieve content in the specified format for a given identifier.
 It then writes the content to a specified file path.
 }
-<<<<<<< HEAD
 \examples{
 \dontrun{
-tryCatch({
-download(
-outformat = "json",
-path = "aspirin.json",
-identifier = "aspirin",
-namespace = "name",
-domain = "compound",
-operation = NULL,
-searchtype = NULL,
-overwrite = TRU
-)
-}, error = function(e) {
- message(paste("An error occurred:", e$message))  # Log the error message
- return(list())  # Return an empty list in case of an error
- })
+ download(
+  outformat = "json",
+  path = "/Users/selcukkorkmaz/Documents/aspirin.json",
+  identifier = "aspirin",
+  namespace = "name",
+  domain = "compound",
+  operation = NULL,
+  searchtype = NULL,
+  overwrite = FALSE
+ )
 }
-
 }
-=======
->>>>>>> 195c9c4c4460211df42a9aafd1d7f494bf2aeeff

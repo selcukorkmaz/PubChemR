@@ -14,8 +14,16 @@
 #' message indicating the file's location.
 #'
 #' @importFrom utils download.file
-#'
+#' @importFrom RCurl url.exists
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#'  get_sdf(
+#'   identifier = "aspirin",
+#'   namespace = "name",
+#'  )
+#' }
 get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL, searchtype = NULL, ...) {
 
   # Generate a file name based on the identifier, ensuring it ends with the .sdf extension

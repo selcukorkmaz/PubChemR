@@ -12,8 +12,15 @@
 #'         If no substance is found for a given identifier, the corresponding list element will contain the string "No substance".
 #'
 #' @importFrom RJSONIO fromJSON
-#'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#'  get_substances(
+#'   identifier = "aspirin",
+#'   namespace = "name",
+#'  )
+#' }
 get_substances <- function(identifier, namespace = 'sid', ...) {
 
   substances <- list()

@@ -17,8 +17,15 @@
 #' @importFrom tidyr as_tibble
 #' @importFrom stringr str_to_title
 #' @importFrom magrittr %>%
-#'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' get_sids(
+#'   identifier = "aspirin",
+#'   namespace = "name",
+#'  )
+#' }
 get_sids <- function(identifier, namespace = 'cid', domain = 'compound', searchtype = NULL, ...) {
 
   # Try to get the response and parse JSON

@@ -13,8 +13,15 @@
 #'         The names of the list elements are based on the provided identifier.
 #'
 #' @importFrom RJSONIO fromJSON
-#'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#'. get_synonyms(
+#'   identifier = "aspirin",
+#'   namespace = "name",
+#'  )
+#' }
 get_synonyms <- function(identifier, namespace = 'cid', domain = 'compound', searchtype = NULL, ...) {
 
   # Try to get the response and parse JSON
