@@ -5,8 +5,9 @@
 \title{Download Content from PubChem and Save to a File}
 \usage{
 download(
+  filename = NULL,
   outformat,
-  path,
+  path = NULL,
   identifier,
   namespace = "cid",
   domain = "compound",
@@ -17,19 +18,29 @@ download(
 )
 }
 \arguments{
+\item{filename}{a character string specifying the file name to be saved. If not specified, a default file name "file" is used.}
+
 \item{outformat}{A character string specifying the desired output format (e.g., "sdf", "json").}
 
-\item{path}{A character string specifying the path where the content should be saved.}
+\item{path}{A character string specifying the path where the content should be saved. Default is NULL. if not specified, default working
+directory returned from \code{getwd()} is used.}
 
-\item{identifier}{A vector of positive integers (e.g. cid, sid, aid) or identifier strings (source, inchikey, formula). In some cases, only a single identifier string (name, smiles, xref; inchi, sdf by POST only).}
+\item{identifier}{A vector of positive integers (e.g. cid, sid, aid) or identifier strings (source, inchikey, formula). In some cases, only a single
+identifier string (name, smiles, xref; inchi, sdf by POST only).}
 
-\item{namespace}{Specifies the namespace for the query. For the 'compound' domain, possible values include 'cid', 'name', 'smiles', 'inchi', 'sdf', 'inchikey', 'formula', 'substructure', 'superstructure', 'similarity', 'identity', 'xref', 'listkey', 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure', and 'fastformula'. For other domains, the possible namespaces are domain-specific.}
+\item{namespace}{Specifies the namespace for the query. For the 'compound' domain, possible values include 'cid', 'name', 'smiles', 'inchi', 'sdf', 'inchikey',
+'formula', 'substructure', 'superstructure', 'similarity', 'identity', 'xref', 'listkey', 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d',
+'fastsubstructure', 'fastsuperstructure', and 'fastformula'. For other domains, the possible namespaces are domain-specific.}
 
-\item{domain}{Specifies the domain of the query. Possible values are 'substance', 'compound', 'assay', 'gene', 'protein', 'pathway', 'taxonomy', 'cell', 'sources', 'sourcetable', 'conformers', 'annotations', 'classification', and 'standardize'.}
+\item{domain}{Specifies the domain of the query. Possible values are 'substance', 'compound', 'assay', 'gene', 'protein', 'pathway', 'taxonomy',
+'cell', 'sources', 'sourcetable', 'conformers', 'annotations', 'classification', and 'standardize'.}
 
-\item{operation}{Specifies the operation to be performed on the input records. For the 'compound' domain, possible operations include 'record', 'property', 'synonyms', 'sids', 'cids', 'aids', 'assaysummary', 'classification', 'xrefs', and 'description'. The available operations are domain-specific.}
+\item{operation}{Specifies the operation to be performed on the input records. For the 'compound' domain, possible operations include 'record',
+'property', 'synonyms', 'sids', 'cids', 'aids', 'assaysummary', 'classification', 'xrefs', and 'description'. The available operations are domain-specific.}
 
-\item{searchtype}{Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.}
+\item{searchtype}{Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure',
+'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity',
+'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.}
 
 \item{overwrite}{A logical value indicating whether to overwrite the file if it already exists. Default is FALSE.}
 

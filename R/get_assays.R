@@ -5,7 +5,7 @@
 #'
 #' @param identifier A vector of positive integers (e.g. cid, sid, aid) or identifier strings (source, inchikey, formula). In some cases, only a single identifier string (name, smiles, xref; inchi, sdf by POST only).
 #' @param namespace Specifies the namespace for the query. For the 'compound' domain, possible values include 'cid', 'name', 'smiles', 'inchi', 'sdf', 'inchikey', 'formula', 'substructure', 'superstructure', 'similarity', 'identity', 'xref', 'listkey', 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure', and 'fastformula'. For other domains, the possible namespaces are domain-specific.
-#' @param ... Additional arguments pssed to \code{\link{get_json}}
+#' @param ... Additional arguments passed to \code{\link{get_json}}
 #'
 #' @return A named list where each element corresponds to an assay retrieved from PubChem.
 #'         The names of the list elements are based on the provided identifiers.
@@ -15,10 +15,10 @@
 #'
 #' @examples
 #' \dontrun{
-#'  get_assays(
+#' get_assays(
 #'   identifier = 1234,
 #'   namespace = "aid",
-#'  )
+#' )
 #' }
 get_assays <- function(identifier, namespace = 'aid', ...) {
 

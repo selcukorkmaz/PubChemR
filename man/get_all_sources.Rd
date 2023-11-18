@@ -18,8 +18,8 @@ This function retrieves a list of all current depositors of substances or assays
 }
 \examples{
 \dontrun{
- get_all_sources(
+get_all_sources(
   domain = 'substance'
-. )
+)
 }
 }

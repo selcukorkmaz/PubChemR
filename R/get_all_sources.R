@@ -12,9 +12,9 @@
 #'
 #' @examples
 #' \dontrun{
-#'  get_all_sources(
+#' get_all_sources(
 #'   domain = 'substance'
-#'. )
+#' )
 #' }
 get_all_sources <- function(domain = 'substance') {
   # Use the get function to retrieve the sources
