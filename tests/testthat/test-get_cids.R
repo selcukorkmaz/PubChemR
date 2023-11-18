@@ -1,5 +1,5 @@
 # test for 'namespace' arg. ----
-test_that("pulling CIDs via 'name' is succesfull", {
+test_that("pulling CIDs via 'name' is succesful", {
   tmp <- try(get_cids(
     identifier = "aspirin",
     namespace = "name",
@@ -13,7 +13,7 @@ test_that("pulling CIDs via 'name' is succesfull", {
 })
 
 
-test_that("pulling CIDs via 'smiles' is succesfull", {
+test_that("pulling CIDs via 'smiles' is succesful", {
   tmp <- try(get_cids(
     identifier = "CC(=O)OC1=CC=CC=C1C(=O)O",
     namespace = "smiles",
@@ -26,7 +26,7 @@ test_that("pulling CIDs via 'smiles' is succesfull", {
   expect_true(all(state1, state2))
 })
 
-test_that("pulling CIDs via 'cid' is succesfull", {
+test_that("pulling CIDs via 'cid' is succesful", {
   tmp <- try(get_cids(
     identifier = 2244,
     namespace = "cid",
@@ -39,7 +39,7 @@ test_that("pulling CIDs via 'cid' is succesfull", {
   expect_true(all(state1, state2))
 })
 
-test_that("pulling CIDs via multiple 'name' is succesfull", {
+test_that("pulling CIDs via multiple 'name' is succesful", {
   tmp <- try(get_cids(
     identifier = c("aspirin", "ibuprofen"),
     namespace = "name",

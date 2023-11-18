@@ -10,6 +10,8 @@ get_sdf(
   domain = "compound",
   operation = NULL,
   searchtype = NULL,
+  path = NULL,
+  file_name = NULL,
   ...
 )
 }
@@ -23,6 +25,10 @@ get_sdf(
 \item{operation}{An optional character string specifying the operation for the request.}
 
 \item{searchtype}{An optional character string specifying the search type.}
+
+\item{path}{A string indicating the path to the folder where the SDF files will be saved. Default is NULL (i.e., saves the file to current working directory).}
+
+\item{file_name}{A string. File name for downloaded SDF file. If NULL, "file" is used as the file name. Default is NULL.}
 
 \item{...}{Additional parameters to be passed to the \code{\link{request}}.}
 }
@@ -38,7 +44,7 @@ It then saves the retrieved data as an SDF file in the current working directory
 \dontrun{
  get_sdf(
   identifier = "aspirin",
-  namespace = "name",
+  namespace = "name"
  )
 }
 }
