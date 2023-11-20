@@ -28,7 +28,7 @@
 #'
 #' @examples
 #' \dontrun{
-#'  download(
+#' download(
 #'   outformat = "json",
 #'   path = "/Users/selcukkorkmaz/Documents/aspirin.json",
 #'   identifier = "aspirin",
@@ -37,7 +37,7 @@
 #'   operation = NULL,
 #'   searchtype = NULL,
 #'   overwrite = FALSE
-#'  )
+#' )
 #' }
 download <- function(filename = NULL, outformat, path = NULL, identifier, namespace = 'cid', domain = 'compound', operation = NULL,
                      searchtype = NULL, overwrite = FALSE, ...) {

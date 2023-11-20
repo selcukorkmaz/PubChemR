@@ -25,8 +25,8 @@
 #' \dontrun{
 #' get_aids(
 #'   identifier = "aspirin",
-#'   namespace = "name",
-#'  )
+#'   namespace = "name"
+#' )
 #' }
 get_aids <- function(identifier, namespace = 'cid', domain = 'compound', searchtype = NULL, as_data_frame = TRUE, ...) {
 

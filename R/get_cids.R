@@ -24,10 +24,10 @@ utils::globalVariables(c("data", "CID"))
 #'
 #' @examples
 #' \dontrun{
-#'  get_cids(
+#' get_cids(
 #'   identifier = "aspirin",
-#'   namespace = "name",
-#'  )
+#'   namespace = "name"
+#' )
 #' }
 get_cids <- function(identifier, namespace = 'name', domain = 'compound', searchtype = NULL, ...) {
 

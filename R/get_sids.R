@@ -23,8 +23,8 @@
 #' \dontrun{
 #' get_sids(
 #'   identifier = "aspirin",
-#'   namespace = "name",
-#'  )
+#'   namespace = "name"
+#' )
 #' }
 get_sids <- function(identifier, namespace = 'cid', domain = 'compound', searchtype = NULL, ...) {
 

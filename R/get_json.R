@@ -17,10 +17,10 @@
 #'
 #' @examples
 #'  \dontrun{
-#'   get_json(
+#' get_json(
 #'   identifier = "aspirin",
-#'   namespace = "name",
-#'  )
+#'   namespace = "name"
+#' )
 #' }
 get_json <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL, searchtype = NULL, ...) {
 

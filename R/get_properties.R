@@ -21,11 +21,11 @@
 #'
 #' @examples
 #' \dontrun{
-#'  get_properties(
+#' get_properties(
 #'   properties = "IsomericSMILES",
 #'   identifier = "aspirin",
-#'   namespace = "name",
-#'  )
+#'   namespace = "name"
+#' )
 #' }
 get_properties <- function(properties, identifier, namespace = 'cid', searchtype = NULL, as_dataframe = FALSE, ...) {
   # If properties is a single string, split it into a vector

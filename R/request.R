@@ -18,10 +18,10 @@
 #'
 #' @examples
 #' \dontrun{
-#'  request(
+#' request(
 #'   identifier = "aspirin",
-#'   namespace = "name",
-#'  )
+#'   namespace = "name"
+#' )
 #' }
 request <- function(identifier = NULL, namespace = 'cid', domain = 'compound',
                     operation = NULL, output = 'JSON', searchtype = NULL, ...) {

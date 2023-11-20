@@ -21,10 +21,10 @@
 #'
 #' @examples
 #' \dontrun{
-#'  get_pubchem(
+#' get_pubchem(
 #'   identifier = "aspirin",
-#'   namespace = "name",
-#'  )
+#'   namespace = "name"
+#' )
 #' }
 get_pubchem <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL,
                         output = 'JSON', searchtype = NULL, ...) {

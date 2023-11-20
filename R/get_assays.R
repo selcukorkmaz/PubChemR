@@ -17,7 +17,7 @@
 #' \dontrun{
 #' get_assays(
 #'   identifier = 1234,
-#'   namespace = "aid",
+#'   namespace = "aid"
 #' )
 #' }
 get_assays <- function(identifier, namespace = 'aid', ...) {

@@ -21,10 +21,10 @@
 #'
 #' @examples
 #' \dontrun{
-#'  get_sdf(
+#' get_sdf(
 #'   identifier = "aspirin",
 #'   namespace = "name"
-#'  )
+#' )
 #' }
 get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL, searchtype = NULL, path = NULL, file_name = NULL, ...) {
 

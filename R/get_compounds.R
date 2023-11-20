@@ -16,10 +16,10 @@
 #'
 #' @examples
 #' \dontrun{
-#'  get_compounds(
+#' get_compounds(
 #'   identifier = "aspirin",
-#'   namespace = "name",
-#'  )
+#'   namespace = "name"
+#' )
 #' }
 get_compounds <- function(identifier, namespace = 'cid', searchtype = NULL, ...) {
   compounds <- list()
