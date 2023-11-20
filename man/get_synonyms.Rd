@@ -33,9 +33,9 @@ It returns a list of synonyms corresponding to the provided identifier.
 }
 \examples{
 \dontrun{
-. get_synonyms(
+get_synonyms(
   identifier = "aspirin",
-  namespace = "name",
- )
+  namespace = "name"
+)
 }
 }

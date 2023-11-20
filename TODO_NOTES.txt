@@ -4,3 +4,4 @@ TO DO Notes for Forthcoming Releases
 #2 - get_properties fonksiyonunda birden fazla identifier verildiğinde sonuç ver.
 
 #3 - get_assays(...) fonksiyonu "aid" namespace dışındaki sorgularda hata veriyor.
+#4 - request(...) 47-49 satırlar arası kontrol edilecek. Buradaki if bloğunda sorun var gibi.

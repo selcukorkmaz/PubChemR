@@ -1,6 +1,6 @@
 # Create directory ----
 test_that("create 'path' if it does not exist.", {
-  temp_dir <- tempdir()
+  temp_dir <- tempdir(check = TRUE)
 
   try(download(
     outformat = "json",
@@ -20,7 +20,7 @@ test_that("create 'path' if it does not exist.", {
 
 # 'overwrite' file/folder
 test_that("overwrite file if it already exists.", {
-  temp_dir <- tempdir()
+  temp_dir <- tempdir(check = TRUE)
 
   try(download(
     outformat = "json",

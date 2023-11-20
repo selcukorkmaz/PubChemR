@@ -5,7 +5,7 @@
 \title{Request Function for PubChem API}
 \usage{
 request(
-  identifier,
+  identifier = NULL,
   namespace = "cid",
   domain = "compound",
   operation = NULL,

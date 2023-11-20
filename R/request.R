@@ -23,7 +23,7 @@
 #'   namespace = "name",
 #'  )
 #' }
-request <- function(identifier, namespace = 'cid', domain = 'compound',
+request <- function(identifier = NULL, namespace = 'cid', domain = 'compound',
                     operation = NULL, output = 'JSON', searchtype = NULL, ...) {
 
   # Check for missing identifier
@@ -31,11 +31,11 @@ request <- function(identifier, namespace = 'cid', domain = 'compound',
     stop("identifier/cid cannot be NULL")
   }
 
-  # If identifier is a list, join with commas into string
   if (is.numeric(identifier)) {
     identifier <- as.character(identifier)
   }
 
+  # If identifier is a list, join with commas into string
   if (is.vector(identifier) && !is.character(identifier)) {
     identifier <- paste(identifier, collapse = ',')
   }
@@ -44,9 +44,9 @@ request <- function(identifier, namespace = 'cid', domain = 'compound',
   urlid <- NULL
   postdata <- NULL
 
-  if (!is.null(namespace) && namespace == 'sourceid') {
-    identifier <- gsub("/", ".", identifier)
-  }
+  # if (!is.null(namespace) && namespace == 'sourceid') {
+  #   identifier <- gsub("/", ".", identifier)
+  # }
 
   api_base <- "https://pubchem.ncbi.nlm.nih.gov/rest/pug"
 

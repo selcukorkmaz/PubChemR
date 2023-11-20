@@ -17,10 +17,10 @@
 #'
 #' @examples
 #' \dontrun{
-#'. get_synonyms(
+#' get_synonyms(
 #'   identifier = "aspirin",
-#'   namespace = "name",
-#'  )
+#'   namespace = "name"
+#' )
 #' }
 get_synonyms <- function(identifier, namespace = 'cid', domain = 'compound', searchtype = NULL, ...) {
 
