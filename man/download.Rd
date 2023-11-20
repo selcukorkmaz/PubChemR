@@ -55,7 +55,7 @@ It then writes the content to a specified file path.
 }
 \examples{
 \dontrun{
- download(
+download(
   outformat = "json",
   path = "/Users/selcukkorkmaz/Documents/aspirin.json",
   identifier = "aspirin",
@@ -64,6 +64,6 @@ It then writes the content to a specified file path.
   operation = NULL,
   searchtype = NULL,
   overwrite = FALSE
- )
+)
 }
 }

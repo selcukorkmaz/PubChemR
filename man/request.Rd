@@ -37,9 +37,9 @@ Constructs a URL for the PubChem API based on the provided parameters.
 }
 \examples{
 \dontrun{
- request(
+request(
   identifier = "aspirin",
-  namespace = "name",
- )
+  namespace = "name"
+)
 }
 }

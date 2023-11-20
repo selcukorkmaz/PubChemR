@@ -35,7 +35,7 @@ It returns a tibble (data frame) with the provided identifier and the correspond
 \dontrun{
 get_sids(
   identifier = "aspirin",
-  namespace = "name",
- )
+  namespace = "name"
+)
 }
 }

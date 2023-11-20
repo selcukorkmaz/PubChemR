@@ -36,7 +36,7 @@ request <- function(identifier = NULL, namespace = 'cid', domain = 'compound',
   }
 
   # If identifier is a list, join with commas into string
-  if (is.vector(identifier) && !is.character(identifier)) {
+  if (length(identifier) > 1) {
     identifier <- paste(identifier, collapse = ',')
   }
 
@@ -44,9 +44,9 @@ request <- function(identifier = NULL, namespace = 'cid', domain = 'compound',
   urlid <- NULL
   postdata <- NULL
 
-  # if (!is.null(namespace) && namespace == 'sourceid') {
-  #   identifier <- gsub("/", ".", identifier)
-  # }
+  if (!is.null(namespace) && namespace == 'sourceid') {
+    identifier <- gsub("/", ".", identifier)
+  }
 
   api_base <- "https://pubchem.ncbi.nlm.nih.gov/rest/pug"
 

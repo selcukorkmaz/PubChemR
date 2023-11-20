@@ -24,9 +24,9 @@ It returns a list of substances corresponding to the provided identifiers.
 }
 \examples{
 \dontrun{
- get_substances(
+get_substances(
   identifier = "aspirin",
   namespace = "name"
- )
+)
 }
 }

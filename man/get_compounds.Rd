@@ -26,9 +26,9 @@ It returns a list of compounds corresponding to the provided identifiers.
 }
 \examples{
 \dontrun{
- get_compounds(
+get_compounds(
   identifier = "aspirin",
-  namespace = "name",
- )
+  namespace = "name"
+)
 }
 }

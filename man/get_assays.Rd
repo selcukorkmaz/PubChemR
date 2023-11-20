@@ -26,7 +26,7 @@ It returns a list of assays corresponding to the provided identifiers.
 \dontrun{
 get_assays(
   identifier = 1234,
-  namespace = "aid",
+  namespace = "aid"
 )
 }
 }

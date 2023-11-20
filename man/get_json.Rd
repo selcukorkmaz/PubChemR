@@ -35,9 +35,9 @@ It handles errors and warnings gracefully, providing informative messages when t
 }
 \examples{
  \dontrun{
-  get_json(
+get_json(
   identifier = "aspirin",
-  namespace = "name",
- )
+  namespace = "name"
+)
 }
 }

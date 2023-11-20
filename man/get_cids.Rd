@@ -33,9 +33,9 @@ It returns a tibble (data frame) with the provided identifier and the correspond
 }
 \examples{
 \dontrun{
- get_cids(
+get_cids(
   identifier = "aspirin",
-  namespace = "name",
- )
+  namespace = "name"
+)
 }
 }

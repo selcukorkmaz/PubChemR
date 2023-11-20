@@ -37,10 +37,10 @@ It returns a list or dataframe of properties corresponding to the provided ident
 }
 \examples{
 \dontrun{
- get_properties(
+get_properties(
   properties = "IsomericSMILES",
   identifier = "aspirin",
-  namespace = "name",
- )
+  namespace = "name"
+)
 }
 }

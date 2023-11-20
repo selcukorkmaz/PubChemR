@@ -42,9 +42,9 @@ It then saves the retrieved data as an SDF file in the current working directory
 }
 \examples{
 \dontrun{
- get_sdf(
+get_sdf(
   identifier = "aspirin",
   namespace = "name"
- )
+)
 }
 }

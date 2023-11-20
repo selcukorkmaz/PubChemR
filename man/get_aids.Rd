@@ -39,7 +39,7 @@ or a list of AIDs, depending on the `as_data_frame` parameter.
 \dontrun{
 get_aids(
   identifier = "aspirin",
-  namespace = "name",
- )
+  namespace = "name"
+)
 }
 }

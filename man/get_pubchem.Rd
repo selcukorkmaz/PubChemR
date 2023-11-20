@@ -37,10 +37,10 @@ This function constructs a URL to query the PubChem API based on the provided pa
 }
 \examples{
 \dontrun{
- get_pubchem(
+get_pubchem(
   identifier = "aspirin",
-  namespace = "name",
- )
+  namespace = "name"
+)
 }
 }
 \seealso{
