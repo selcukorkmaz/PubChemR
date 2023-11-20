@@ -18,7 +18,7 @@
 #' \dontrun{
 #'  get_substances(
 #'   identifier = "aspirin",
-#'   namespace = "name",
+#'   namespace = "name"
 #'  )
 #' }
 get_substances <- function(identifier, namespace = 'sid', ...) {

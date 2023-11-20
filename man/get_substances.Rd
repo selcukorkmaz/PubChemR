@@ -26,7 +26,7 @@ It returns a list of substances corresponding to the provided identifiers.
 \dontrun{
  get_substances(
   identifier = "aspirin",
-  namespace = "name",
+  namespace = "name"
  )
 }
 }
