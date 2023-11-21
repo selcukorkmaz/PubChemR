@@ -16,50 +16,207 @@ knitr::opts_chunk$set(
 )
 ```
 
-Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
+## 1. Introduction to the `PubChemR` Package
 
-- Never uses retina figures
-- Has a smaller default figure size
-- Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style
+### Overview
+`PubChemR` is an R package designed to facilitate seamless interaction with the PubChem database, a comprehensive resource for chemical information. This package provides a user-friendly interface to query and retrieve data from PubChem, which includes detailed information on chemical compounds, substances, and biological assays.
 
-## Vignette Info
+### Purpose
+The primary purpose of `PubChemR` is to enable researchers, chemists, and data scientists to access and utilize the wealth of chemical information available in the PubChem database directly from their R environment. This integration allows for efficient data retrieval, manipulation, and analysis within a familiar R framework, enhancing the workflow for chemical data analysis.
 
-Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
+### Main Features
+**Data Retrieval:** `PubChemR` offers functions to query and retrieve detailed information about chemical compounds, substances, and assays. This includes structural information, properties, biological activities, and more.
 
-## Styles
+**Data Processing:** The package includes utilities to process and transform the retrieved data into user-friendly formats, such as data frames or lists, suitable for further analysis in R.
 
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
+**Integration with R Environment:** The package is designed to integrate smoothly with the R ecosystem, allowing users to leverage other R packages and tools for data analysis, visualization, and reporting.
 
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
+### Prerequisites and Dependencies
+**R Environment:** PubChemR is an R package and requires an R environment to run. It is recommended to use the latest version of R for optimal performance.
 
-## Figures
+**Required R Packages:** `PubChemR` may depend on other R packages for certain functionalities, such as httr for HTTP requests, jsonlite for JSON processing, and dplyr or tidyverse for data manipulation.
 
-The figure sizes have been customised so that you can easily put two images side-by-side. 
+**API Keys:** While `PubChemR` primarily interacts with public APIs that do not require authentication, users should check if any specific functions or extended usage require an API key from PubChem or related services.
 
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
+## 2. Installation
+`PubChemR` can be installed from CRAN or directly from its GitHub repository (if available). Users can install the package using standard R package installation commands.
+
+```{r}
+# Install from CRAN
+# install.packages("PubChemR")
+
+# Or, install the development version from GitHub
+# install.packages("devtools")
+# devtools::install_github("yourusername/PubChemR")
 ```
 
-You can enable figure captions by `fig_caption: yes` in YAML:
+## 3. Setup
 
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
+Before diving into the functionalities of the `PubChemR` package, it's essential to set up your R environment by loading `PubChemR` along with any other necessary libraries. This step ensures that all the functions and features of the package are readily available for use.
 
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
+### Loading the `PubChemR` Package
+First, you need to load the `PubChemR` package into your R session. If you haven't already installed the package, refer to the installation instructions provided in the Introduction section.
 
-## More Examples
-
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
-
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
+```{r}
+# Load the PubChemR package
+library(PubChemR)
 ```
 
-Also a quote using `>`:
 
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))
+### Verifying the Setup
+After loading the package and any additional libraries, it's good practice to verify that everything is set up correctly. You can do this by calling a simple function from the package to check if it executes without errors.
+
+```{r}
+# Example function call to verify setup
+example_result <- pubchem_summary("aspirin", "name")
+example_result$CIDs
+```
+
+This setup section ensures that users have everything they need to start working with the `PubChemR` package effectively. The next sections of the vignette will delve into specific functionalities and use cases of the package.
+
+## 4. Overview of Functions
+
+The `PubChemR` package offers a suite of functions designed to interact with the PubChem database, allowing users to retrieve and manipulate chemical data efficiently. Below is an overview of the main functions provided by the package, along with brief descriptions of their purposes:
+
+### 1. `pubchem_summary()`
+
+**Purpose** 
+
+The `pubchem_summary` function is designed to fetch and summarize various types of data from the PubChem database. It can retrieve information about compounds, substances, assays, and their associated properties, synonyms, and structural data files (SDF).
+
+**Parameters**
+
+* `identifier`: The specific identifier for the query. This could be a compound ID (CID), substance ID (SID), assay ID (AID), or a name.
+* `namespace`: Specifies the type of identifier being used (e.g., 'cid', 'name').
+* `type`: A character vector indicating the type of data to retrieve. Options include "compound", "substance", and "assay".
+* `properties`: Optional. A list of properties to retrieve for the given identifier.
+* `include_synonyms`: Boolean. If TRUE, retrieves synonyms for the identifier.
+* `include_sdf`: Boolean. If TRUE, downloads the SDF file for the compound.
+`sdf_path`: Optional. Specifies the path for saving the SDF file. If NULL, the file is saved in the current working directory.
+* `...`: Additional arguments that might be passed to internal functions.
+
+
+**Functionality**
+
+**1. Data Retrieval:** Based on the `namespace` and `type`, the function fetches data from PubChem. It can retrieve data about compounds, substances, and assays.
+**2. Error Handling:** The function uses `tryCatch` to handle any errors during data retrieval, providing informative messages about the success or failure of each operation.
+**3. Synonyms and Properties:** If requested, the function can also fetch synonyms and specified properties of the identifier.
+**4. SDF File Download:** If `include_sdf` is TRUE, the function downloads the SDF file for the compound and saves it either in the specified path or the current working directory.
+
+**Usage**
+
+The function is used to aggregate various types of information from PubChem for a given identifier. It simplifies the process of fetching detailed data from PubChem by wrapping multiple queries into a single function call.
+
+**Example**
+
+```{r}
+pubchemSummary <- pubchem_summary(
+  identifier = "aspirin",
+  namespace = 'name',
+  type = c("compound", "substance", "assay"),
+  properties = "IsomericSMILES",
+  include_synonyms = TRUE,
+  include_sdf = TRUE,
+  sdf_path = NULL
+)
+pubchemSummary$CIDs
+```
+
+This example retrieves data for aspirin, including compound details, synonyms, and its SDF file, and stores the results in the variable `r`.
+
+**Notes**
+
+* The function's effectiveness depends on the availability and responsiveness of the PubChem API.
+* Proper error handling ensures that the function provides informative feedback in case of any issues with data retrieval.
+
+### 2. `get_aids()`
+
+**Purpose**
+
+The `get_aids` function in the `PubChemR` package is designed to retrieve Assay IDs (AIDs) from the PubChem database for a given set of identifiers. This function is particularly useful for researchers and scientists who need to access assay information related to specific compounds, substances, or other entities in PubChem.
+
+**Parameters**
+
+* `identifier`: A vector of identifiers, which can be positive integers (like CID, SID, AID) or strings (like names, SMILES, InChIKeys).
+* `namespace`: Specifies the namespace for the query, indicating the type of identifier used (e.g., 'cid', 'name').
+* `domain`: The domain of the query, such as 'compound', 'substance', 'assay', etc.
+* `searchtype`: Defines the type of search to be performed, such as 'substructure', 'superstructure', 'similarity', etc.
+* `as_data_frame`: A logical flag indicating whether to return the results as a data frame (tibble) or not. Defaults to TRUE.
+* `...`: Additional arguments passed to the internal function `get_json`.
+
+**Functionality**
+
+**1. Data Retrieval:** The function sends a request to PubChem to fetch AIDs based on the provided identifiers and parameters.
+**2. Response Parsing:** It parses the JSON response to extract AIDs.
+**3. Data Formatting:** Depending on the `as_data_frame` flag, the function either formats the results into a tibble (data frame) or returns them as a list.
+**4. Error Handling:** The function includes error handling to manage and report any issues during the data retrieval process.
+
+**Usage**
+
+This function is used to obtain assay information from PubChem, which is essential for various biochemical and pharmacological research purposes. It simplifies the process of querying PubChem for assay data.
+
+**Example**
+
+```{r}
+getAIDs <- get_aids(
+  identifier = "aspirin",
+  namespace = "name"
+)
+head(getAIDs)
+```
+
+In this example, the function retrieves AIDs associated with "aspirin" from PubChem and returns them in a data frame format.
+
+**Notes**
+
+* The function's performance and accuracy depend on the current state and availability of the PubChem database.
+* Proper error handling ensures that the function provides useful feedback in case of any issues with data retrieval or processing.
+* The function is versatile, allowing for different types of identifiers and query parameters, making it suitable for a wide range of use cases.
+
+### 3. `get_cids()`
+
+**Purpose**
+The `get_cids` function is designed to interact with the PubChem database to retrieve Compound IDs (CIDs) based on a given set of identifiers. This function is particularly useful for users who need to convert various types of chemical identifiers into CIDs, which are unique numerical identifiers assigned to chemical compounds by PubChem.
+
+**Parameters**
+* `identifier`: This is a vector containing identifiers. These identifiers can be a mix of positive integers (like cid, sid, aid) or strings (such as source, inchikey, formula). The function is flexible enough to handle different types of identifiers, including names, SMILES strings, and more.
+
+* `namespace`: This parameter specifies the context or category of the identifier. For compounds, it can be 'cid', 'name', 'smiles', 'inchi', etc. The namespace helps the function understand the type of the provided identifier.
+
+* `domain`: It indicates the domain of the query. Possible values include 'substance', 'compound', 'assay', and others. This parameter helps in narrowing down the search to a specific domain in PubChem.
+
+* `searchtype`: This parameter defines the type of search to be performed. It can be a combination of search types like 'substructure', 'superstructure', 'similarity', 'identity', etc., along with the identifier type.
+
+* `...`: This is a placeholder for additional arguments that can be passed to the underlying get_json function, which is assumed to be a part of the package for handling JSON data from PubChem.
+
+**Functionality**
+The function returns a tibble (a modern version of a data frame in R), where each row corresponds to an identifier and its associated CID(s). The tibble contains columns 'Compound' and 'CID', making it easy to understand and manipulate the data.
+
+**Usage**
+
+```{r}
+getCIDs <- get_cids(
+  identifier = "aspirin",
+  namespace = "name"
+)
+getCIDs
+```
+
+
+**Additional Notes**
+* The function uses `tryCatch` to handle any errors during the API request and parsing of the response.
+* It employs various `tidyverse` functions like `unnest_wider`, `unnest_longer`, and `mutate` to reshape the data into a user-friendly format.
+* The function assumes the existence of a `get_json` function in the package, which is responsible for making the actual API request and returning the JSON response.
+* This function is a key component of the PubChemR package, enabling users to seamlessly convert various chemical identifiers into PubChem CIDs, which are essential for further chemical data exploration and analysis.
+
+
+
+
+
+
+
+
+
+
+
+

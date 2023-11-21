@@ -1,3 +1,36 @@
+#' Summarize Data from PubChem Based on Identifier
+#'
+#' This function provides a comprehensive summary of data from the PubChem database for a given identifier. It can retrieve information about compounds, substances, assays, and additional properties, including synonyms and SDF files.
+#'
+#' @param identifier A character string or numeric value representing the identifier for which the summary is required. It can be a compound ID (CID), substance ID (SID), assay ID (AID), or a name.
+#' @param namespace A character string specifying the namespace of the identifier. Possible values include 'cid' for compound ID, 'sid' for substance ID, 'aid' for assay ID, and 'name' for common names or synonyms.
+#' @param type A character vector indicating the type of data to retrieve. Possible values are "compound", "substance", and "assay". This parameter determines the kind of information fetched from PubChem.
+#' @param properties An optional vector of property names to retrieve for the given identifier. If specified, the function fetches these properties from PubChem.
+#' @param include_synonyms Logical; if TRUE, the function also retrieves synonyms for the given identifier.
+#' @param include_sdf Logical; if TRUE, the function downloads the Structure-Data File (SDF) for the given identifier.
+#' @param sdf_path An optional file path for saving the downloaded SDF file. If NULL and `include_sdf` is TRUE, the file is saved with the identifier as its name.
+#' @param ... Additional arguments passed to internal functions.
+#'
+#' @return A list containing the requested data. The structure of the list depends on the parameters provided. It may include compound data, substance data, assay data, CIDs, SIDs, AIDs, synonyms, properties, and an SDF file path.
+#'
+#' @examples
+#' \dontrun{
+#' summary_data <- pubchem_summary(
+#'   identifier = "aspirin",
+#'   namespace = 'name',
+#'   type = c("compound", "substance", "assay"),
+#'   properties = "IsomericSMILES",
+#'   include_synonyms = TRUE,
+#'   include_sdf = TRUE
+#' )
+#' }
+#'
+#' @importFrom RJSONIO fromJSON
+#' @importFrom httr GET
+#' @importFrom dplyr bind_rows
+#' @importFrom tibble as_tibble
+#' @export
+
 pubchem_summary <-
   function(identifier,
            namespace = 'cid',
@@ -162,14 +195,3 @@ pubchem_summary <-
 
     return(summary_data)
   }
-# Example usage
-# r <-
-#   pubchem_summary(
-#     identifier = "aspirin",
-#     namespace = 'name',
-#     type = c("compound", "substance", "assay"),
-#     properties = "IsomericSMILES",
-#     include_synonyms = TRUE,
-#     include_sdf = TRUE,
-#     sdf_path = NULL
-#   )

@@ -1,0 +1,11 @@
+citHeader("To cite PubChemR in publications use:")
+
+citEntry(entry="article",
+  title  = "PubChemR: Interface to the PubChem Database for Chemical Data Retrieval",
+  author = personList(as.person("Selcuk Korkmaz"), 
+                             as.person("Dincer Goksuluk")),
+
+  journal = "R CRAN",
+  year = "2023",
+  url = "https://cran.r-project.org/web/packages/PubChemR/index.html",
+  textVersion = paste("Korkmaz S, Goksuluk D (2023). PubChemR: Interface to the PubChem Database for Chemical Data Retrieval. R package version 0.99-1."))
