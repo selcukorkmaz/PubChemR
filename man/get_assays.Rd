@@ -23,10 +23,8 @@ This function sends a request to PubChem to retrieve assay data based on the spe
 It returns a list of assays corresponding to the provided identifiers.
 }
 \examples{
-\dontrun{
 get_assays(
   identifier = 1234,
   namespace = "aid"
 )
-}
 }

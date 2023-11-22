@@ -15,12 +15,10 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' get_substances(
 #'   identifier = "aspirin",
 #'   namespace = "name"
 #' )
-#' }
 get_substances <- function(identifier, namespace = 'sid', ...) {
 
   substances <- list()

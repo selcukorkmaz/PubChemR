@@ -23,12 +23,10 @@ utils::globalVariables(c("data", "CID"))
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' get_cids(
 #'   identifier = "aspirin",
 #'   namespace = "name"
 #' )
-#' }
 get_cids <- function(identifier, namespace = 'name', domain = 'compound', searchtype = NULL, ...) {
 
   # Try to get the response and parse JSON

@@ -23,10 +23,8 @@ This function sends a request to PubChem to retrieve substance data based on the
 It returns a list of substances corresponding to the provided identifiers.
 }
 \examples{
-\dontrun{
 get_substances(
   identifier = "aspirin",
   namespace = "name"
 )
-}
 }

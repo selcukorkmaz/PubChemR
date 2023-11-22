@@ -25,10 +25,8 @@ This function sends a request to PubChem to retrieve compound data based on the 
 It returns a list of compounds corresponding to the provided identifiers.
 }
 \examples{
-\dontrun{
 get_compounds(
   identifier = "aspirin",
   namespace = "name"
 )
-}
 }

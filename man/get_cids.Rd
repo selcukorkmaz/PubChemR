@@ -32,10 +32,8 @@ This function sends a request to PubChem to retrieve Compound IDs (CIDs) for a g
 It returns a tibble (data frame) with the provided identifier and the corresponding CIDs.
 }
 \examples{
-\dontrun{
 get_cids(
   identifier = "aspirin",
   namespace = "name"
 )
-}
 }

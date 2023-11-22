@@ -36,11 +36,9 @@ This function sends a request to PubChem to retrieve compound properties based o
 It returns a list or dataframe of properties corresponding to the provided identifiers.
 }
 \examples{
-\dontrun{
 get_properties(
   properties = "IsomericSMILES",
   identifier = "aspirin",
   namespace = "name"
 )
-}
 }

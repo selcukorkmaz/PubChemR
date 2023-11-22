@@ -2,11 +2,7 @@
 % Please edit documentation in R/pubchem_summary.R
 \name{pubchem_summary}
 \alias{pubchem_summary}
-<<<<<<< Updated upstream
 \title{Summarize Data from PubChem Based on Identifier}
-=======
-\title{Summarize PubChem Data for a Given Identifier}
->>>>>>> Stashed changes
 \usage{
 pubchem_summary(
   identifier,
@@ -20,7 +16,6 @@ pubchem_summary(
 )
 }
 \arguments{
-<<<<<<< Updated upstream
 \item{identifier}{A character string or numeric value representing the identifier for which the summary is required. It can be a compound ID (CID), substance ID (SID), assay ID (AID), or a name.}
 
 \item{namespace}{A character string specifying the namespace of the identifier. Possible values include 'cid' for compound ID, 'sid' for substance ID, 'aid' for assay ID, and 'name' for common names or synonyms.}
@@ -34,57 +29,23 @@ pubchem_summary(
 \item{include_sdf}{Logical; if TRUE, the function downloads the Structure-Data File (SDF) for the given identifier.}
 
 \item{sdf_path}{An optional file path for saving the downloaded SDF file. If NULL and `include_sdf` is TRUE, the file is saved with the identifier as its name.}
-=======
-\item{identifier}{A character string or numeric value representing the identifier for the query.}
-
-\item{namespace}{A character string specifying the namespace of the identifier (e.g., 'cid', 'name').}
-
-\item{type}{A character vector indicating the type of data to retrieve ('compound', 'substance', 'assay').}
-
-\item{properties}{Optionally, a vector of properties to retrieve for the compound/substance/assay.}
-
-\item{include_synonyms}{Logical; if TRUE, retrieves synonyms for the identifier.}
-
-\item{include_sdf}{Logical; if TRUE, downloads the SDF file for the compound/substance.}
-
-\item{sdf_path}{Optional; specify a path for saving the SDF file. If NULL, the file is saved in the current working directory.}
->>>>>>> Stashed changes
 
 \item{...}{Additional arguments passed to internal functions.}
 }
 \value{
-<<<<<<< Updated upstream
 A list containing the requested data. The structure of the list depends on the parameters provided. It may include compound data, substance data, assay data, CIDs, SIDs, AIDs, synonyms, properties, and an SDF file path.
 }
 \description{
 This function provides a comprehensive summary of data from the PubChem database for a given identifier. It can retrieve information about compounds, substances, assays, and additional properties, including synonyms and SDF files.
 }
 \examples{
-\dontrun{
 summary_data <- pubchem_summary(
-=======
-A list containing the requested data. The structure of the list depends on the requested types and options.
-}
-\description{
-This function retrieves various types of data from PubChem based on the provided identifier and namespace.
-It can fetch data for compounds, substances, assays, and additional information like synonyms and properties.
-}
-\examples{
-r <- pubchem_summary(
->>>>>>> Stashed changes
   identifier = "aspirin",
   namespace = 'name',
   type = c("compound", "substance", "assay"),
   properties = "IsomericSMILES",
   include_synonyms = TRUE,
-<<<<<<< Updated upstream
   include_sdf = TRUE
 )
-}
-=======
-  include_sdf = FALSE,
-  sdf_path = NULL
-)
->>>>>>> Stashed changes
 
 }

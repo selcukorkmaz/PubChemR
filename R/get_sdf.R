@@ -20,13 +20,12 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' get_sdf(
 #'   identifier = "aspirin",
-#'   namespace = "name"
+#'   namespace = "name",
+#'   path = "SDF"
 #' )
-#' }
-get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL, searchtype = NULL, path = NULL, file_name = NULL, ...) {
+get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL, searchtype = NULL, path, file_name = NULL, ...) {
 
   if (is.null(file_name)){
     # Generate a file name based on the identifier, ensuring it ends with the .sdf extension
@@ -38,8 +37,13 @@ get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operatio
   }
 
   if (is.null(path)){
-    path <- getwd()
+    stop("path can not be NULL")
+  } else {
+    if (!file.exists(path)){
+      dir.create(path, recursive = TRUE)
+    }
   }
+
 
   # Use tryCatch to handle errors gracefully
   result <- tryCatch({
@@ -50,9 +54,9 @@ get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operatio
     if (url.exists(response_sdf)) {
       # Write the content to a file in SDF format in the current working directory
       download.file(response_sdf, file.path(path, file_name))
-      cat("  SDF file to save --> '", file_name, "'", sep = "", "\n")
-      cat("  Saved into folder --> ", path, sep = "", "\n\n")
-      cat("  Completed...", "\n\n")
+      message("  SDF file to save --> '", file_name, "'", sep = "", "\n")
+      message("  Saved into folder --> ", path, sep = "", "\n")
+      message("  Completed...", "\n")
     } else {
       message("Received no content to write to the SDF file.")
       return(NULL)

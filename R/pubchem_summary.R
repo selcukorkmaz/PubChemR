@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 #' Summarize Data from PubChem Based on Identifier
 #'
 #' This function provides a comprehensive summary of data from the PubChem database for a given identifier. It can retrieve information about compounds, substances, assays, and additional properties, including synonyms and SDF files.
@@ -15,48 +14,19 @@
 #' @return A list containing the requested data. The structure of the list depends on the parameters provided. It may include compound data, substance data, assay data, CIDs, SIDs, AIDs, synonyms, properties, and an SDF file path.
 #'
 #' @examples
-#' \dontrun{
 #' summary_data <- pubchem_summary(
-=======
-#' Summarize PubChem Data for a Given Identifier
-#'
-#' This function retrieves various types of data from PubChem based on the provided identifier and namespace.
-#' It can fetch data for compounds, substances, assays, and additional information like synonyms and properties.
-#'
-#' @param identifier A character string or numeric value representing the identifier for the query.
-#' @param namespace A character string specifying the namespace of the identifier (e.g., 'cid', 'name').
-#' @param type A character vector indicating the type of data to retrieve ('compound', 'substance', 'assay').
-#' @param properties Optionally, a vector of properties to retrieve for the compound/substance/assay.
-#' @param include_synonyms Logical; if TRUE, retrieves synonyms for the identifier.
-#' @param include_sdf Logical; if TRUE, downloads the SDF file for the compound/substance.
-#' @param sdf_path Optional; specify a path for saving the SDF file. If NULL, the file is saved in the current working directory.
-#' @param ... Additional arguments passed to internal functions.
-#'
-#' @return A list containing the requested data. The structure of the list depends on the requested types and options.
-#'
-#' @examples
-#' r <- pubchem_summary(
->>>>>>> Stashed changes
 #'   identifier = "aspirin",
 #'   namespace = 'name',
 #'   type = c("compound", "substance", "assay"),
 #'   properties = "IsomericSMILES",
 #'   include_synonyms = TRUE,
-<<<<<<< Updated upstream
 #'   include_sdf = TRUE
 #' )
-#' }
 #'
 #' @importFrom RJSONIO fromJSON
 #' @importFrom httr GET
 #' @importFrom dplyr bind_rows
 #' @importFrom tibble as_tibble
-=======
-#'   include_sdf = FALSE,
-#'   sdf_path = NULL
-#' )
-#'
->>>>>>> Stashed changes
 #' @export
 
 pubchem_summary <-
@@ -223,7 +193,3 @@ pubchem_summary <-
 
     return(summary_data)
   }
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes

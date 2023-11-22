@@ -16,12 +16,10 @@
 #' @export
 #'
 #' @examples
-#'  \dontrun{
 #' get_json(
 #'   identifier = "aspirin",
 #'   namespace = "name"
 #' )
-#' }
 get_json <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL, searchtype = NULL, ...) {
 
   result <- tryCatch({

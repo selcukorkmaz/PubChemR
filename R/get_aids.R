@@ -22,12 +22,10 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' get_aids(
 #'   identifier = "aspirin",
 #'   namespace = "name"
 #' )
-#' }
 get_aids <- function(identifier, namespace = 'cid', domain = 'compound', searchtype = NULL, as_data_frame = TRUE, ...) {
 
   # Try to get the response and parse JSON

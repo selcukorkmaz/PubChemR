@@ -11,11 +11,9 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' get_all_sources(
 #'   domain = 'substance'
 #' )
-#' }
 get_all_sources <- function(domain = 'substance') {
   # Use the get function to retrieve the sources
   response_content <- get_pubchem(identifier = domain, namespace = NULL, domain = 'sources')

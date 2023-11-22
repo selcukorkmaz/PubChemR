@@ -12,20 +12,15 @@
 #'
 #' @return Returns the response content from the PubChem API based on the constructed URL.
 #'
-#' @seealso
-#' \url{https://pubchem.ncbi.nlm.nih.gov/rest/pug/}
-#'
 #' @importFrom httr GET http_status
 #' @importFrom RJSONIO fromJSON
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' get_pubchem(
 #'   identifier = "aspirin",
 #'   namespace = "name"
 #' )
-#' }
 get_pubchem <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL,
                         output = 'JSON', searchtype = NULL, ...) {
 

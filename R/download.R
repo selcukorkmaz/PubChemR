@@ -5,8 +5,7 @@
 #'
 #' @param filename a character string specifying the file name to be saved. If not specified, a default file name "file" is used.
 #' @param outformat A character string specifying the desired output format (e.g., "sdf", "json").
-#' @param path A character string specifying the path where the content should be saved. Default is NULL. if not specified, default working
-#' directory returned from \code{getwd()} is used.
+#' @param path A character string specifying the path where the content should be saved.
 #' @param identifier A vector of positive integers (e.g. cid, sid, aid) or identifier strings (source, inchikey, formula). In some cases, only a single
 #' identifier string (name, smiles, xref; inchi, sdf by POST only).
 #' @param namespace Specifies the namespace for the query. For the 'compound' domain, possible values include 'cid', 'name', 'smiles', 'inchi', 'sdf', 'inchikey',
@@ -27,24 +26,22 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' download(
+#'   filename = "Aspirin",
 #'   outformat = "json",
-#'   path = "/Users/selcukkorkmaz/Documents/aspirin.json",
+#'   path = "Compound",
 #'   identifier = "aspirin",
 #'   namespace = "name",
 #'   domain = "compound",
 #'   operation = NULL,
 #'   searchtype = NULL,
 #'   overwrite = FALSE
-#' )
-#' }
-download <- function(filename = NULL, outformat, path = NULL, identifier, namespace = 'cid', domain = 'compound', operation = NULL,
+#')
+download <- function(filename = NULL, outformat, path, identifier, namespace = 'cid', domain = 'compound', operation = NULL,
                      searchtype = NULL, overwrite = FALSE, ...) {
 
-  # If path is not specified, default working directory is used.
   if (is.null(path)){
-    path <- getwd()
+    stop("path can not be NULL")
   } else {
     if (!file.exists(path)){
       dir.create(path, recursive = TRUE)
@@ -52,7 +49,7 @@ download <- function(filename = NULL, outformat, path = NULL, identifier, namesp
   }
 
   if (is.null(filename)){
-    filename <- "file"
+    filename <- identifier
   }
 
   # Use the get function to retrieve the content

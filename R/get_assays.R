@@ -14,12 +14,10 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' get_assays(
 #'   identifier = 1234,
 #'   namespace = "aid"
 #' )
-#' }
 get_assays <- function(identifier, namespace = 'aid', ...) {
 
   assays <- list()

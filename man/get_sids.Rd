@@ -32,10 +32,8 @@ This function sends a request to PubChem to retrieve Substance IDs (SIDs) for a 
 It returns a tibble (data frame) with the provided identifier and the corresponding SIDs.
 }
 \examples{
-\dontrun{
 get_sids(
   identifier = "aspirin",
   namespace = "name"
 )
-}
 }

@@ -61,11 +61,14 @@ test_that("get PubChem data as JSON output (cid)", {
 })
 
 test_that("multiple inputs (cid)", {
-  expect_error({
+  tmp <- try({
     get_pubchem(
       identifier = c(2244, 3627),
       namespace = "cid",
       output = "JSON"
     )
   })
+
+  expect_false(inherits(tmp, "try-error"))
+  expect_false(is.null(tmp))
 })

@@ -43,5 +43,6 @@ test_that("pulling JSON file via multiple 'cid' returns error", {
   })
 
   # It returns NULL when encountered an error.
-  expect_null(tmp)
+  expect_false(inherits(tmp, "try-error"))
+  expect_false(is.null(tmp))
 })
