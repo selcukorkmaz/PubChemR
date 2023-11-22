@@ -10,7 +10,7 @@ get_sdf(
   domain = "compound",
   operation = NULL,
   searchtype = NULL,
-  path = NULL,
+  path,
   file_name = NULL,
   ...
 )
@@ -43,6 +43,7 @@ It then saves the retrieved data as an SDF file in the current working directory
 \examples{
 get_sdf(
   identifier = "aspirin",
-  namespace = "name"
+  namespace = "name",
+  path = "SDF"
 )
 }

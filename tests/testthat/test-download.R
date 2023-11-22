@@ -14,7 +14,7 @@ test_that("create 'path' if it does not exist.", {
   ))
 
   expect_true(file.exists(temp_dir))
-  file.remove(file.path(temp_dir, "file.json"))
+  file.remove(file.path(temp_dir, "aspirin.json"))
   file.remove(temp_dir)
 })
 
@@ -34,7 +34,7 @@ test_that("overwrite file if it already exists.", {
   ))
 
   if (file.exists(temp_dir)){
-    ctime <- file.info(file.path(temp_dir, "file.json"))$ctime
+    ctime <- file.info(file.path(temp_dir, "aspirin.json"))$ctime
 
     try(download(
       outformat = "json",
@@ -44,13 +44,13 @@ test_that("overwrite file if it already exists.", {
       domain = "compound",
       operation = NULL,
       searchtype = NULL,
-      overwrite = TRUE
+      overwrite = FALSE
     ))
 
-    mtime <- file.info(file.path(temp_dir, "file.json"))$mtime
+    mtime <- file.info(file.path(temp_dir, "aspirin.json"))$mtime
     expect_false(identical(ctime, mtime))
 
-    file.remove(file.path(temp_dir, "file.json"))
+    file.remove(file.path(temp_dir, "aspirin.json"))
     file.remove(temp_dir)
   }
 })
@@ -83,7 +83,7 @@ test_that("return error if overwrite is FALSE and file exists.", {
     )
   })
 
-  file.remove(file.path(temp_dir, "file.json"))
+  file.remove(file.path(temp_dir, "aspirin.json"))
   file.remove(temp_dir)
 })
 
@@ -113,11 +113,12 @@ test_that("create 'path' if it does not exist.", {
     overwrite = FALSE
   ))
 
-  json_file <- file.path(temp_dir, "file.json")
-  sdf_file <- file.path(temp_dir, "file.sdf")
+  json_file <- file.path(temp_dir, "aspirin.json")
+  sdf_file <- file.path(temp_dir, "aspirin.sdf")
 
   expect_true(all(file.exists(json_file), file.exists(sdf_file)))
   file.remove(json_file)
   file.remove(sdf_file)
   file.remove(temp_dir)
 })
+

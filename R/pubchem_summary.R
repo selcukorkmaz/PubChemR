@@ -14,14 +14,16 @@
 #' @return A list containing the requested data. The structure of the list depends on the parameters provided. It may include compound data, substance data, assay data, CIDs, SIDs, AIDs, synonyms, properties, and an SDF file path.
 #'
 #' @examples
-#' summary_data <- pubchem_summary(
-#'   identifier = "aspirin",
-#'   namespace = 'name',
-#'   type = c("compound", "substance", "assay"),
-#'   properties = "IsomericSMILES",
-#'   include_synonyms = TRUE,
-#'   include_sdf = TRUE
-#' )
+#' \donttest{
+#'   summary_data <- pubchem_summary(
+#'     identifier = "aspirin",
+#'     namespace = 'name',
+#'     type = c("compound", "substance", "assay"),
+#'     properties = "IsomericSMILES",
+#'     include_synonyms = TRUE,
+#'     include_sdf = TRUE
+#'   )
+#' }
 #'
 #' @importFrom RJSONIO fromJSON
 #' @importFrom httr GET

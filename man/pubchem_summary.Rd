@@ -39,13 +39,15 @@ A list containing the requested data. The structure of the list depends on the p
 This function provides a comprehensive summary of data from the PubChem database for a given identifier. It can retrieve information about compounds, substances, assays, and additional properties, including synonyms and SDF files.
 }
 \examples{
-summary_data <- pubchem_summary(
-  identifier = "aspirin",
-  namespace = 'name',
-  type = c("compound", "substance", "assay"),
-  properties = "IsomericSMILES",
-  include_synonyms = TRUE,
-  include_sdf = TRUE
-)
+\donttest{
+  summary_data <- pubchem_summary(
+    identifier = "aspirin",
+    namespace = 'name',
+    type = c("compound", "substance", "assay"),
+    properties = "IsomericSMILES",
+    include_synonyms = TRUE,
+    include_sdf = TRUE
+  )
+}
 
 }

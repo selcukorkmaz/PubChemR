@@ -7,7 +7,7 @@
 download(
   filename = NULL,
   outformat,
-  path = NULL,
+  path,
   identifier,
   namespace = "cid",
   domain = "compound",
@@ -22,8 +22,7 @@ download(
 
 \item{outformat}{A character string specifying the desired output format (e.g., "sdf", "json").}
 
-\item{path}{A character string specifying the path where the content should be saved. Default is NULL. if not specified, default working
-directory returned from \code{getwd()} is used.}
+\item{path}{A character string specifying the path where the content should be saved.}
 
 \item{identifier}{A vector of positive integers (e.g. cid, sid, aid) or identifier strings (source, inchikey, formula). In some cases, only a single
 identifier string (name, smiles, xref; inchi, sdf by POST only).}
@@ -55,7 +54,9 @@ It then writes the content to a specified file path.
 }
 \examples{
 download(
+  filename = "Aspirin",
   outformat = "json",
+  path = "Compound",
   identifier = "aspirin",
   namespace = "name",
   domain = "compound",

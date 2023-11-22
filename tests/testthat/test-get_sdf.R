@@ -49,15 +49,20 @@ test_that("no SDF file saved for unknown/incorrect identifiers", {
 })
 
 test_that("save SDF files to default working directory", {
+  temp_dir <- tempdir(check = TRUE)
+
   tmp <- try(get_sdf(
     identifier = "aspirin",
     namespace = "name",
-    file_name = "file"
+    file_name = "file",
+    path = temp_dir
+
   ))
 
-  default_path <- getwd()
+  default_path <- temp_dir
   expect_true(file.exists(default_path))
   expect_true(file.exists(file.path(default_path, "file.sdf")))
 
   file.remove(file.path(default_path, "file.sdf"))
 })
+
