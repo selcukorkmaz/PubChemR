@@ -29,7 +29,7 @@
 #' download(
 #'   filename = "Aspirin",
 #'   outformat = "json",
-#'   path = "Compound",
+#'   path = tempdir(check = TRUE),
 #'   identifier = "aspirin",
 #'   namespace = "name",
 #'   domain = "compound",
