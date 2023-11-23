@@ -53,15 +53,21 @@ This function sends a request to PubChem to retrieve content in the specified fo
 It then writes the content to a specified file path.
 }
 \examples{
+# Download JSON file for the compound "aspirin" into "Aspirin.JSON"
+# A folder named "Compound" will be created under current directory"
 download(
   filename = "Aspirin",
   outformat = "json",
-  path = tempdir(check = TRUE),
+  path = "./Compound",
   identifier = "aspirin",
   namespace = "name",
   domain = "compound",
   operation = NULL,
   searchtype = NULL,
-  overwrite = FALSE
+  overwrite = TRUE
 )
+
+# Remove downloaded files and folders.
+file.remove("./Compound/Aspirin.json")
+file.remove("./Compound/")
 }

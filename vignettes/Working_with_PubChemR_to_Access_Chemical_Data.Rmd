@@ -41,13 +41,13 @@ The primary purpose of `PubChemR` is to enable researchers, chemists, and data s
 ## 2. Installation
 `PubChemR` can be installed from CRAN or directly from its GitHub repository (if available). Users can install the package using standard R package installation commands.
 
-```{r}
+```{r, eval=FALSE}
 # Install from CRAN
-# install.packages("PubChemR")
+install.packages("PubChemR")
 
 # Or, install the development version from GitHub
-# install.packages("devtools")
-# devtools::install_github("yourusername/PubChemR")
+install.packages("devtools")
+devtools::install_github("selcukorkmaz/PubChemR")
 ```
 
 ## 3. Setup
@@ -92,7 +92,8 @@ The `pubchem_summary` function is designed to fetch and summarize various types 
 * `properties`: Optional. A list of properties to retrieve for the given identifier.
 * `include_synonyms`: Boolean. If TRUE, retrieves synonyms for the identifier.
 * `include_sdf`: Boolean. If TRUE, downloads the SDF file for the compound.
-`sdf_path`: Optional. Specifies the path for saving the SDF file. If NULL, the file is saved in the current working directory.
+* `sdf_path`: Optional. Specifies the path for saving the SDF file. If NULL, the file is saved into a **temprorary folder**.
+* `sdf_file_name`: Optional. Specifies the name of downloaded SDF file. If NULL, the file name is retrieved from `identifier` input.
 * `...`: Additional arguments that might be passed to internal functions.
 
 
@@ -116,13 +117,37 @@ pubchemSummary <- pubchem_summary(
   type = c("compound", "substance", "assay"),
   properties = "IsomericSMILES",
   include_synonyms = TRUE,
+<<<<<<< HEAD
   include_sdf = FALSE,
   sdf_path = NULL
+=======
+  include_sdf = FALSE
+>>>>>>> b2bca3ff8aa37fe371187dcb523282d79d2e17ba
 )
 pubchemSummary$CIDs
 ```
 
+<<<<<<< HEAD
 This example retrieves data for aspirin, including compound details, and synonyms, and stores the results in the variable `pubchemSummary`.
+=======
+This example retrieves data for aspirin, including compound details, and synonyms, and stores the results in the variable `r`. To save SDF file, one may set `include_sdf = TRUE` and define the path to save downloaded file via `sdf_path` and the file name via `sdf_file_name`. If both arguments, i.e., `sdf_path` and 
+`sdf_file_name` are set NULL, the downloaded file will be saved into a **temporary folder** with a file name retrieved from `identifier` argument. See below for an example
+
+```{r, eval = FALSE}
+# Save downloaded SDF file into a temporary folder.
+pubchemSummary <- pubchem_summary(
+  identifier = "aspirin",
+  namespace = 'name',
+  type = c("compound", "substance", "assay"),
+  properties = "IsomericSMILES",
+  include_synonyms = TRUE,
+  include_sdf = TRUE, 
+  sdf_path = NULL, 
+  sdf_file_name = "Aspirin"
+)
+pubchemSummary$CIDs
+```
+>>>>>>> b2bca3ff8aa37fe371187dcb523282d79d2e17ba
 
 **Notes**
 
