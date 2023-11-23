@@ -116,13 +116,13 @@ pubchemSummary <- pubchem_summary(
   type = c("compound", "substance", "assay"),
   properties = "IsomericSMILES",
   include_synonyms = TRUE,
-  include_sdf = TRUE,
+  include_sdf = FALSE,
   sdf_path = NULL
 )
 pubchemSummary$CIDs
 ```
 
-This example retrieves data for aspirin, including compound details, synonyms, and its SDF file, and stores the results in the variable `r`.
+This example retrieves data for aspirin, including compound details, and synonyms, and stores the results in the variable `pubchemSummary`.
 
 **Notes**
 
