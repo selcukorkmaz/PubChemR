@@ -40,7 +40,9 @@ get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operatio
     message("'path' is not specified. Saving files into a temporary folder.")
     path <- tempdir(check = TRUE)
   } else {
-    dir.create(path, recursive = TRUE)
+    if (!file.exists(path)){
+      dir.create(path, recursive = TRUE)
+    }
   }
 
   # Use tryCatch to handle errors gracefully
