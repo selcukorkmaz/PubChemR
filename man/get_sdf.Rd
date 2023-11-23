@@ -10,7 +10,7 @@ get_sdf(
   domain = "compound",
   operation = NULL,
   searchtype = NULL,
-  path,
+  path = NULL,
   file_name = NULL,
   ...
 )
@@ -26,7 +26,7 @@ get_sdf(
 
 \item{searchtype}{An optional character string specifying the search type.}
 
-\item{path}{A string indicating the path to the folder where the SDF files will be saved. Default is NULL (i.e., saves the file to current working directory).}
+\item{path}{A string indicating the path to the folder where the SDF files will be saved. Default is NULL (i.e., saves the file into a temporary folder).}
 
 \item{file_name}{A string. File name for downloaded SDF file. If NULL, "file" is used as the file name. Default is NULL.}
 
@@ -44,6 +44,6 @@ It then saves the retrieved data as an SDF file in the current working directory
 get_sdf(
   identifier = "aspirin",
   namespace = "name",
-  path = "SDF"
+  path = NULL
 )
 }

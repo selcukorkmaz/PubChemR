@@ -12,6 +12,7 @@ pubchem_summary(
   include_synonyms = FALSE,
   include_sdf = FALSE,
   sdf_path = NULL,
+  sdf_file_name = NULL,
   ...
 )
 }
@@ -28,7 +29,9 @@ pubchem_summary(
 
 \item{include_sdf}{Logical; if TRUE, the function downloads the Structure-Data File (SDF) for the given identifier.}
 
-\item{sdf_path}{An optional file path for saving the downloaded SDF file. If NULL and `include_sdf` is TRUE, the file is saved with the identifier as its name.}
+\item{sdf_path}{An optional file path for saving the downloaded SDF file. If NULL and `include_sdf` is TRUE, the file is saved into a temporary folder with the identifier as its name.}
+
+\item{sdf_file_name}{a character indicating the name of SDF file withoud ".sdf" extension. If NULL, default name is retrieved from \code{identifier} argument.}
 
 \item{...}{Additional arguments passed to internal functions.}
 }

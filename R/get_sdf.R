@@ -8,7 +8,7 @@
 #' @param domain A character string specifying the domain for the request. Default is 'compound'.
 #' @param operation An optional character string specifying the operation for the request.
 #' @param searchtype An optional character string specifying the search type.
-#' @param path A string indicating the path to the folder where the SDF files will be saved. Default is NULL (i.e., saves the file to current working directory).
+#' @param path A string indicating the path to the folder where the SDF files will be saved. Default is NULL (i.e., saves the file into a temporary folder).
 #' @param file_name A string. File name for downloaded SDF file. If NULL, "file" is used as the file name. Default is NULL.
 #' @param ... Additional parameters to be passed to the \code{\link{request}}.
 #'
@@ -23,9 +23,9 @@
 #' get_sdf(
 #'   identifier = "aspirin",
 #'   namespace = "name",
-#'   path = "SDF"
+#'   path = NULL
 #' )
-get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL, searchtype = NULL, path, file_name = NULL, ...) {
+get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL, searchtype = NULL, path = NULL, file_name = NULL, ...) {
 
   if (is.null(file_name)){
     # Generate a file name based on the identifier, ensuring it ends with the .sdf extension
@@ -37,13 +37,11 @@ get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operatio
   }
 
   if (is.null(path)){
-    stop("path can not be NULL")
+    message("'path' is not specified. Saving files into a temporary folder.")
+    path <- tempdir(check = TRUE)
   } else {
-    if (!file.exists(path)){
-      dir.create(path, recursive = TRUE)
-    }
+    dir.create(path, recursive = TRUE)
   }
-
 
   # Use tryCatch to handle errors gracefully
   result <- tryCatch({
