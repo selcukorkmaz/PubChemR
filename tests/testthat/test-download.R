@@ -44,7 +44,7 @@ test_that("overwrite file if it already exists.", {
       domain = "compound",
       operation = NULL,
       searchtype = NULL,
-      overwrite = FALSE
+      overwrite = TRUE
     ))
 
     mtime <- file.info(file.path(temp_dir, "aspirin.json"))$mtime
