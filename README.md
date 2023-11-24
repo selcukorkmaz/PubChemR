@@ -8,7 +8,7 @@ You can install the development version of `PubChemR` from [GitHub](https://gith
 
 ```r
 # install.packages("devtools")
-devtools::install_github("your_github_username/PubChemR")
+devtools::install_github("selcukorkmaz/PubChemR")
 ```
 
 **Usage**
@@ -90,7 +90,19 @@ For questions and feedback, please open an issue in the GitHub repository issue 
 
 If you use PubChemR in your research, please cite it as follows:
 
-Your Name (Year). PubChemR: An Interface to the PubChem Collection of Chemical Data. R package version x.x.x. URL: https://github.com/your_github_username/PubChemR
+Korkmaz S, Goksuluk D (2023). _PubChemR: Interface to the 'PubChem' Database for Chemical Data Retrieval_. R package version 0.99-1, <https://CRAN.R-project.org/package=PubChemR>.
+
+A BibTeX entry for LaTeX users is:
+
+```r
+@Manual{,
+  title = {PubChemR: Interface to the 'PubChem' Database for Chemical Data Retrieval},
+  author = {Selcuk Korkmaz and Dincer Goksuluk},
+  year = {2023},
+  note = {R package version 0.99-1},
+  url = {https://CRAN.R-project.org/package=PubChemR},
+}
+```
 
 
 
