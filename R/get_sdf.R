@@ -10,7 +10,7 @@
 #' @param searchtype An optional character string specifying the search type.
 #' @param path A string indicating the path to the folder where the SDF files will be saved. Default is NULL (i.e., saves the file into a temporary folder).
 #' @param file_name A string. File name for downloaded SDF file. If NULL, "file" is used as the file name. Default is NULL.
-#' @param ... Additional parameters to be passed to the \code{\link{request}}.
+#' @param options Additional parameters to be passed to the \code{\link{request}}.
 #'
 #' @return NULL. The function saves the retrieved data as an SDF file in the current working directory and prints a
 #' message indicating the file's location.
@@ -25,7 +25,7 @@
 #'   namespace = "name",
 #'   path = NULL
 #' )
-get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL, searchtype = NULL, path = NULL, file_name = NULL, ...) {
+get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL, searchtype = NULL, path = NULL, file_name = NULL, options = NULL) {
 
   if (is.null(file_name)){
     # Generate a file name based on the identifier, ensuring it ends with the .sdf extension
@@ -48,7 +48,7 @@ get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operatio
   # Use tryCatch to handle errors gracefully
   result <- tryCatch({
     # Make the request. The 'get' function is expected to return the response content directly.
-    response_sdf <- request(identifier, namespace, domain, operation, 'SDF', searchtype, ...)
+    response_sdf <- request(identifier, namespace, domain, operation, 'SDF', searchtype, options)
 
     # Check if the response is not empty or NULL before proceeding
     if (url.exists(response_sdf)) {
@@ -56,7 +56,7 @@ get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operatio
       download.file(response_sdf, file.path(path, file_name))
       message("  SDF file to save --> '", file_name, "'", sep = "", "\n")
       message("  Saved into folder --> ", path, sep = "", "\n")
-      message("  Completed...", "\n")
+      message("  Completedoptions", "\n")
     } else {
       message("Received no content to write to the SDF file.")
       return(NULL)

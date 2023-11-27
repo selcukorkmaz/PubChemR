@@ -10,7 +10,7 @@
 #' @param domain Specifies the domain of the query. Possible values are 'substance', 'compound', 'assay', 'gene', 'protein', 'pathway', 'taxonomy', 'cell', 'sources', 'sourcetable', 'conformers', 'annotations', 'classification', and 'standardize'.
 #' @param searchtype Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.
 #' @param as_data_frame A logical value indicating whether to return the results as a tibble (data frame). Default is TRUE.
-#' @param ... Additional arguments passed to \code{\link{get_json}}
+#' @param options Additional arguments passed to \code{\link{get_json}}
 #'
 #' @return If `as_data_frame` is TRUE, a tibble (data frame) where each row corresponds to a provided identifier and its AID.
 #'         The tibble has columns 'CID' and 'AID'. If `as_data_frame` is FALSE, a list of AIDs is returned.
@@ -26,7 +26,7 @@
 #'   identifier = "aspirin",
 #'   namespace = "name"
 #' )
-get_aids <- function(identifier, namespace = 'cid', domain = 'compound', searchtype = NULL, as_data_frame = TRUE, ...) {
+get_aids <- function(identifier, namespace = 'cid', domain = 'compound', searchtype = NULL, as_data_frame = TRUE, options = NULL) {
 
   # Try to get the response and parse JSON
   result <- tryCatch({
@@ -34,7 +34,7 @@ get_aids <- function(identifier, namespace = 'cid', domain = 'compound', searcht
     aidsList <- list()
 
     for (i in 1:length(identifier)){
-      response_json <- get_json(identifier[i], namespace, domain, 'aids', searchtype, ...)
+      response_json <- get_json(identifier[i], namespace, domain, 'aids', searchtype, options)
 
       # Check if the response contains the expected information
       if (is.null(response_json)) {
@@ -111,7 +111,7 @@ get_aids <- function(identifier, namespace = 'cid', domain = 'compound', searcht
           resultList[[i]] <- temp_df
         }
 
-      # Perhaps, we might prefer using DoCall(...) function under DescTools packace, which is claimed
+      # Perhaps, we might prefer using DoCall(options) function under DescTools packace, which is claimed
       # faster alternative to base "do.call" function.
       df <- do.call(rbind.data.frame, resultList)
     }

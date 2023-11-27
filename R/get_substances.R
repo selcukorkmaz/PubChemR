@@ -5,7 +5,7 @@
 #'
 #' @param identifier A character or numeric vector specifying the identifiers for the request.
 #' @param namespace A character string specifying the namespace for the request. Default is 'sid'.
-#' @param ... Additional parameters passed to \code{\link{get_json}}.
+#' @param options Additional parameters passed to \code{\link{get_json}}.
 #'
 #' @return A named list where each element corresponds to a substance retrieved from PubChem.
 #'         The names of the list elements are based on the provided identifiers.
@@ -19,13 +19,13 @@
 #'   identifier = "aspirin",
 #'   namespace = "name"
 #' )
-get_substances <- function(identifier, namespace = 'sid', ...) {
+get_substances <- function(identifier, namespace = 'sid', options = NULL) {
 
   substances <- list()
 
   for (i in 1:length(identifier)) {
     # Retrieve the JSON data
-    results <- get_json(identifier[i], namespace, 'substance', operation = NULL, searchtype = NULL, ...)
+    results <- get_json(identifier[i], namespace, 'substance', operation = NULL, searchtype = NULL, options)
 
     # Check if results are not empty
     if (!is.null(results)) {

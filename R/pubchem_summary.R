@@ -10,7 +10,7 @@
 #' @param include_sdf Logical; if TRUE, the function downloads the Structure-Data File (SDF) for the given identifier.
 #' @param sdf_path An optional file path for saving the downloaded SDF file. If NULL and `include_sdf` is TRUE, the file is saved into a temporary folder with the identifier as its name.
 #' @param sdf_file_name a character indicating the name of SDF file withoud ".sdf" extension. If NULL, default name is retrieved from \code{identifier} argument.
-#' @param ... Additional arguments passed to internal functions.
+#' @param options Additional arguments passed to internal functions.
 #'
 #' @return A list containing the requested data. The structure of the list depends on the parameters provided. It may include compound data, substance data, assay data, CIDs, SIDs, AIDs, synonyms, properties, and an SDF file path.
 #'
@@ -39,7 +39,7 @@ pubchem_summary <- function(identifier,
                             include_sdf = FALSE,
                             sdf_path = NULL,
                             sdf_file_name = NULL,
-                            ...) {
+                            options = NULL) {
 
   summary_data <- list()
   check_request <- url.exists(request(identifier, namespace))

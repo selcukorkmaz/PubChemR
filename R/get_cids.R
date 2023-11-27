@@ -11,7 +11,7 @@ utils::globalVariables(c("data", "CID"))
 #' @param namespace Specifies the namespace for the query. For the 'compound' domain, possible values include 'cid', 'name', 'smiles', 'inchi', 'sdf', 'inchikey', 'formula', 'substructure', 'superstructure', 'similarity', 'identity', 'xref', 'listkey', 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure', and 'fastformula'. For other domains, the possible namespaces are domain-specific.
 #' @param domain Specifies the domain of the query. Possible values are 'substance', 'compound', 'assay', 'gene', 'protein', 'pathway', 'taxonomy', 'cell', 'sources', 'sourcetable', 'conformers', 'annotations', 'classification', and 'standardize'.
 #' @param searchtype Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.
-#' @param ... Additional arguments passed to \code{\link{get_json}}.
+#' @param options Additional arguments passed to \code{\link{get_json}}.
 #'
 #' @return A tibble (data frame) where each row corresponds to a provided identifier and its CID.
 #'         The tibble has columns 'Compound' and 'CID'.
@@ -27,7 +27,7 @@ utils::globalVariables(c("data", "CID"))
 #'   identifier = "aspirin",
 #'   namespace = "name"
 #' )
-get_cids <- function(identifier, namespace = 'name', domain = 'compound', searchtype = NULL, ...) {
+get_cids <- function(identifier, namespace = 'name', domain = 'compound', searchtype = NULL, options = NULL) {
 
   # Try to get the response and parse JSON
   result <- tryCatch({
@@ -36,7 +36,7 @@ get_cids <- function(identifier, namespace = 'name', domain = 'compound', search
     cidsList <- list()
 
     for (i in 1:length(identifier)){
-    response_json <- get_json(identifier[i], namespace, domain, 'cids', searchtype, ...)
+    response_json <- get_json(identifier[i], namespace, domain, 'cids', searchtype, options)
 
     # Check if the response contains the expected information
     if (is.null(response_json)) {

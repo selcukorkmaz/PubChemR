@@ -19,7 +19,7 @@
 #' 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity',
 #' 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.
 #' @param overwrite A logical value indicating whether to overwrite the file if it already exists. Default is FALSE.
-#' @param ... Additional arguments.
+#' @param options Additional arguments.
 #'
 #' @return No return value. The function writes the content to the specified file path and prints a message indicating the save location.
 #'
@@ -44,7 +44,7 @@
 #' file.remove("./Compound/Aspirin.json")
 #' file.remove("./Compound/")
 download <- function(filename = NULL, outformat, path, identifier, namespace = 'cid', domain = 'compound', operation = NULL,
-                     searchtype = NULL, overwrite = FALSE, ...) {
+                     searchtype = NULL, overwrite = FALSE, options = NULL) {
 
   if (is.null(path)){
     stop("path can not be NULL")
@@ -59,7 +59,7 @@ download <- function(filename = NULL, outformat, path, identifier, namespace = '
   }
 
   # Use the get function to retrieve the content
-  response_content <- get_pubchem(identifier, namespace, domain, operation, outformat, searchtype, ...)
+  response_content <- get_pubchem(identifier, namespace, domain, operation, outformat, searchtype, options)
 
   # Full path, including the name and file extension
   full_path <- paste0(path, "/", filename, ".", outformat)

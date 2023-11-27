@@ -7,7 +7,7 @@
 #' @param namespace A character string specifying the namespace for the request. Default is 'cid'.
 #' @param domain A character string specifying the domain for the request. Default is 'compound'.
 #' @param searchtype A character string specifying the search type. Default is NULL.
-#' @param ... Additional arguments passed to \code{\link{get_json}}.
+#' @param options Additional arguments passed to \code{\link{get_json}}.
 #'
 #' @return A tibble (data frame) where each row corresponds to a provided identifier and its SID.
 #'         The tibble has columns 'CID' and 'SID'.
@@ -24,7 +24,7 @@
 #'   identifier = "aspirin",
 #'   namespace = "name"
 #' )
-get_sids <- function(identifier, namespace = 'cid', domain = 'compound', searchtype = NULL, ...) {
+get_sids <- function(identifier, namespace = 'cid', domain = 'compound', searchtype = NULL, options = NULL) {
 
   # Try to get the response and parse JSON
   result <- tryCatch({
@@ -32,7 +32,7 @@ get_sids <- function(identifier, namespace = 'cid', domain = 'compound', searcht
     sidsList = list()
 
     for (i in 1:length(identifier)){
-      response_json <- get_json(identifier[i], namespace, domain, 'sids', searchtype, ...)
+      response_json <- get_json(identifier[i], namespace, domain, 'sids', searchtype, options)
 
       # Check if the response contains the expected information
       if (is.null(response_json)) {

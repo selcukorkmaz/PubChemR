@@ -7,7 +7,7 @@
 #' @param namespace A character string specifying the namespace for the request. Default is 'cid'.
 #' @param domain A character string specifying the domain for the request. Default is 'compound'.
 #' @param searchtype A character string specifying the search type. Default is NULL.
-#' @param ... Additional arguments passed to \code{\link{get_json}}.
+#' @param options Additional arguments passed to \code{\link{get_json}}.
 #'
 #' @return A list where each element corresponds to the synonyms retrieved from PubChem for the provided identifier.
 #'         The names of the list elements are based on the provided identifier.
@@ -20,12 +20,12 @@
 #'   identifier = "aspirin",
 #'   namespace = "name"
 #' )
-get_synonyms <- function(identifier, namespace = 'cid', domain = 'compound', searchtype = NULL, ...) {
+get_synonyms <- function(identifier, namespace = 'cid', domain = 'compound', searchtype = NULL, options = NULL) {
 
   # Try to get the response and parse JSON
   result <- tryCatch({
     # Assuming 'get_json' is a function you've previously defined, similar to your Python environment
-    response_json <- get_json(identifier, namespace, domain, 'synonyms', searchtype, ...)
+    response_json <- get_json(identifier, namespace, domain, 'synonyms', searchtype, options)
 
     # Check if the response contains the expected information
     if (!is.null(response_json) && !is.null(response_json$InformationList) && !is.null(response_json$InformationList$Information)) {

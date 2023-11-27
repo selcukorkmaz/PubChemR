@@ -117,19 +117,13 @@ pubchemSummary <- pubchem_summary(
   type = c("compound", "substance", "assay"),
   properties = "IsomericSMILES",
   include_synonyms = TRUE,
-<<<<<<< HEAD
   include_sdf = FALSE,
   sdf_path = NULL
-=======
-  include_sdf = FALSE
->>>>>>> b2bca3ff8aa37fe371187dcb523282d79d2e17ba
 )
 pubchemSummary$CIDs
 ```
 
-<<<<<<< HEAD
 This example retrieves data for aspirin, including compound details, and synonyms, and stores the results in the variable `pubchemSummary`.
-=======
 This example retrieves data for aspirin, including compound details, and synonyms, and stores the results in the variable `r`. To save SDF file, one may set `include_sdf = TRUE` and define the path to save downloaded file via `sdf_path` and the file name via `sdf_file_name`. If both arguments, i.e., `sdf_path` and 
 `sdf_file_name` are set NULL, the downloaded file will be saved into a **temporary folder** with a file name retrieved from `identifier` argument. See below for an example
 
@@ -233,15 +227,4 @@ getCIDs
 * It employs various `tidyverse` functions like `unnest_wider`, `unnest_longer`, and `mutate` to reshape the data into a user-friendly format.
 * The function assumes the existence of a `get_json` function in the package, which is responsible for making the actual API request and returning the JSON response.
 * This function is a key component of the PubChemR package, enabling users to seamlessly convert various chemical identifiers into PubChem CIDs, which are essential for further chemical data exploration and analysis.
-
-
-
-
-
-
-
-
-
-
-
 

@@ -8,7 +8,7 @@
 #' @param namespace Specifies the namespace for the query. For the 'compound' domain, possible values include 'cid', 'name', 'smiles', 'inchi', 'sdf', 'inchikey', 'formula', 'substructure', 'superstructure', 'similarity', 'identity', 'xref', 'listkey', 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure', and 'fastformula'. For other domains, the possible namespaces are domain-specific.
 #' @param searchtype Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.
 #' @param as_dataframe If TRUE it return a dataframe.
-#' @param ... Additional arguments passed to \code{\link{get_json}}.
+#' @param options Additional arguments passed to \code{\link{get_json}}.
 #'
 #' @return If `as_dataframe` is FALSE, a named list where each element corresponds to the properties retrieved from PubChem.
 #'         If `as_dataframe` is TRUE, a dataframe where each row corresponds to the properties retrieved from PubChem.
@@ -25,7 +25,7 @@
 #'   identifier = "aspirin",
 #'   namespace = "name"
 #' )
-get_properties <- function(properties, identifier, namespace = 'cid', searchtype = NULL, as_dataframe = FALSE, ...) {
+get_properties <- function(properties, identifier, namespace = 'cid', searchtype = NULL, as_dataframe = FALSE, options = NULL) {
   # If properties is a single string, split it into a vector
   # if (is.character(properties) && !grepl(",", properties)) {
   #   properties <- strsplit(properties, ",")[[1]]
@@ -47,7 +47,7 @@ get_properties <- function(properties, identifier, namespace = 'cid', searchtype
   # This is a placeholder for that function call, as its implementation depends on your setup.
   results <- get_json(identifier = identifier, namespace = namespace, domain = 'compound',
                       operation = properties_endpoint,
-                      searchtype = searchtype, ...)
+                      searchtype = searchtype, options)
 
   # Check if results are not empty and process them
   properties_results <- list()

@@ -20,10 +20,10 @@
 #'   identifier = "aspirin",
 #'   namespace = "name"
 #' )
-get_json <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL, searchtype = NULL, ...) {
+get_json <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL, searchtype = NULL, options = NULL) {
 
   result <- tryCatch({
-    response <- fromJSON(get_pubchem(identifier, namespace, domain, operation, 'JSON', searchtype, ...))
+    response <- get_pubchem(identifier, namespace, domain, operation, output, searchtype, options)
     return(response)
   },
   error = function(e) {
