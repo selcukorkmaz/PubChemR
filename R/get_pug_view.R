@@ -49,7 +49,7 @@ get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compoun
   }
 
   if(domain == "key"){output = NULL}
-  identifier <- sub(" ", "%20", identifier)
+  identifier <- URLencode(identifier)
 
   # Build API URL
   api_base <- "https://pubchem.ncbi.nlm.nih.gov/rest/pug_view"

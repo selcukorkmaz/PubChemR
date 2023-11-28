@@ -31,6 +31,7 @@ Imports:
     tidyr,
     utils,
     magrittr,
-    stringr
+    stringr,
+    magick
 VignetteBuilder: knitr
 
