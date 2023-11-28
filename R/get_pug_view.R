@@ -1,7 +1,34 @@
-library(rsvg)
-library(magick)
-library(png)
-library(RCurl)
+#' Retrieve PUG View Data from PubChem
+#'
+#' This function sends a request to the PubChem PUG View API to retrieve various types of data
+#' for a given identifier. It supports fetching annotations, QR codes, and more, with options
+#' for different output formats including JSON and SVG.
+#'
+#' @param annotation A character string specifying the type of annotation to retrieve.
+#' @param identifier A single identifier for the query, either numeric or character.
+#' @param domain A character string specifying the domain for the request. Default is 'compound'.
+#' @param output A character string specifying the output format. Possible values are 'JSON', 'JSONP', and 'SVG'. Default is 'JSON'.
+#' @param heading An optional character string for specifying a heading in the request.
+#' @param headingType An optional character string for specifying a heading type in the request.
+#' @param page An optional character string for specifying a page number in the request.
+#' @param qrSize A character string specifying the size of the QR code. Possible values are 'short' and 'long'. Default is 'short'.
+#' @param savePNG A logical value indicating whether to save the output as a PNG file. Default is FALSE.
+#'
+#' @return Depending on the output format, this function returns different types of content:
+#'         JSON or JSONP format returns parsed JSON content.
+#'         SVG format returns an image object.
+#'         For QR codes, it returns an image object or saves a PNG file.
+#'
+#' @examples
+#'   get_pug_view(identifier = "2244", annotation = "linkout", domain = "compound")
+#'
+#' @importFrom RJSONIO fromJSON
+#' @importFrom httr GET status_code
+#' @importFrom magick image_read
+#' @importFrom rsvg rsvg_png
+#' @importFrom RCurl getURLContent
+#' @importFrom png readPNG
+#' @export
 
 get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compound',
                          output = 'JSON', heading = NULL, headingType = NULL, page = NULL,
@@ -102,11 +129,6 @@ get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compoun
   return(content)
 }
 
-# Note: Users should be aware of rate limiting and usage policies of PUG-View.
-# Documentation: [Add documentation here with examples and parameter descriptions]
-
-get_pug_view(identifier = "2244", annotation = "linkout",
-             domain = "compound")
 
 
 
