@@ -18,14 +18,14 @@
 #'   identifier = 1234,
 #'   namespace = "aid"
 #' )
-get_assays <- function(identifier, namespace = 'aid', options = NULL) {
+get_assays <- function(identifier, namespace = 'aid', operation = NULL, searchtype = NULL, options = NULL) {
 
   assays <- list()
   data <- list()
 
   for (i in 1:length(identifier)) {
     # Retrieve the JSON data
-    results <- get_json(identifier[i], namespace, 'assay', 'description', options)
+    results <- get_json(identifier[i], namespace, 'assay', 'description', searchtype, options)
 
     # Check if results are not empty
     if (!is.null(results)) {

@@ -19,13 +19,13 @@
 #'   identifier = "aspirin",
 #'   namespace = "name"
 #' )
-get_substances <- function(identifier, namespace = 'sid', options = NULL) {
+get_substances <- function(identifier, namespace = 'sid', operation = NULL, searchtype = NULL, options = NULL) {
 
   substances <- list()
 
   for (i in 1:length(identifier)) {
     # Retrieve the JSON data
-    results <- get_json(identifier[i], namespace, 'substance', operation = NULL, searchtype = NULL, options)
+    results <- get_json(identifier[i], namespace, 'substance', operation = operation, searchtype = searchtype, options = options)
 
     # Check if results are not empty
     if (!is.null(results)) {
@@ -34,7 +34,7 @@ get_substances <- function(identifier, namespace = 'sid', options = NULL) {
       if (!is.null(results$PC_Substances)) {
         substances[[i]] <- results$PC_Substances
       } else {
-        substances[[i]] <- "No substance"
+        substances[[i]] <- results
       }
     }
   }
