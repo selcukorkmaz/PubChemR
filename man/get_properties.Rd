@@ -10,7 +10,7 @@ get_properties(
   namespace = "cid",
   searchtype = NULL,
   as_dataframe = FALSE,
-  ...
+  options = NULL
 )
 }
 \arguments{
@@ -24,7 +24,7 @@ get_properties(
 
 \item{as_dataframe}{If TRUE it return a dataframe.}
 
-\item{...}{Additional arguments passed to \code{\link{get_json}}.}
+\item{options}{Additional arguments passed to \code{\link{get_json}}.}
 }
 \value{
 If `as_dataframe` is FALSE, a named list where each element corresponds to the properties retrieved from PubChem.

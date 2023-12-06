@@ -9,7 +9,7 @@ get_sids(
   namespace = "cid",
   domain = "compound",
   searchtype = NULL,
-  ...
+  options = NULL
 )
 }
 \arguments{
@@ -21,7 +21,7 @@ get_sids(
 
 \item{searchtype}{A character string specifying the search type. Default is NULL.}
 
-\item{...}{Additional arguments passed to \code{\link{get_json}}.}
+\item{options}{Additional arguments passed to \code{\link{get_json}}.}
 }
 \value{
 A tibble (data frame) where each row corresponds to a provided identifier and its SID.

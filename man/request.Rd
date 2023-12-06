@@ -11,7 +11,7 @@ request(
   operation = NULL,
   output = "JSON",
   searchtype = NULL,
-  ...
+  options = NULL
 )
 }
 \arguments{
@@ -27,7 +27,7 @@ request(
 
 \item{searchtype}{The type of search to be performed (default: NULL).}
 
-\item{...}{Additional parameters. Currently has no effect on the results.}
+\item{options}{Additional parameters. Currently has no effect on the results.}
 }
 \value{
 A constructed URL for the PubChem API.

@@ -9,7 +9,7 @@ get_synonyms(
   namespace = "cid",
   domain = "compound",
   searchtype = NULL,
-  ...
+  options = NULL
 )
 }
 \arguments{
@@ -21,7 +21,7 @@ get_synonyms(
 
 \item{searchtype}{A character string specifying the search type. Default is NULL.}
 
-\item{...}{Additional arguments passed to \code{\link{get_json}}.}
+\item{options}{Additional arguments passed to \code{\link{get_json}}.}
 }
 \value{
 A list where each element corresponds to the synonyms retrieved from PubChem for the provided identifier.

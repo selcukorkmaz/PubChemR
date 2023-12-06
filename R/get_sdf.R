@@ -56,7 +56,7 @@ get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operatio
       download.file(response_sdf, file.path(path, file_name))
       message("  SDF file to save --> '", file_name, "'", sep = "", "\n")
       message("  Saved into folder --> ", path, sep = "", "\n")
-      message("  Completedoptions", "\n")
+      message("  Completed options", "\n")
     } else {
       message("Received no content to write to the SDF file.")
       return(NULL)

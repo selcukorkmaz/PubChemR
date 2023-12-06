@@ -10,7 +10,7 @@ get_aids(
   domain = "compound",
   searchtype = NULL,
   as_data_frame = TRUE,
-  ...
+  options = NULL
 )
 }
 \arguments{
@@ -24,7 +24,7 @@ get_aids(
 
 \item{as_data_frame}{A logical value indicating whether to return the results as a tibble (data frame). Default is TRUE.}
 
-\item{...}{Additional arguments passed to \code{\link{get_json}}}
+\item{options}{Additional arguments passed to \code{\link{get_json}}}
 }
 \value{
 If `as_data_frame` is TRUE, a tibble (data frame) where each row corresponds to a provided identifier and its AID.

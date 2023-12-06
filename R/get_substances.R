@@ -5,6 +5,8 @@
 #'
 #' @param identifier A character or numeric vector specifying the identifiers for the request.
 #' @param namespace A character string specifying the namespace for the request. Default is 'sid'.
+#' @param operation Specifies the operation to be performed on the input records. For the 'compound' domain, possible operations include 'record', 'property', 'synonyms', 'sids', 'cids', 'aids', 'assaysummary', 'classification', 'xrefs', and 'description'. The available operations are domain-specific.
+#' @param searchtype Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.
 #' @param options Additional parameters passed to \code{\link{get_json}}.
 #'
 #' @return A named list where each element corresponds to a substance retrieved from PubChem.

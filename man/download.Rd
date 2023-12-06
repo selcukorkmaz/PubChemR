@@ -14,7 +14,7 @@ download(
   operation = NULL,
   searchtype = NULL,
   overwrite = FALSE,
-  ...
+  options = NULL
 )
 }
 \arguments{
@@ -43,7 +43,7 @@ identifier string (name, smiles, xref; inchi, sdf by POST only).}
 
 \item{overwrite}{A logical value indicating whether to overwrite the file if it already exists. Default is FALSE.}
 
-\item{...}{Additional arguments.}
+\item{options}{Additional arguments.}
 }
 \value{
 No return value. The function writes the content to the specified file path and prints a message indicating the save location.

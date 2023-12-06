@@ -11,7 +11,7 @@ get_pubchem(
   operation = NULL,
   output = "JSON",
   searchtype = NULL,
-  ...
+  options = NULL
 )
 }
 \arguments{
@@ -27,7 +27,7 @@ get_pubchem(
 
 \item{searchtype}{Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.}
 
-\item{...}{Additional arguments passed to \code{\link{request}}.}
+\item{options}{Additional arguments passed to \code{\link{request}}.}
 }
 \value{
 Returns the response content from the PubChem API based on the constructed URL.

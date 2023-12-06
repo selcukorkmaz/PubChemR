@@ -13,7 +13,7 @@ pubchem_summary(
   include_sdf = FALSE,
   sdf_path = NULL,
   sdf_file_name = NULL,
-  ...
+  options = NULL
 )
 }
 \arguments{
@@ -33,7 +33,7 @@ pubchem_summary(
 
 \item{sdf_file_name}{a character indicating the name of SDF file withoud ".sdf" extension. If NULL, default name is retrieved from \code{identifier} argument.}
 
-\item{...}{Additional arguments passed to internal functions.}
+\item{options}{Additional arguments passed to internal functions.}
 }
 \value{
 A list containing the requested data. The structure of the list depends on the parameters provided. It may include compound data, substance data, assay data, CIDs, SIDs, AIDs, synonyms, properties, and an SDF file path.

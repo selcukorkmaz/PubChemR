@@ -4,16 +4,24 @@
 \alias{get_compounds}
 \title{Retrieve Compounds from PubChem}
 \usage{
-get_compounds(identifier, namespace = "cid", searchtype = NULL, ...)
+get_compounds(
+  identifier,
+  namespace = "cid",
+  operation = NULL,
+  searchtype = NULL,
+  options = NULL
+)
 }
 \arguments{
 \item{identifier}{A vector of positive integers (e.g. cid, sid, aid) or identifier strings (source, inchikey, formula). In some cases, only a single identifier string (name, smiles, xref; inchi, sdf by POST only).}
 
 \item{namespace}{Specifies the namespace for the query. For the 'compound' domain, possible values include 'cid', 'name', 'smiles', 'inchi', 'sdf', 'inchikey', 'formula', 'substructure', 'superstructure', 'similarity', 'identity', 'xref', 'listkey', 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure', and 'fastformula'. For other domains, the possible namespaces are domain-specific.}
 
+\item{operation}{The operation to be performed (default: NULL).}
+
 \item{searchtype}{Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.}
 
-\item{...}{Additional parameters passed to \code{\link{get_json}}.}
+\item{options}{Additional parameters passed to \code{\link{get_json}}.}
 }
 \value{
 A named list where each element corresponds to a compound retrieved from PubChem.

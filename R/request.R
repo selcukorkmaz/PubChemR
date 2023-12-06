@@ -8,7 +8,7 @@
 #' @param operation The operation to be performed (default: NULL).
 #' @param output The desired output format (default: 'JSON').
 #' @param searchtype The type of search to be performed (default: NULL).
-#' @param ... Additional parameters. Currently has no effect on the results.
+#' @param options Additional parameters. Currently has no effect on the results.
 #'
 #' @return A constructed URL for the PubChem API.
 #'

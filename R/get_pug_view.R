@@ -28,6 +28,7 @@
 #' @importFrom rsvg rsvg_png
 #' @importFrom RCurl getURLContent
 #' @importFrom png readPNG
+#' @importFrom httr content
 #' @export
 
 get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compound',

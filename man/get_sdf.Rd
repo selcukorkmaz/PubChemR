@@ -12,7 +12,7 @@ get_sdf(
   searchtype = NULL,
   path = NULL,
   file_name = NULL,
-  ...
+  options = NULL
 )
 }
 \arguments{
@@ -30,7 +30,7 @@ get_sdf(
 
 \item{file_name}{A string. File name for downloaded SDF file. If NULL, "file" is used as the file name. Default is NULL.}
 
-\item{...}{Additional parameters to be passed to the \code{\link{request}}.}
+\item{options}{Additional parameters to be passed to the \code{\link{request}}.}
 }
 \value{
 NULL. The function saves the retrieved data as an SDF file in the current working directory and prints a
