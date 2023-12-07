@@ -1,3 +1,7 @@
+[![](https://www.r-pkg.org/badges/version/PubChemR)](https://cran.rstudio.com/web/packages/PubChemR/index.html)
+[![](https://www.r-pkg.org/badges/last-release/PubChemR?color=orange)](https://cran.rstudio.com/web/packages/PubChemR/index.html)
+[![](https://cranlogs.r-pkg.org/badges/PubChemR)](https://cran.rstudio.com/web/packages/PubChemR/index.html)
+
 # PubChemR: An Interface to the PubChem Collection of Chemical Data PubChemR <img src="man/figures/logo.png" align="right" height="32" />
 
 `PubChemR` is an R package that provides a user-friendly interface to the PubChem database, which is a rich resource for chemical information. This package allows users to programmatically access chemical data, including compound identifiers (CIDs), substance identifiers (SIDs), assay information (AIDs), and more.
