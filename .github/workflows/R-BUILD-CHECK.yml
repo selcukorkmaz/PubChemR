@@ -48,7 +48,9 @@ jobs:
             libgmp3-dev \
             libmpfr-dev \
             libgl-dev \
-            libglpk-dev
+            libglpk-dev \
+            libharfbuzz-dev \
+            libfribidi-dev
           sudo apt-get install -y qpdf \
             ghostscript-x \
             default-jre \
