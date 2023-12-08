@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        r-version: ['4.1.1']
+        r-version: ['4.3.0']
 
     steps:
       - uses: actions/checkout@v3
@@ -60,7 +60,7 @@ jobs:
           R CMD javareconf -e
     
       - name: Set up R ${{ matrix.r-version }}
-        uses: r-lib/actions/setup-r@v2
+        uses: r-lib/actions/setup-r@v2.6.5
         with:
           r-version: ${{ matrix.r-version }}
           
