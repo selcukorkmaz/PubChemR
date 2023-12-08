@@ -5,7 +5,9 @@ Version: 1.0.1
 Authors@R: c(person("Selcuk", "Korkmaz", email="selcukorkmaz@gmail.com", role=c("aut", "cre"),
                     comment = c(ORCID = "0000-0003-4632-6850")), 
              person("Dincer", "Goksuluk", email="dincer.goksuluk@gmail.com", role="aut",
-                    comment = c(ORCID = "0000-0002-2752-7668")))
+                    comment = c(ORCID = "0000-0002-2752-7668")),
+             person("Bilge Eren", "Korkmaz", email="berenyamasan@hotmail.com", role="aut",
+                    comment = c(ORCID = "0000-0002-6525-2503")))
 Description: Provides an R interface to the 'PubChem' database, which is a repository for 
     chemical information and a resource for finding chemical and biological data. The package 
     simplifies the process of retrieving and handling chemical compound information from 
