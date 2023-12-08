@@ -1,7 +1,7 @@
 [![](https://www.r-pkg.org/badges/version/PubChemR)](https://cran.rstudio.com/web/packages/PubChemR/index.html)
 [![](https://www.r-pkg.org/badges/last-release/PubChemR?color=orange)](https://cran.rstudio.com/web/packages/PubChemR/index.html)
 [![](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
-[![BUILD & CHECK](https://github.com/dncR/PubChemR-forked/actions/workflows/R-BUILD-CHECK.yml/badge.svg)](https://github.com/dncR/PubChemR-forked/actions/workflows/R-BUILD-CHECK.yml)
+[![BUILD & CHECK](https://github.com/selcukorkmaz/PubChemR/actions/workflows/R-BUILD-CHECK.yml/badge.svg)](https://github.com/selcukorkmaz/PubChemR/actions/workflows/R-BUILD-CHECK.yml)
 <!-- [![](https://cranlogs.r-pkg.org/badges/PubChemR)](https://cran.rstudio.com/web/packages/PubChemR/index.html) -->
 <!-- [![License: GPL (>= 2)](https://img.shields.io/badge/license-GPL%20(%3E=%202)-blue.svg)](https://cran.r-project.org/web/licenses/GPL-2) -->
 
