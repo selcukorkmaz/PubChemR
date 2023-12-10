@@ -8,13 +8,10 @@ Authors@R: c(person("Selcuk", "Korkmaz", email="selcukorkmaz@gmail.com", role=c(
                     comment = c(ORCID = "0000-0002-2752-7668")),
              person("Bilge Eren", "Korkmaz", email="berenyamasan@hotmail.com", role="aut",
                     comment = c(ORCID = "0000-0002-6525-2503")))
-Description: Provides an R interface to the 'PubChem' database, which is a repository for 
-    chemical information and a resource for finding chemical and biological data. The package 
-    simplifies the process of retrieving and handling chemical compound information from 
-    'PubChem'. Users can search for compounds, retrieve standard chemical information, 
-    download data in various formats, and query the database using the 'PubChem' 
-    Power User Gateway (PUG) 'RESTful' API <https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest>. 
-    The package aims to facilitate the integration of chemical data in bioinformatics and cheminformatics workflows.
+Description: Provides an interface to the 'PubChem' database via the PUG REST <https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest> and 
+            PUG View <https://pubchem.ncbi.nlm.nih.gov/docs/pug-view> services. This package allows users to programmatically 
+            access chemical and biological data from 'PubChem', including compounds, substances, assays, and various other data types. 
+            Functions are available to retrieve data in different formats, perform searches, and access detailed annotations.
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true

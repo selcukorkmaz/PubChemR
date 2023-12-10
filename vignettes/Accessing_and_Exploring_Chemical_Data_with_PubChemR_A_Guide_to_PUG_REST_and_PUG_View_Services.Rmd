@@ -43,7 +43,7 @@ pre[class] {
 
 ## 1. Introduction
 
-The `PubChemR` package introduces two pivotal functions, `get_pug_rest` and `get_pug_view`, designed to facilitate seamless access to the vast chemical data repository of PubChem. These functions leverage the capabilities of PubChem's Power User Gateway (PUG) REST and PUG View services, providing a straightforward and efficient means for users to programmatically interact with PubChem's extensive database. This vignette aims to elucidate the structure and usage of these services, offering a range of illustrative use cases to aid new users in understanding their operation and constructing effective requests.
+The `PubChemR` package introduces a pivotal function, `get_pug_rest`, designed to facilitate seamless access to the vast chemical data repository of PubChem. This function leverages the capabilities of PubChem's Power User Gateway (PUG) REST service, providing a straightforward and efficient means for users to programmatically interact with PubChem's extensive database. This vignette aims to elucidate the structure and usage of the PUG REST service, offering a range of illustrative use cases to aid new users in understanding its operation and constructing effective requests.
 
 ## 2. PUG REST: A Gateway to Chemical Data
 
@@ -60,27 +60,13 @@ PUG REST, standing for Power User Gateway RESTful interface, is a simplified acc
 * PUG REST is not intended for extremely high-volume requests (millions). Users are advised to limit their requests to no more than 5 per second to prevent server overload.
 * For large data sets, users are encouraged to contact PubChem for optimized query approaches.
 
-## 3. PUG View: Detailed Chemical Information and Summaries
-
-PUG View is another REST-style web service that provides detailed information content and summary reports on individual PubChem records, which are not directly available in the primary Substance, Compound, or BioAssay records. It primarily powers the PubChem database summary record web pages but can also be used independently for programmatic access.
-
-### 3.1. Key Features of PUG View:
-
-* **Comprehensive Reports:** Offers complete summary reports on individual PubChem records.
-* **Programmatic Access:** Can be used as a standalone service for automated data retrieval and processing.
-
-**Usage Policy:**
-
-* Similar to PUG REST, PUG View is not designed for handling very large volumes of requests. A limit of 5 requests per second is recommended.
-* Users with large-scale data needs should contact PubChem for assistance.
-
-## 4. Accessing PUG REST with `get_pug_rest`
+## 3. Accessing PUG REST with `get_pug_rest`
 
 **Overview**
 
 The `get_pug_rest` function in the `PubChemR` package provides a versatile interface to access a wide range of chemical data from the PubChem database. This section of the vignette focuses on various methods to retrieve chemical structure information and other related data using the PUG REST service. The function is designed to be flexible, accommodating different input methods, operations, and output formats.
 
-### 4.1. Input Methods
+### 3.1. Input Methods
 
 The input part of a PUG REST request specifies the records of interest. There are several ways to define this input, with the most common methods detailed below:
 
@@ -127,7 +113,7 @@ result
 **4. By Structure Search:** More sophisticated searches like substructure or similarity searches. These may require asynchronous operations due to the time taken to search the database.
 
 ```{r, class.output="scroll-100", eval=FALSE}
-get_pug_rest(identifier = "C1CCCCCC1", namespace = "smiles", domain = "compound",  output = "XML", searchtype = "substructure")
+result <- get_pug_rest(identifier = "C1CCCCCC1", namespace = "smiles", domain = "compound",  output = "XML", searchtype = "substructure")
 ```
 
 ```{r, class.output="scroll-100"}
@@ -155,13 +141,13 @@ result <- get_pug_rest(identifier = "US20050159403A1", namespace = "xref/PatentI
 result
 ```
 
-### 4.2. Available Data
+### 3.2. Available Data
 
 Once you've specified the records of interest in PUG REST, the next step is to define what information you want to retrieve about these records. PUG REST excels in providing access to specific data points about each record, such as individual properties or cross-references, without the need to download and sift through large datasets.
 
 **1. Full Records:** PUG REST allows the retrieval of entire records in various formats like ASN.1, XML, SDF, and JSON(P). For example, to retrieve the record for aspirin (CID 2244) in SDF format:
 
-```{r, class.output="scroll-100"}
+```{r, class.output="scroll-100", eval=FALSE}
 get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", output = "SDF")
 ```
 
@@ -227,7 +213,7 @@ result
 These examples illustrate the versatility of PUG REST in fetching specific data efficiently. It's an ideal tool for users who need quick access to particular pieces of information from the vast PubChem database without the overhead of processing bulk data.
 
 
-### 4.3. BioAssays
+### 3.3. BioAssays
 
 PubChem BioAssays are complex entities containing a wealth of data. PUG REST provides access to both complete assay records and specific components of BioAssay data, allowing users to efficiently retrieve the information they need.
 
@@ -288,7 +274,7 @@ result <- get_pug_rest(identifier = "EC50", namespace = "activity", domain = "as
 These examples demonstrate the flexibility of PUG REST in accessing specific BioAssay data. Users can efficiently retrieve detailed descriptions, comprehensive data sets, concise readouts, and target information, making it a valuable tool for researchers and scientists working with BioAssay data.
 
 
-### 4.4. Genes
+### 3.4. Genes
 
 PubChem provides various methods to access gene data, making it a valuable resource for genetic research. Here's how you can utilize PUG REST to access gene-related information:
 
@@ -368,7 +354,7 @@ result
 
 These methods offer a comprehensive way to access and analyze gene-related data in PubChem, catering to various research needs in genetics and molecular biology.
 
-### 4.5. Proteins
+### 3.5. Proteins
 
 PubChem provides a versatile platform for accessing detailed protein data, essential for researchers in biochemistry and molecular biology. Here's how you can utilize PUG REST for protein-related queries:
 
@@ -439,7 +425,7 @@ result
 These methods offer a comprehensive approach to accessing and analyzing protein-related data in PubChem, supporting a wide range of research applications in the fields of biochemistry, molecular biology, and pharmacology.
 
 
-### 4.6. Pathways
+### 3.6. Pathways
 
 PubChem's PUG REST service offers a detailed and comprehensive approach to accessing pathway information, crucial for researchers in fields like bioinformatics, pharmacology, and molecular biology. Here's how to utilize PUG REST for pathway-related queries:
 
@@ -479,7 +465,7 @@ get_pug_rest(identifier = "Reactome:R-HSA-70171", namespace = "pwacc", domain = 
 
 These methods offer a streamlined and efficient way to access and analyze pathway-related data in PubChem, supporting a wide range of research applications in bioinformatics, molecular biology, and related fields.
 
-### 4.7. Taxonomies
+### 3.7. Taxonomies
 
 PubChem's PUG REST service provides a comprehensive approach to accessing taxonomy information, essential for researchers in fields like biology, pharmacology, and environmental science. Here's how to utilize PUG REST for taxonomy-related queries:
 
@@ -540,7 +526,7 @@ result
 These methods offer a streamlined and efficient way to access and analyze taxonomy-related data in PubChem, supporting a wide range of research applications in biology, pharmacology, environmental science, and related fields.
 
 
-### 4.8. Cell Lines
+### 3.8. Cell Lines
 
 PubChem's PUG REST service offers a valuable resource for accessing detailed information about various cell lines, crucial for research in cellular biology, pharmacology, and related fields. Here's how to effectively use PUG REST for cell line-related queries:
 
