@@ -9,7 +9,7 @@ output:
       collapsed: true
 
 vignette: >
-  %\VignetteIndexEntry{Accessing and Exploring Chemical Data with PubChemR: A Guide to PUG REST and PUG View Services}
+  %\VignetteIndexEntry{Accessing and Exploring Chemical Data with PubChemR: A Guide to PUG REST Service}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

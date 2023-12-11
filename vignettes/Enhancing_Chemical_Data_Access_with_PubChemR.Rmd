@@ -47,11 +47,11 @@ The PubChemR package features the essential function get_pug_view, specifically 
 
 PUG View is expertly designed to provide complete summary reports on individual PubChem records, offering a different approach compared to the PUG REST service, which delivers smaller bits of information about one or more PubChem records. The get_pug_view function sends requests to the PubChem PUG View API, allowing users to retrieve various types of data for a given identifier, including annotations and QR codes. It supports multiple output formats such as JSON and SVG, making it a versatile tool for users who need comprehensive information from PubChem's database. This vignette aims to elucidate the structure and usage of the PUG View service, offering illustrative use cases to aid new users in understanding its operation and constructing effective requests.
 
-## 3. Accessing PUG View with `get_pug_view`
+## 2. Accessing PUG View with `get_pug_view`
 
 PUG View offers a versatile approach to access structured information from PubChem's extensive database. Here's how to leverage the get_pug_view function in R for accessing various data formats and specific record summaries:
 
-### 3.1. Data Formats:
+### 2.1. Data Formats:
 
 **Multiple Formats:** PUG View supports JSON, JSONP, XML, ASNT, and ASNB formats. For example, to retrieve compound data in JSON format:
 
@@ -65,7 +65,7 @@ result
 
 **XML Schema:** An XML schema is available for users requiring a structured format. This can be accessed via https://pubchem.ncbi.nlm.nih.gov/pug_view/pug_view.xsd
 
-### 3.2. Record Summaries and Full Records:
+### 2.2. Record Summaries and Full Records:
 
 **Index vs Full Data:** Choose between an index (a summary or table of contents) and full data retrieval. For example, to get a compound index:
 
@@ -87,7 +87,7 @@ result <- get_pug_view(annotation = "data", identifier = "2244", domain = "compo
 result
 ```
 
-### 3.3. Accessing Different Record Types:
+### 2.3. Accessing Different Record Types:
 
 **Compounds, Substances, and BioAssays:** Access these records using their respective identifiers (CID, SID, AID). For example, to access a BioAssay record:
 
@@ -109,7 +109,7 @@ result <- get_pug_view(annotation = "data", identifier = "1", domain = "gene", o
 result
 ```
 
-### 3.4. Annotations:
+### 2.4. Annotations:
 
 **Access by Heading:** Retrieve specific types of information across PubChem's databases. For example, to get all experimental viscosity measurements:
 
@@ -152,7 +152,7 @@ result <- get_pug_view(annotation = "annotations", identifier = "CAS",domain = "
 result
 ```
 
-### 3.5. Source Categories:
+### 2.5. Source Categories:
 
 **Depositors and SIDs:** List all depositors for a given compound, categorized by source type:
 
@@ -164,7 +164,7 @@ result <- get_pug_view(annotation = "categories", identifier = "1234", domain = 
 result
 ```
 
-### 3.6. Neighbors:
+### 2.6. Neighbors:
 
 **Similar Compounds:** Get a list of compounds with similar structures and associated information:
 
@@ -176,7 +176,7 @@ result <- get_pug_view(annotation = "neighbors", identifier = "1234", domain = "
 result
 ```
 
-### 3.7. Literature:
+### 2.7. Literature:
 
 **PubMed URLs:** Retrieve literature associated with a compound, organized by subheading:
 
@@ -188,31 +188,23 @@ result <- get_pug_view(annotation = "literature", identifier = "1234", domain = 
 result
 ```
 
-### 3.8. Biologics:
+### 2.8. Biologics:
 
 **Biologic Images:** Display biologic images associated with compounds:
 
-```{r, class.output="scroll-100"}
-result <- get_pug_view(annotation = "image", identifier = "243577", domain = "biologic", output = "SVG")
+```{r, class.output="scroll-100", eval=FALSE}
+get_pug_view(annotation = "image", identifier = "243577", domain = "biologic", output = "SVG")
 ```
 
-```{r, class.output="scroll-100"}
-result
-```
-
-### 3.9. QR Codes:
+### 2.9. QR Codes:
 
 **Safety and Hazard Labelling:** Generate QR codes linking to LCSS pages for compounds:
 
-```{r, class.output="scroll-100"}
-result <- get_pug_view(annotation = "qr", identifier = "1234", domain = "compound", output = "SVG", qrSize = "short")
+```{r, class.output="scroll-100", eval=FALSE}
+get_pug_view(annotation = "qr", identifier = "1234", domain = "compound", output = "SVG", qrSize = "short")
 ```
 
-```{r, class.output="scroll-100"}
-result
-```
-
-### 3.10. Linkout:
+### 2.10. Linkout:
 
 **NCBI LinkOut Records:** List all LinkOut records for a substance, compound, or assay:
 
@@ -224,7 +216,7 @@ result <- get_pug_view(annotation = "linkout", identifier = "1234", domain = "co
 result
 ```
 
-### 3.11. PDB/MMDB Structures:
+### 2.11. PDB/MMDB Structures:
 
 **3D Protein Structures:** List 3D protein structures associated with a compound:
 
@@ -236,15 +228,12 @@ result <- get_pug_view(annotation = "structure", identifier = "2244", domain = "
 result
 ```
 
-### 3.12. Annotation Attachments:
+### 2.12. Annotation Attachments:
 
 **Specialized Retrieval:** Access attachments like spectral images associated with records:
 
-```{r, class.output="scroll-100"}
-result <- get_pug_view(annotation = "data", identifier = "236678_1", domain = "key")
+```{r, class.output="scroll-100", eval=FALSE}
+get_pug_view(annotation = "data", identifier = "236678_1", domain = "key")
 ```
 
-```{r, class.output="scroll-100"}
-result
-```
 
