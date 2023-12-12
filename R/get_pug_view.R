@@ -133,6 +133,3 @@ get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compoun
   return(content)
 }
 
-
-
-

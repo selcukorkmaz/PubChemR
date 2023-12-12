@@ -1,0 +1,635 @@
+---
+title: "Working with PubChemR to Access Chemical Data"
+author: "Selcuk Korkmaz, Dincer Goksuluk, Bilge Eren Korkmaz"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: true
+
+vignette: >
+  %\VignetteIndexEntry{Working with PubChemR to Access Chemical Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{css, echo=FALSE}
+pre {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+pre[class] {
+  max-height: 300px;
+}
+```
+
+```{css, echo=FALSE}
+.scroll-100 {
+  max-height: 100px;
+  overflow-y: auto;
+  background-color: inherit;
+}
+```
+
+## 1. Introduction
+The `PubChemR` package is a powerful and versatile tool designed for R users who need to interact with the PubChem database, a free resource from the National Center for Biotechnology Information (NCBI). PubChem is a key repository of chemical and biological data, including information on chemical structures, identifiers, chemical and physical properties, biological activities, patents, health, safety, toxicity data, and much more.
+
+This package simplifies the process of accessing and manipulating this vast array of data directly from R, making it an invaluable resource for chemists, biologists, bioinformaticians, and researchers in related fields. Whether you're conducting academic research, working in the pharmaceutical industry, or exploring data for educational purposes, `PubChemR` provides a user-friendly interface to query PubChem's extensive database.
+
+In this vignette, we will explore the various functionalities offered by the `PubChemR` package. Each function is designed with ease of use in mind, allowing users to efficiently retrieve specific types of data from PubChem. We will cover how to install and load the package, provide detailed descriptions of each function, and demonstrate their usage with practical examples. By the end of this guide, you will be equipped with the knowledge to integrate `PubChemR` into your data analysis workflows, enhancing your research capabilities with the rich data available in PubChem.
+
+## 2. Installation
+
+The `PubChemR` package is designed to be easily accessible and can be installed either from the Comprehensive R Archive Network (CRAN) or directly from its GitHub repository, offering users the flexibility to choose between the stable CRAN version or the latest development version with potentially newer features and fixes.
+
+### Installing from CRAN
+For most users, installing `PubChemR` from CRAN is the recommended method as it ensures a stable and tested version of the package. You can install it using the standard R package installation command:
+
+```{r, eval=FALSE}
+install.packages("PubChemR")
+```
+
+This command will download and install the `PubChemR` package along with any dependencies it requires. Once installed, you can load the package in your R session as follows:
+
+```{r}
+library(PubChemR)
+```
+
+### Installing the Development Version from GitHub
+
+For users who are interested in the latest features and updates that might not yet be available on CRAN, the development version of `PubChemR` can be installed from GitHub. This version is likely to include recent enhancements and bug fixes but may also be less stable than the CRAN release.
+
+To install the development version, you will first need to install the `devtools` package, which provides functions to install packages directly from GitHub and other sources. You can install devtools from CRAN using:
+
+```{r, eval=FALSE}
+install.packages("devtools")
+```
+
+Once devtools is installed, you can install the development version of PubChemR using:
+
+```{r, eval=FALSE}
+devtools::install_github("selcukorkmaz/PubChemR")
+```
+
+This command downloads and installs the package from the specified GitHub repository. After installation, load the package as usual:
+
+```{r}
+library(PubChemR)
+```
+
+## 3. Overview of Functions
+
+The `PubChemR` package offers a suite of functions designed to interact with the PubChem database, allowing users to retrieve and manipulate chemical data efficiently. Below is an overview of the main functions provided by the package:
+
+### 3.1.1. `get_json`
+
+**Overview**
+
+The `get_json` function in the `PubChemR` package is a versatile tool designed to retrieve JSON-formatted data from the PubChem database. This function is particularly useful for accessing detailed information about chemical compounds, substances, and assays, among other data types available in PubChem. It serves as a foundational function that interacts directly with the PubChem API, fetching data based on specified parameters.
+
+**Functionality**
+
+The `get_json` function constructs a query URL based on the provided parameters and sends a request to the PubChem API. It then processes the response, converting the JSON content into a format that can be easily utilized within R. This function is essential for other higher-level functions in the `PubChemR` package that rely on JSON data from PubChem.
+
+**Parameters**
+
+* `identifier`: The specific identifier for which data is being requested. This could be a compound ID (CID), substance ID (SID), assay ID (AID), or other identifier types like names, SMILES strings, etc.
+* `namespace`: Specifies the type of identifier being used. Common namespaces include 'cid' for compound IDs, 'sid' for substance IDs, and 'name' for chemical names.
+* `domain`: The domain of the query, such as 'compound', 'substance', or 'assay'.
+* `operation`: The specific operation or type of data to be retrieved, like 'record', 'synonyms', 'sids', etc.
+* `searchtype`: The type of search to be performed, if applicable.
+* `options`: Additional arguments that might be required for specific queries.
+
+**Usage Example**
+
+The following example demonstrates how to use the `get_json` function to retrieve information about Aspirin by its common name:
+
+```{r, class.output="scroll-100"}
+# Retrieve JSON data for Aspirin
+result <- get_json(identifier = "aspirin", namespace = "name")
+
+
+```
+
+The result is a list containing the parsed JSON response from PubChem. You can explore this list to find specific information about Aspirin
+
+```{r, class.output="scroll-100"}
+result
+```
+
+In this example, `identifier` is set to **aspirin**, and `namespace` is **name**, indicating that the query is based on the common name of the compound. The function will return a list containing various details about Aspirin, formatted as JSON and parsed into an R-friendly structure.
+
+**Practical Applications**
+
+The `get_json` function is particularly useful for:
+
+* Fetching detailed chemical information for research and analysis.
+* Integrating chemical data into data analysis workflows in R.
+* Serving as a building block for more complex queries and data processing tasks within the `PubChemR` package.
+
+**Advanced Usage**
+
+For more advanced use cases, users can specify additional parameters like `domain`, `operation`, and `searchtype` to refine their queries. This allows for fetching specific types of data or performing more targeted searches within the PubChem database.
+
+For example, to retrieve synonyms of Aspirin, you can modify the function call as follows:
+
+```{r, class.output="scroll-100"}
+# Retrieve synonyms for Aspirin
+synonyms_result <- get_json(identifier = "aspirin", namespace = "name", operation = "synonyms")
+synonyms_result
+```
+
+This query will return a list of synonyms associated with Aspirin, demonstrating the flexibility and power of the `get_json` function in accessing a wide range of data from PubChem.
+
+### 3.1.2. `get_aids` 
+
+**Overview**
+
+The `get_aids` function in the `PubChemR` package is designed to retrieve Assay IDs (AIDs) from the PubChem database. It is useful for accessing detailed assay data related to specific compounds or substances, which is crucial in fields like pharmacology, biochemistry, and molecular biology.
+
+**Functionality**
+
+This function queries the PubChem database to obtain AIDs based on the provided identifier. It can return the results either as a tibble (data frame) or as a list, depending on the user's preference.
+
+**Parameters**
+
+* `identifier`: A vector of identifiers, which can be integers (e.g., cid, sid, aid) or strings (e.g., source, inchikey, formula). Single identifier strings like name, smiles, xref are also supported in some cases.
+* `namespace`: Specifies the namespace for the query, determining the type of identifier provided.
+* `domain`: Specifies the domain of the query, with possible values including 'substance', 'compound','assay', etc.
+* `searchtype`: Specifies the type of search to be performed, with options like 'substructure', 'superstructure', 'similarity', 'identity', etc.
+* `as_data_frame`: A logical value indicating whether to return the results as a tibble. Default is TRUE.
+options: Additional arguments passed to the get_json function.
+
+**Usage Example**
+
+```{r, class.output="scroll-100"}
+# Retrieve AIDs by CID
+aids_result <- get_aids(
+  identifier = "2244",
+  namespace = "cid"
+)
+```
+
+```{r, class.output="scroll-100"}
+aids_result
+```
+
+```{r, class.output="scroll-100"}
+
+# Retrieve AIDs by name
+aids_result_name <- get_aids(
+  identifier = "aspirin",
+  namespace = "name"
+)
+```
+
+```{r, class.output="scroll-100"}
+aids_result_name
+```
+
+### 3.1.3. `get_cids` 
+
+**Overview**
+
+`get_cids` is a function in the `PubChemR` package designed to retrieve Compound IDs (CIDs) from the PubChem database. This function is particularly useful for users who need to obtain the unique identifiers assigned to chemical substances within PubChem.
+
+**Functionality**
+
+The function queries the PubChem database using various identifiers such as names, formulas, or other chemical identifiers. It then extracts the corresponding CIDs and returns them in a structured format.
+
+**Parameters**
+
+* `identifier`: A vector of identifiers for which CIDs are to be retrieved. These can be integers (e.g., cid, sid, aid) or strings (e.g., name, smiles, inchikey).
+* `namespace`: Specifies the type of identifier provided. It can be 'cid', 'name', 'smiles', 'inchi', etc.
+domain: The domain of the query, typically 'compound'.
+* `searchtype`: The type of search to be performed, such as 'substructure' or 'similarity'.
+* `options`: Additional arguments passed to the internal get_json function.
+
+**Usage Example**
+
+```{r, class.output="scroll-100"}
+# Retrieve CIDs for a given compound name
+cids <- get_cids(
+  identifier = "aspirin",
+  namespace = "name"
+)
+```
+
+```{r, class.output="scroll-100"}
+# Display the retrieved CIDs
+cids
+```
+
+**Practical Applications**
+
+`get_cids` can be used in various scenarios, such as:
+
+* Identifying the CIDs of compounds for further research or database querying.
+* Integrating with other `PubChemR` functions to retrieve detailed information about specific compounds.
+* Automating the process of gathering compound identifiers for large datasets.
+
+**Advanced Usage**
+
+For more advanced applications, `get_cids` can be combined with other functions to create comprehensive workflows. For example, after retrieving CIDs, one might use these identifiers to fetch detailed compound properties or related biological assay data.
+
+```{r, class.output="scroll-100"}
+# Retrieve CIDs for multiple compounds
+compounds <- c("Aspirin", "Caffeine")
+cids_list <- lapply(compounds, function(compound) {
+  get_cids(identifier = compound, namespace = "name")
+})
+
+# Use the retrieved CIDs to fetch additional data
+for (cids in cids_list) {
+  for (cid in cids$CID) {
+    properties <- get_properties("MolecularWeight", cid)
+    print(properties)
+  }
+}
+```
+
+In this advanced example, get_cids is used to fetch CIDs for multiple compounds, and then these CIDs are used to retrieve molecular weights for each compound. This approach is useful in studies where comparative analysis of different compounds is required.
+
+### 3.1.4. `get_sids` 
+
+**Overview**
+
+`get_sids` is a function in the `PubChemR` package that retrieves Substance IDs (SIDs) from the PubChem database. This function is essential for users who need to identify unique identifiers assigned to specific chemical substances or mixtures in PubChem.
+
+**Functionality**
+
+The function queries PubChem using various identifiers and extracts the corresponding SIDs. It is capable of handling multiple identifiers and returns a structured tibble (data frame) containing the SIDs along with the original identifiers.
+
+**Parameters**
+
+* `identifier`: A vector specifying the identifiers for which SIDs are to be retrieved. These can be numeric or character vectors.
+* `namespace`: Specifies the type of identifier provided, with 'cid' as the default.
+* `domain`: The domain of the query, typically 'compound'.
+* `searchtype`: Specifies the type of search to be performed, if applicable.
+* `options`: Additional arguments passed to the internal get_json function.
+
+**Usage Example**
+
+```{r, class.output="scroll-100"}
+# Retrieve SIDs for a given compound name
+sids <- get_sids(
+  identifier = "aspirin",
+  namespace = "name"
+)
+```
+
+```{r, class.output="scroll-100"}
+# Display the retrieved SIDs
+sids
+```
+
+**Practical Applications**
+
+`get_sids` can be used in various scenarios, such as:
+
+* Identifying the SIDs of substances for further research or database querying.
+* Integrating with other PubChemR functions to retrieve detailed information about specific substances.
+* Automating the process of gathering substance identifiers for large datasets.
+
+### 3.1.5. `get_assays` 
+
+**Overview**
+
+`get_assays` is a function in the `PubChemR` package designed to retrieve biological assay data from the PubChem database. This function is particularly useful for researchers and scientists who need detailed information about various biological assays.
+
+**Functionality**
+
+The function queries the PubChem database using specified identifiers and returns a comprehensive list of assay data. It can handle different types of identifiers and is capable of fetching detailed assay information, including experimental data, results, and methodologies.
+
+**Parameters**
+
+* `identifier`: A vector specifying the assay identifiers for which data are to be retrieved. These can be positive integers (e.g., aid) or identifier strings (e.g., source, inchikey).
+* `namespace`: Specifies the type of identifier provided, typically 'aid'.
+* `operation`: The operation to be performed on the input records, defaulting to NULL.
+* `searchtype`: The type of search to be performed, defaulting to NULL.
+* `options`: Additional parameters for the query, currently not affecting the results.
+
+**Usage Example**
+
+```{r, class.output="scroll-100"}
+# Retrieve assay data for a specific AID
+assay_data <- get_assays(
+  identifier = 1234,
+  namespace = "aid"
+)
+```
+
+```{r, class.output="scroll-100"}
+# Display the retrieved assay data
+print(assay_data)
+```
+
+**Practical Applications**
+
+get_assays can be utilized in various research contexts, such as:
+
+* Identifying specific assay data for further analysis or reporting.
+* Integrating assay information into larger datasets for comprehensive studies.
+* Automating the retrieval of assay data for high-throughput screening results.
+
+### 3.1.6. `get_compounds` 
+
+**Overview**
+
+`get_compounds` is a function in the `PubChemR` package that facilitates the retrieval of detailed compound data from the PubChem database. This function is particularly useful for chemists, biologists, and researchers who require access to comprehensive chemical compound information.
+
+**Functionality**
+
+The function queries the PubChem database using specified identifiers and returns a list containing detailed information about each compound. This information can include chemical structures, properties, biological activities, and more, depending on the available data in PubChem.
+
+**Parameters**
+
+* `identifier`: A vector specifying the compound identifiers. These can be positive integers (e.g., cid) or identifier strings (e.g., name, smiles).
+* `namespace`: Specifies the type of identifier provided. Common values include 'cid', 'name', 'smiles', etc.
+* `operation`: The operation to be performed on the input records, defaulting to NULL.
+* `searchtype`: The type of search to be performed, defaulting to NULL.
+* `options`: Additional parameters for the query.
+
+**Usage Example**
+
+```{r, class.output="scroll-100"}
+# Retrieve compound data for Aspirin
+compound_data <- get_compounds(
+  identifier = "aspirin",
+  namespace = "name"
+)
+```
+
+```{r, class.output="scroll-100"}
+# Display the retrieved compound data
+compound_data
+```
+
+**Practical Applications**
+
+`get_compounds` can be used in various scenarios, such as:
+
+* Fetching detailed information about a specific compound for research or study.
+* Gathering data for a set of compounds for comparative analysis.
+* Integrating compound information into databases or software tools for further processing.
+
+
+### 3.1.7. `get_substances` 
+
+**Overview**
+
+`get_substances` is a function in the `PubChemR` package designed to retrieve data about substances from the PubChem database. This function is particularly useful for researchers and professionals who need detailed information about specific substances, including their chemical composition, properties, and associated data.
+
+**Functionality**
+
+The function queries the PubChem database using specified identifiers and returns a list containing detailed information about each substance. The information can include chemical structures, properties, biological activities, and more, depending on the available data in PubChem.
+
+**Parameters**
+
+* `identifier`: A character or numeric vector specifying the identifiers for the request.
+* `namespace`: Specifies the namespace for the request (default is 'sid').
+* `operation`: Specifies the operation to be performed on the input records (default: NULL).
+* `searchtype`: Specifies the type of search to be performed (default: NULL).
+* `options`: Additional parameters for the query.
+
+**Usage Example**
+
+```{r, class.output="scroll-100"}
+# Retrieve substance data for Aspirin
+substance_data <- get_substances(
+  identifier = "aspirin",
+  namespace = "name"
+)
+```
+
+```{r, class.output="scroll-100"}
+# Display the retrieved substance data
+substance_data
+```
+
+**Practical Applications**
+
+`get_substances` can be used in various scenarios, such as:
+
+* Gathering detailed information about a specific substance for research or study.
+* Collecting data for a set of substances for comparative analysis.
+* Integrating substance information into databases or software tools for further processing.
+
+### 3.1.8. `get_properties` 
+
+**Overview**
+
+`get_properties` is a function in the `PubChemR` package that facilitates the retrieval of specific chemical properties of compounds from the PubChem database. This function is essential for researchers and chemists who require detailed chemical information about various compounds.
+
+**Functionality**
+
+The function queries the PubChem database using specified identifiers and returns a list or dataframe containing the requested properties of each compound. These properties can include molecular weight, chemical formula, isomeric SMILES, and more, depending on the available data in PubChem and the properties requested.
+
+**Parameters**
+
+* `properties`: A character vector specifying the properties to be retrieved.
+* `identifier`: A vector of identifiers for the compounds.
+* `namespace`: Specifies the namespace for the query (default is 'cid').
+* `searchtype`: Specifies the type of search to be performed (default: NULL).
+* `as_dataframe`: If TRUE, the results are returned as a dataframe; otherwise, a list is returned.
+* `options`: Additional arguments for the query.
+
+**Usage Example**
+
+```{r, class.output="scroll-100"}
+# Retrieve molecular weight and formula for Aspirin
+properties_data <- get_properties(
+  properties = c("MolecularWeight", "MolecularFormula"),
+  identifier = "aspirin",
+  namespace = "name",
+  as_dataframe = TRUE
+)
+```
+
+```{r, class.output="scroll-100"}
+# Display the retrieved properties
+properties_data
+```
+
+**Practical Applications**
+
+`get_properties` can be used in various scenarios, such as:
+
+* Obtaining specific chemical properties for a compound for research purposes.
+* Comparing properties of multiple compounds in a study.
+* Integrating chemical property data into databases or software tools for further analysis.
+
+### 3.1.9. `get_sdf` 
+
+**Overview**
+
+`get_sdf` is a function in the `PubChemR` package designed to retrieve data in Structure Data File (SDF) format from the PubChem database. This function is particularly useful for chemists and researchers who need to work with molecular structure data.
+
+**Functionality**
+
+The function requests SDF data for a specified compound or substance from PubChem. Upon successful retrieval, it saves the data as an SDF file in the specified directory or in a temporary folder if no path is provided.
+
+**Parameters**
+
+* `identifier`: The identifier for the compound or substance.
+* `namespace`: Specifies the namespace for the query (default is 'cid').
+* `domain`: Specifies the domain for the request (default is 'compound').
+* `operation`: An optional operation for the request.
+* `searchtype`: An optional search type.
+* `path`: The path where the SDF file will be saved. If NULL, saves in a temporary folder.
+* `file_name`: The name for the downloaded SDF file. Defaults to a combination of the identifier and a timestamp.
+* `options`: Additional parameters for the request.
+
+**Usage Example**
+
+```{r, class.output="scroll-100"}
+# Retrieve and save SDF data for Aspirin
+get_sdf(
+  identifier = "aspirin",
+  namespace = "name",
+  path = tempdir(),
+  file_name = "aspirin_structure"
+)
+```
+
+**Practical Applications**
+
+`get_sdf` can be used in various scenarios, such as:
+
+* Downloading molecular structure data for further analysis or visualization.
+* Creating a local repository of SDF files for research or educational purposes.
+* Integrating SDF data into chemical databases or informatics tools.
+
+### 3.1.10. `download` 
+
+**Overview**
+
+`download` is a function in the `PubChemR` package that facilitates downloading content from the PubChem database in various formats. It allows users to specify the type of content, the identifier for the query, and the destination for saving the downloaded file.
+
+**Functionality**
+
+This function interacts with the PubChem database to retrieve data for a given identifier in a specified format. It supports various output formats like JSON, SDF, etc., and saves the content to a user-defined location on the local file system.
+
+**Parameters**
+
+* `filename`: The name of the file to be saved. Defaults to the identifier if not specified.
+* `outformat`: The desired output format (e.g., "sdf", "json").
+* `path`: The path where the content should be saved.
+* `identifier`: The identifier for the query (e.g., cid, sid, aid, name).
+* `namespace`: The namespace for the query (e.g., 'cid', 'name').
+* `domain`: The domain of the query (e.g., 'compound', 'substance').
+* `operation`: The operation to be performed (optional).
+* `searchtype`: The type of search to be performed (optional).
+* `overwrite`: Whether to overwrite the file if it already exists (default is FALSE).
+* `options`: Additional arguments for the request.
+
+**Usage Example**
+
+```{r, class.output="scroll-100"}
+# Download JSON file for the compound "aspirin" into "Aspirin.JSON"
+# A folder named "Compound" will be created under the current directory
+download(
+  filename = "Aspirin",
+  outformat = "JSON",
+  path = tempdir(),
+  identifier = "aspirin",
+  namespace = "name",
+  domain = "compound",
+  overwrite = TRUE
+)
+```
+
+**Practical Applications**
+
+The download function is useful for:
+
+* Automating the retrieval of chemical or biological data from PubChem for research or analysis.
+* Creating local repositories of data in specific formats for offline access or further processing.
+* Integrating PubChem data into data pipelines or workflows in bioinformatics and cheminformatics.
+
+### 3.1.11. `get_synonyms` 
+
+**Overview**
+
+`get_synonyms` is a function in the `PubChemR` package designed to retrieve synonyms for chemical compounds or substances from the PubChem database. It is particularly useful for obtaining various names and identifiers associated with a specific chemical entity.
+
+**Functionality**
+
+This function queries the PubChem database for synonyms of a given identifier (such as a Compound ID or a chemical name) and returns a comprehensive list of alternative names and identifiers. This can include systematic names, trade names, registry numbers, and other forms of identification used in scientific literature and industry.
+
+**Parameters**
+
+* `identifier`: The identifier for which synonyms are to be retrieved. This can be a numeric value (like a Compound ID) or a character string (like a chemical name).
+* `namespace`: Specifies the namespace for the query (e.g., 'cid' for Compound ID). Default is 'cid'.
+* `domain`: Specifies the domain for the request, typically 'compound'. Default is 'compound'.
+* `searchtype`: Specifies the type of search to be performed. Default is NULL.
+* `options`: Additional arguments for customization of the request.
+
+**Usage Example**
+
+```{r, class.output="scroll-100"}
+
+# Retrieve synonyms for Aspirin
+synonyms <- get_synonyms(
+  identifier = "aspirin",
+  namespace = "name"
+)
+```
+
+```{r, class.output="scroll-100"}
+# Print the retrieved synonyms
+synonyms
+```
+
+**Practical Applications**
+
+The get_synonyms function can be used in various scenarios, such as:
+
+Identifying alternative names for chemicals in research papers or databases.
+Cross-referencing substances across different scientific databases or publications.
+Building comprehensive chemical databases that include all known synonyms for each compound.
+
+### 3.1.12. `get_all_sources` 
+
+**Overview**
+
+`get_all_sources` is a function in the `PubChemR` package that facilitates the retrieval of a list of all current depositors for substances or assays from the PubChem database. This function is particularly useful for users who need to identify and analyze the sources of chemical data.
+
+**Functionality**
+
+The function queries the PubChem database to obtain a comprehensive list of sources (such as laboratories, companies, or research institutions) that have contributed substance or assay data. This information can be crucial for researchers and professionals who are tracking the origin of specific chemical data or assessing the diversity of data sources in PubChem.
+
+**Parameters**
+
+* `domain`: Specifies the domain for which sources are to be retrieved. The domain can be either 'substance' or 'assay'. The default value is 'substance'.
+
+**Usage Example**
+
+```{r, class.output="scroll-100"}
+
+# Retrieve all sources for substances
+substance_sources <- get_all_sources(
+  domain = 'substance'
+)
+```
+
+```{r, class.output="scroll-100"}
+# Print the list of substance sources
+substance_sources
+```
+
+**Practical Applications**
+The get_all_sources function can be applied in various contexts, such as:
+
+* Identifying the range of contributors to the PubChem database, which can be useful for meta-analyses or data provenance studies.
+* Analyzing the diversity of data sources in terms of geographical distribution, type of institution (academic, industrial, governmental), and scope of contribution.
+* Integrating source information into chemical databases or informatics tools for enhanced data transparency and traceability.
