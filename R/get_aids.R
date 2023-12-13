@@ -38,7 +38,7 @@ get_aids <- function(identifier, namespace = 'cid', domain = 'compound', searcht
 
       # Check if the response contains the expected information
       if (is.null(response_json)) {
-        aidsList[[i]] <- list(Compound = identifier[i], aid = "No aid")
+        aidsList[[i]] <- list(Identifier = identifier[i], aid = "No aid")
 
       } else if (!is.null(response_json$IdentifierList) && !is.null(response_json$IdentifierList$aid)) {
         aidsList[[i]] <- response_json$IdentifierList$aid

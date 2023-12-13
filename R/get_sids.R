@@ -36,7 +36,7 @@ get_sids <- function(identifier, namespace = 'cid', domain = 'compound', searcht
 
       # Check if the response contains the expected information
       if (is.null(response_json)) {
-        sidsList[[i]] <- list(Compound = identifier[i], SID = "No SID")
+        sidsList[[i]] <- list(Identifier = identifier[i], SID = "No SID")
 
       } else if (!is.null(response_json$IdentifierList) && !is.null(response_json$IdentifierList$SID)) {
         sidsList[[i]] <- response_json$IdentifierList$SID

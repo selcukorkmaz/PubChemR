@@ -40,13 +40,13 @@ get_cids <- function(identifier, namespace = 'name', domain = 'compound', search
 
     # Check if the response contains the expected information
     if (is.null(response_json)) {
-      cidsList[[i]] <- list(Compound = identifier[i], CID = "No CID")
+      cidsList[[i]] <- list(Identifier = identifier[i], CID = "No CID")
 
     } else if (!is.null(response_json$IdentifierList) && !is.null(response_json$IdentifierList$CID)) {
-      cidsList[[i]] <- list(Compound = identifier[i], CID = response_json$IdentifierList$CID)
+      cidsList[[i]] <- list(Identifier = identifier[i], CID = response_json$IdentifierList$CID)
 
     } else if (!is.null(response_json$InformationList) && !is.null(response_json$InformationList$Information)) {
-      cidsList[[i]] <- list(Compound = identifier[i], Info = response_json$InformationList$Information)
+      cidsList[[i]] <- list(Identifier = identifier[i], Info = response_json$InformationList$Information)
 
     } else {
       return(list())  # Return an empty list if neither CIDs nor Information is found
