@@ -5,7 +5,7 @@
 <!-- [![](https://cranlogs.r-pkg.org/badges/PubChemR)](https://cran.r-project.org/package=PubChemR) -->
 <!-- [![License: GPL (>= 2)](https://img.shields.io/badge/license-GPL%20(%3E=%202)-blue.svg)](https://cran.r-project.org/web/licenses/GPL-2) -->
 
-# PubChemR: An Interface to the PubChem Collection of Chemical Data PubChemR <img src="man/figures/logo.png" align="right" height="32" />
+# PubChemR: An Interface to the PubChem Collection of Chemical Data PubChemR <img src="docs/figures/logo.png" align="right" height="32" />
 
 `PubChemR` is an R package that provides an interface to the 'PubChem' database via the [PUG REST](https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest) and 
 [PUG View](https://pubchem.ncbi.nlm.nih.gov/docs/pug-view) services. This package allows users to programmatically 
