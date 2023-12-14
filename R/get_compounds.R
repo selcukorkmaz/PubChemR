@@ -39,9 +39,12 @@ get_compounds <- function(identifier, namespace = 'cid', operation = NULL, searc
       }
     }}
 
-  names(compounds) <- paste0("'", identifier, "'")
-  results <- compounds
+    if(length(compounds) > 1){
 
-  return(results)
+      names(compounds) <- paste0("'", identifier, "'")
+      results <- compounds
+
+      return(results)
+  }
 }
 
