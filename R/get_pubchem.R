@@ -60,7 +60,7 @@ get_pubchem <- function(identifier, namespace = 'cid', domain = 'compound', oper
 
     # Check if the request was successful
     if (http_status(response)$category != "Success") {
-      stop(paste("HTTP error", http_status(response)$message))
+      stop(fromJSON(content(response, "text", encoding = "UTF-8"))$Fault$Details)
     } else {
       content <- rawToChar(response$content)
     }

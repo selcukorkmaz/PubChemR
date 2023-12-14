@@ -41,10 +41,12 @@ get_substances <- function(identifier, namespace = 'sid', operation = NULL, sear
     }
   }
 
+  if(length(substances) > 1){
   names(substances) <- paste0("Substance_", identifier)
   results <- substances
 
   return(results)
+  }
 }
 
 

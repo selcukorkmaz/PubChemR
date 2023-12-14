@@ -27,11 +27,11 @@ get_json <- function(identifier, namespace = 'cid', domain = 'compound', operati
     return(response)
   },
   error = function(e) {
-    message("An error occurred: ", e$message)
+    message(e$message)
     return(NULL)
   },
   warning = function(w) {
-    message("A warning occurred: ", w$message)
+    message(w$message)
     return(NULL)
   })
 
