@@ -13,7 +13,7 @@ get_pug_view(
   headingType = NULL,
   page = NULL,
   qrSize = "short",
-  savePNG = FALSE
+  save = FALSE
 )
 }
 \arguments{
@@ -23,7 +23,7 @@ get_pug_view(
 
 \item{domain}{A character string specifying the domain for the request. Default is 'compound'.}
 
-\item{output}{A character string specifying the output format. Possible values are 'JSON', 'JSONP', and 'SVG'. Default is 'JSON'.}
+\item{output}{A character string specifying the output format. Possible values are 'JSON', 'XML', and 'SVG'. Default is 'JSON'.}
 
 \item{heading}{An optional character string for specifying a heading in the request.}
 
@@ -33,7 +33,7 @@ get_pug_view(
 
 \item{qrSize}{A character string specifying the size of the QR code. Possible values are 'short' and 'long'. Default is 'short'.}
 
-\item{savePNG}{A logical value indicating whether to save the output as a PNG file. Default is FALSE.}
+\item{save}{A logical value indicating whether to save the output. Default is FALSE.}
 }
 \value{
 Depending on the output format, this function returns different types of content:

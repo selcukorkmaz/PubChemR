@@ -26,7 +26,6 @@
 #'   get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", output = "JSON")
 #'
 #' @importFrom httr GET
-#' @importFrom jsonlite prettify
 #' @importFrom RJSONIO fromJSON
 #' @importFrom xml2 read_xml
 #' @importFrom magick image_read
@@ -110,7 +109,7 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
 
  if(output == "SDF"){
 
-   if (apiurl.exists(apiurl)) {
+   if (url.exists(apiurl)) {
      # Write the content to a file in SDF format in the current working directory
      path = paste0(domain, "_", identifier, ".", output)
      download.file(apiurl, path)
