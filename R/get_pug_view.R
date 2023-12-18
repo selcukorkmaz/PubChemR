@@ -142,7 +142,7 @@ get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compoun
   else if(output == "XML"){
     responseContent <- rawToChar(response$content)
     xml_file <- read_xml(responseContent)
-    content <-  as_list(xml_file)
+    content <-  xml2::as_list(xml_file)
 
     if(save){
 
