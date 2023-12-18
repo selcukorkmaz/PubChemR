@@ -29,6 +29,8 @@
 #' @importFrom RCurl getURLContent
 #' @importFrom png readPNG
 #' @importFrom httr content
+#' @importFrom xml2 as_list read_xml
+
 #' @export
 
 get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compound',
