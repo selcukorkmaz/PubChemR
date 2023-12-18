@@ -126,7 +126,7 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
   if(response$status_code != 400){
 
   if(output == "CSV"){
-    content <- read.csv(response$apiurl)
+    content <- read.csv(response$url)
 
     if(saveFile){
 
@@ -192,7 +192,7 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
 
   if(output == "TXT"){
 
-      content <- read.table(response$apiurl)
+      content <- read.table(response$url)
   }
 
   if(saveFile){
