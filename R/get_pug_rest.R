@@ -55,12 +55,12 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
   base_url <- "https://pubchem.ncbi.nlm.nih.gov/rest/pug"
 
   # Build the URL with the given parameters
-  url <- paste0(base_url, "/", domain, "/", namespace, "/")
+  apiurl <- paste0(base_url, "/", domain, "/", namespace, "/")
 
   # Add searchtype to the URL if provided
   if (!is.null(searchtype)) {
     searchtype <- paste0(searchtype, collapse = "/")
-    url <- paste0(base_url, "/", domain, "/", searchtype, "/", namespace, "/")
+    apiurl <- paste0(base_url, "/", domain, "/", searchtype, "/", namespace, "/")
   }
 
   # Add identifier to the URL if provided
@@ -73,13 +73,13 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
       identifier = paste0(identifier, collapse = ",")
     }
 
-    url <- paste0(url, identifier, "/")
+    apiurl <- paste0(apiurl, identifier, "/")
   }
 
   # Add operation to the URL if provided
   if (!is.null(operation)) {
     operation <- paste0(operation, collapse = "/")
-    url <- paste0(url, operation, "/")
+    apiurl <- paste0(apiurl, operation, "/")
   }
 
   # Add searchtype to the URL if provided
@@ -89,11 +89,11 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
 
       property = paste0(property, collapse = ",")
     }
-    url <- paste0(url, "property/", property, "/")
+    apiurl <- paste0(apiurl, "property/", property, "/")
   }
 
   # Finalize URL with output format
-  url <- paste0(url, output)
+  apiurl <- paste0(apiurl, output)
 
   # Add options to the URL if provided
   if (!is.null(options)) {
@@ -105,15 +105,15 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
       options <- paste0("?", paste0( names(options), unlist(options), collapse = "&"))
       options <- gsub(" ", "", options)
     }
-    url <- paste0(url, options)
+    apiurl <- paste0(apiurl, options)
   }
 
  if(output == "SDF"){
 
-   if (url.exists(url)) {
+   if (apiurl.exists(apiurl)) {
      # Write the content to a file in SDF format in the current working directory
      path = paste0(domain, "_", identifier, ".", output)
-     download.file(url, path)
+     download.file(apiurl, path)
      message("  SDF file to save --> '", path, "'", sep = "", "\n")
    } else {
      message("Received no content to write to the SDF file.")
@@ -121,12 +121,12 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
  }else{
 
   # Make the HTTP GET request and return the response
-  response <- GET(URLencode(url))
+  response <- GET(URLencode(apiurl))
 
   if(response$status_code != 400){
 
   if(output == "CSV"){
-    content <- read.csv(response$url)
+    content <- read.csv(response$apiurl)
 
     if(saveFile){
 
@@ -137,7 +137,7 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
   if(output == "XML"){
     responseContent <- rawToChar(response$content)
     xml_file <- read_xml(responseContent)
-    content <-  xmlParse(xml_file)
+    content <-  xml2::as_list(xml_file)
   }
 
   # Check if the response is asking to wait and has a ListKey
@@ -154,7 +154,8 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
 
       if(output == "XML"){
         xml_file <- read_xml(responseContent)
-        content <-  xmlParse(xml_file)
+        content <-  xml2::as_list(xml_file)
+
       }else{
         content <- fromJSON(responseContent)
       }
@@ -171,12 +172,13 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
       savedContent <- sub('\\)$', '', savedContent) # remove closing parenthesis
     }
 
-    content <- prettify(savedContent)
+    content <- fromJSON(savedContent)
+
   }
 
   if(!is.null(output) && output == "PNG"){
 
-    str = readPNG(getURLContent(url))
+    str = readPNG(getURLContent(apiurl))
 
 
     if(saveImage){
@@ -190,7 +192,7 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
 
   if(output == "TXT"){
 
-      content <- read.table(response$url)
+      content <- read.table(response$apiurl)
   }
 
   if(saveFile){
