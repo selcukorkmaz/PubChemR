@@ -12,7 +12,7 @@
 #' @param headingType An optional character string for specifying a heading type in the request.
 #' @param page An optional character string for specifying a page number in the request.
 #' @param qrSize A character string specifying the size of the QR code. Possible values are 'short' and 'long'. Default is 'short'.
-#' @param savePNG A logical value indicating whether to save the output as a PNG file. Default is FALSE.
+#' @param save A logical value indicating whether to save the output. Default is FALSE.
 #'
 #' @return Depending on the output format, this function returns different types of content:
 #'         JSON or JSONP format returns parsed JSON content.
@@ -33,7 +33,7 @@
 
 get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compound',
                          output = 'JSON', heading = NULL, headingType = NULL, page = NULL,
-                         qrSize = "short", savePNG = FALSE) {
+                         qrSize = "short", save = FALSE) {
 
   # Check for missing annotation
   if (is.null(annotation)) {

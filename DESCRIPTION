@@ -1,7 +1,7 @@
 Package: PubChemR
 Type: Package
 Title: Interface to the 'PubChem' Database for Chemical Data Retrieval
-Version: 1.0.1
+Version: 1.1
 Authors@R: c(person("Selcuk", "Korkmaz", email="selcukorkmaz@gmail.com", role=c("aut", "cre"),
                     comment = c(ORCID = "0000-0003-4632-6850")), 
              person("Dincer", "Goksuluk", email="dincer.goksuluk@gmail.com", role="aut",
