@@ -1,10 +1,10 @@
 #' Retrieve PUG View Data from PubChem
 #'
 #' This function sends a request to the PubChem PUG View API to retrieve various types of data
-#' for a given identifier. It supports fetching annotations, QR codes, and more, with options
+#' for a given identifier. It supports fetching domain, QR codes, and more, with options
 #' for different output formats including JSON and SVG.
 #'
-#' @param annotation A character string specifying the type of annotation to retrieve.
+#' @param domain A character string specifying the type of domain to retrieve.
 #' @param identifier A single identifier for the query, either numeric or character.
 #' @param domain A character string specifying the domain for the request. Default is 'compound'.
 #' @param output A character string specifying the output format. Possible values are 'JSON', 'XML', and 'SVG'. Default is 'JSON'.
@@ -20,7 +20,7 @@
 #'         For QR codes, it returns an image object or saves a PNG file.
 #'
 #' @examples
-#'   get_pug_view(identifier = "2244", annotation = "linkout", domain = "compound")
+#'   get_pug_view(identifier = "2244", domain = "linkout", domain = "compound")
 #'
 #' @importFrom RJSONIO fromJSON
 #' @importFrom httr GET status_code
@@ -33,13 +33,13 @@
 
 #' @export
 
-get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compound',
+get_pug_view <- function(domain = NULL, identifier = NULL, domain = 'compound',
                          output = 'JSON', heading = NULL, headingType = NULL, page = NULL,
                          qrSize = "short", save = FALSE) {
 
-  # Check for missing annotation
-  if (is.null(annotation)) {
-    stop("annotation cannot be NULL")
+  # Check for missing domain
+  if (is.null(domain)) {
+    stop("domain cannot be NULL")
   }
 
   if (is.numeric(identifier)) {
@@ -64,7 +64,7 @@ get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compoun
   # urlid <- URLencode(identifier)
 
   # Building the URL components
-  comps <- Filter(Negate(is.null), list(api_base, annotation, domain, identifier, output))
+  comps <- Filter(Negate(is.null), list(api_base, domain, domain, identifier, output))
 
   if (!is.null(heading)) {
     apiurl <- paste0(paste(comps, collapse = '/'), "?heading=", URLencode(sub(" ", "+", heading)))
@@ -78,13 +78,13 @@ get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compoun
     apiurl <- paste0(paste(comps, collapse = '/'), "?page=", URLencode(sub(" ", "+", page)))
   }
 
-  else if (annotation == "qr") {
+  else if (domain == "qr") {
     if(qrSize == "short"){
-    comps <- Filter(Negate(is.null), list(api_base, annotation, "short", domain, identifier, output))
+    comps <- Filter(Negate(is.null), list(api_base, domain, "short", domain, identifier, output))
     }
 
     else if(qrSize == "long"){
-      comps <- Filter(Negate(is.null), list(api_base, annotation, "long", domain, identifier, output))
+      comps <- Filter(Negate(is.null), list(api_base, domain, "long", domain, identifier, output))
     }
 
     apiurl <- paste(comps, collapse = '/')
