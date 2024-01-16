@@ -15,12 +15,6 @@
 #'
 #' @importFrom RJSONIO fromJSON
 #' @export
-#'
-#' @examples
-#' get_substances(
-#'   identifier = "aspirin",
-#'   namespace = "name"
-#' )
 get_substances <- function(identifier, namespace = 'sid', operation = NULL, searchtype = NULL, options = NULL) {
 
   substances <- list()
