@@ -23,17 +23,17 @@
 get_json <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL, searchtype = NULL, options = NULL) {
 
   result <- tryCatch({
-    response <- fromJSON(get_pubchem(identifier, namespace, domain, operation, "JSON", searchtype, options))
-    return(response)
+    get_pubchem(identifier, namespace, domain, operation, "JSON", searchtype, options)
+    # return(response)
   },
   error = function(e) {
     message(e$message)
-    return(NULL)
+    # return(NULL)
   },
   warning = function(w) {
     message(w$message)
-    return(NULL)
+    # return(NULL)
   })
 
-  return(result)
+  return(fromJSON(result))
 }

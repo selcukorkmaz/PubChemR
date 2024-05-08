@@ -22,7 +22,7 @@
 #' )
 get_compounds <- function(identifier, namespace = 'cid', operation = NULL, searchtype = NULL, options = NULL) {
 
-    compounds <- list()
+  compounds <- list()
 
   for (i in 1:length(identifier)) {
     # Retrieve the JSON data
@@ -39,7 +39,7 @@ get_compounds <- function(identifier, namespace = 'cid', operation = NULL, searc
       }
     }}
 
-    if(length(compounds) > 1){
+    if(length(compounds) >= 1){
 
       names(compounds) <- paste0("'", identifier, "'")
       results <- compounds
