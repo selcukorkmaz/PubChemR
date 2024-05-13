@@ -40,7 +40,7 @@ services:
       # User-specific container (external volume). Files in this folder will be stored as an external volume
       # out of docker container. If docker container was removed, external files will be remained in the main 
       # computer. Multiple volumes can be defined.
-        - /home/dncr:/home/rstudio/externalvolume
+        - /Users/dncr:/home/rstudio/externalvolume
     #deploy:
     #  resources:
     #    limits:

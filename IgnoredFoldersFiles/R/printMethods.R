@@ -16,7 +16,10 @@ print.PubChemInstanceList <- function(x, ...) {
 print.PubChemInstance <- function(x, ...) {
 
   cat(" An object of '", class(x), "' class", sep = "", "\n\n")
-  cat(" Number of Compound(s): ", length(x[[1]]), sep = "")
+  cat(" Number of Compound(s): ", length(x[[1]]), sep = "", "\n")
+
+  meta_data <- x[[1]][[1]][["meta_data"]]
+  cat("   - ", )
 }
 
 # Define a generic print method

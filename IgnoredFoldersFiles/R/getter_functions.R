@@ -8,3 +8,11 @@
 
 
 
+
+meta_data <- function(x, ...){
+  UseMethod("meta_data")
+}
+
+meta_data.PubChemInstance <- function(x, ...){
+  x[[1]][[1]][["meta_data"]]
+}
