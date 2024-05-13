@@ -9,6 +9,7 @@
 #' @param operation Specifies the operation to be performed on the input records. For the 'compound' domain, possible operations include 'record', 'property', 'synonyms', 'sids', 'cids', 'aids', 'assaysummary', 'classification', 'xrefs', and 'description'. The available operations are domain-specific.
 #' @param searchtype Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.
 #' @param options Additional parameters passed to \code{\link{get_json}}.
+#' @param ... other arguments. Deprecated.
 #'
 #' @return A list containing the parsed JSON response from PubChem. Returns NULL if an error or warning occurs.
 #'
@@ -20,30 +21,29 @@
 #'   identifier = "aspirin",
 #'   namespace = "name"
 #' )
-get_json <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL, searchtype = NULL, options = NULL) {
+get_json <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL, searchtype = NULL, options = NULL, ...) {
 
   result <- tryCatch({
     get_pubchem(identifier, namespace, domain, operation, "JSON", searchtype, options)
-    # return(response)
   },
   error = function(e) {
-    message(e$message)
-    # return(NULL)
-  },
-  warning = function(w) {
-    message(w$message)
-    # return(NULL)
+    err.text <- c("Failed", e$message)
+    names(err.text) <- c("Code", "Message")
+    return(toJSON(list(Fault = err.text)))
   })
 
   result_list <- fromJSON(result)
 
-  for (i in 1:length(result_list[[1]])){
-    result_list[[1]][[i]][["meta_data"]] <- list(
-      namespace = namespace,
-      identifier = identifier[i]
-    )
+  # If not failed with an error.
+  if (!is.null(result_list$Fault)){
+    for (i in 1:length(identifier)){
+      result_list[[1]][[i]][["meta_data"]] <- list(
+        namespace = namespace,
+        identifier = identifier[i]
+      )
+    }
   }
 
-  class(result_list) <- "PubChemInstance"
+  class(result_list) <- "get_json_Object"
   return(result_list)
 }
