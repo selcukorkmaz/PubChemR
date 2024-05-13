@@ -35,5 +35,15 @@ get_json <- function(identifier, namespace = 'cid', domain = 'compound', operati
     # return(NULL)
   })
 
-  return(fromJSON(result))
+  result_list <- fromJSON(result)
+
+  for (i in 1:length(result_list[[1]])){
+    result_list[[1]][[i]][["meta_data"]] <- list(
+      namespace = namespace,
+      identifier = identifier[i]
+    )
+  }
+
+  class(result_list) <- "PubChemInstance"
+  return(result_list)
 }
