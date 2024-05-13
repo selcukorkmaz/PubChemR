@@ -100,7 +100,7 @@ For questions and feedback, please open an issue in the GitHub repository issue 
 
 If you use PubChemR in your research, please cite it as follows:
 
-Korkmaz S, Goksuluk D (2023). _PubChemR: Interface to the 'PubChem' Database for Chemical Data Retrieval_. R package version 0.99-1, <https://CRAN.R-project.org/package=PubChemR>.
+Korkmaz S, Yamasan BE, Goksuluk D (2023). _PubChemR: Interface to the 'PubChem' Database for Chemical Data Retrieval_. R package version 0.99-1, <https://CRAN.R-project.org/package=PubChemR>.
 
 A BibTeX entry for LaTeX users is:
 
