@@ -3,22 +3,22 @@ title: "Working with PubChemR to Access Chemical Data"
 author: "Selcuk Korkmaz, Bilge Eren Korkmaz, Dincer Goksuluk"
 date: "`r Sys.Date()`"
 output: 
-  html_document:
+  html_document: 
     toc: true
     toc_float:
       collapsed: true
-
+    keep_md: false
 vignette: >
   %\VignetteIndexEntry{Working with PubChemR to Access Chemical Data}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
 ---
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  cache = TRUE,
+  cache = FALSE,
   class.output="scroll-100",
   cache.path = "cached/"
 )
@@ -119,8 +119,6 @@ The following example demonstrates how to use the `get_json` function to retriev
 ```{r}
 # Retrieve JSON data for Aspirin
 result <- get_json(identifier = "aspirin", namespace = "name")
-
-
 ```
 
 The result is a list containing the parsed JSON response from PubChem. You can explore this list to find specific information about Aspirin
