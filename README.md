@@ -107,7 +107,7 @@ A BibTeX entry for LaTeX users is:
 ```r
 @Manual{,
   title = {PubChemR: Interface to the 'PubChem' Database for Chemical Data Retrieval},
-  author = {Selcuk Korkmaz and Dincer Goksuluk},
+  author = {Selcuk Korkmaz and Bilge Eren Yamasan and Dincer Goksuluk},
   year = {2023},
   note = {R package version 0.99-1},
   url = {https://CRAN.R-project.org/package=PubChemR},
