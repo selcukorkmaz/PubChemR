@@ -9,4 +9,5 @@ TODO_NOTES.txt
 IgnoredFoldersFiles
 
 .github
-^vignettes/cache$
+^vignettes/cached$
+vignettes/cached

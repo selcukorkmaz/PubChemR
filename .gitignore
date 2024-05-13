@@ -5,3 +5,7 @@
 docs
 /doc/
 /Meta/
+
+# Cached files and leftover of Vignette
+/vignettes/cached
+/vignettes/*.html
