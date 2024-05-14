@@ -21,6 +21,14 @@
 #'   identifier = "aspirin",
 #'   namespace = "name"
 #' )
+
+identifier = c("2244", "2519")
+namespace = "cid"
+domain = 'compound'
+operation = NULL
+searchtype = NULL
+options = NULL
+
 get_json <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL, searchtype = NULL, options = NULL, ...) {
 
   result <- tryCatch({
@@ -38,14 +46,21 @@ get_json <- function(identifier, namespace = 'cid', domain = 'compound', operati
   if (is.null(result_list$Fault)){
     result_list[["success"]] <- TRUE
 
-    result_list[["PC_Compounds"]][[1]][["meta_data"]] <- list(
+    result_list[["call_parameters"]] <- list(
       namespace = namespace,
-      identifier = identifier
+      identifier = identifier,
+      domain = domain
     )
+
+    class(result_list[[1]]) <- "PubChemInstanceList"
+    for (i in 1:length(result_list[[1]])){
+      class(result_list[[1]][[i]]) <- "PubChemInstance"
+    }
+
   } else {
     result_list[["success"]] <- FALSE
   }
 
-  class(result_list) <- "get_json_Object"
+  class(result_list) <- c("PubChemRequest")
   return(result_list)
 }

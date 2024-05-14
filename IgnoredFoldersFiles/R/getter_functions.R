@@ -1,18 +1,80 @@
-.compound_name <- function(x, ...){
-  UseMethod(".compound_name")
+# Getter Functions ----
+## PubChemRequest class ----
+call_params.PubChemRequest <- function(object){
+  return(object[["call_parameters"]])
 }
 
-.compound_name.PubChemInstance <- function(x, ...){
-  return(x[["Compound_Name"]])
+call_params <- function(object, ...){
+  UseMethod("call_params")
+}
+
+instance.PubChemRequest <- function(object, .which = "aspirin", ....){
+  return(object[[1]][[.which]])
+}
+
+instance <- function(object, ...){
+  UseMethod("instance")
 }
 
 
 
 
-meta_data <- function(x, ...){
-  UseMethod("meta_data")
+
+
+
+
+
+## PubChemInstance class ----
+atoms.PubChemInstance <- function(object, ...){
+  object[["atoms"]]
 }
 
-meta_data.PubChemInstance <- function(x, ...){
-  x[[1]][[1]][["meta_data"]]
+atoms.PubChemRequest <- function(object){
+  object <- object[[1]][[1]]
+  object[["atoms"]]
+}
+
+atoms <- function(object, ...){
+  UseMethod("atoms")
+}
+
+
+bonds.PubChemInstance <- function(object, ...){
+  object[["atoms"]]
+}
+
+bonds <- function(object, ...){
+  UseMethod("bonds")
+}
+
+coords.PubChemInstance <- function(object, ...){
+
+}
+
+coords <- function(object, ...){
+  UseMethod("coords")
+}
+
+charge.PubChemInstance <- function(object, ...){
+
+}
+
+charge <- function(object, ...){
+  UseMethod("charge")
+}
+
+props.PubChemInstance <- function(object, ...){
+
+}
+
+props <- function(object, ...){
+  UseMethod("props")
+}
+
+count.PubChemInstance <- function(object, ...){
+
+}
+
+count <- function(object, ...){
+  UseMethod("count")
 }

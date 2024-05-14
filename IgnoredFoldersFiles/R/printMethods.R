@@ -1,31 +1,102 @@
+# Print Methods ----
+## PubChemRequest class ----
 
+#' @importFrom dplyr case_when
+#' @importFrom utils object.size
+print.PubChemRequest <- function(x, ...){
+  # If PubChem retrieval has encountered with an error.
+  if (!(x$success)){
 
-asp <- get_json(identifier = "aspirin", namespace = "name")
-caf <- get_json(identifier = "caffein", namespace = "name")
-asp_caf <- get_json(identifier = c(2222, 2223), namespace = "cid")
+  } else {
+    call_args <- call_params(x)
 
-class(asp_caf) <- class(caf) <- class(asp) <- "PubChemInstance"
+    compound_identifier_text <- case_when(
+      .default = "Domain-Specific",
+      call_args$namespace == "name" ~ "Name",
+      call_args$namespace == "cid" ~ "CID",
+      call_args$namespace == "smiles" ~ "SMILES",
+      call_args$namespace == "inchi" ~ "INCHI",
+      call_args$namespace == "inchikey" ~ "INCHI Key",
+      call_args$namespace == "sdf" ~ "SDF",
+      call_args$namespace == "formula" ~ "Formula",
+      call_args$namespace == "substructure" ~ "Sub-structure",
+      call_args$namespace == "superstructure" ~ "Super-structure",
+      call_args$namespace == "similarity" ~ "Similarity",
+      call_args$namespace == "identity" ~ "Identity",
+      call_args$namespace == "xref" ~ "Cross-Reference",
+      call_args$namespace == "listkey" ~ "List Key",
+      call_args$namespace == "fastidentity" ~ "Fast Identity",
+      call_args$namespace == "fastsimilarity_2d" ~ "2-D Fast Similarity",
+      call_args$namespace == "fastsimilarity_3d" ~ "3-D Fast Similarity",
+      call_args$namespace == "fastsubstructure" ~ "Fast Sub-structure",
+      call_args$namespace == "fastsuperstructure" ~ "Fast Super-structure",
+      call_args$namespace == "fastformula" ~ "Fast Formula"
+    )
 
-# Define a print method for "PubChemInstanceList". this list includes the PubChem data for multiple instances.
-print.PubChemInstanceList <- function(x, ...) {
-  cat(" An object of '", class(x), "' class", sep = "", "\n\n")
-  cat(" Number of compounds: ", length(x[[1]]), "\n")
+    domain_text <- case_when(
+      .default = "Substance",
+      call_args$domain == "compound" ~ "Compound",
+      call_args$domain == "assay" ~ "Assay",
+      call_args$domain == "gene" ~ "Gene",
+      call_args$domain == "protein" ~ "Protein",
+      call_args$domain == "taxonomy" ~ "Taxonomy",
+      call_args$domain == "cell" ~ "Cell",
+      call_args$domain == "sources" ~ "Sources",
+      call_args$domain == "sourcetable" ~ "Source Table",
+      call_args$domain == "conformers" ~ "Conformers",
+      call_args$domain == "annotations" ~ "Annotations",
+      call_args$domain == "classification" ~ "Classification",
+      call_args$domain == "standardize" ~ "Standardize"
+    )
+
+    cat("\n")
+    cat(" An object of class ", "'", class(x), "'", sep = "", "\n\n")
+    cat(" A list with instance(s) retrieved from 'PubChem' Database using;", "\n")
+    cat("   - Instance Identifier (", compound_identifier_text, "): ", paste0(call_args$identifier, collapse = ", ", sep = ""), sep = "", "\n")
+    cat("   - Domain: ", domain_text, sep = "", "\n")
+    #cat("   - No. of Compound(s) Matched: ", length(x[[1]][[1]]), sep = "", "\n")
+
+    file_size <- as.numeric(object.size(x))
+    file_size_unit <- case_when(
+      .default = "Bytes",
+      (file_size >= 1024 & file_size < 1024 ** 2) ~ "KB",
+      (file_size >= 1024 ** 2 & file_size < 1024 ** 3) ~ "MB",
+      (file_size >= 1024 ** 3 & file_size < 1024 ** 4) ~ "GB",
+      file_size >= 1024 ** 4 ~ "PB",
+    )
+
+    file_size <- case_when(
+      .default = file_size,
+      file_size_unit == "KB" ~ file_size / 1024,
+      file_size_unit == "MB" ~ file_size / (1024 ** 2),
+      file_size_unit == "GB" ~ file_size / (1024 ** 3),
+      file_size_unit == "PB" ~ file_size / (1024 ** 4)
+    )
+    cat("\n", " Downloaded File Size: ", round(file_size, digits = 3), " ", file_size_unit, sep = "", "\n\n")
+  }
 }
 
-# Define a print method for "PubChemInstance"
-print.PubChemInstance <- function(x, ...) {
+## PubChemInstanceList ----
+print.PubChemInstanceList <- function(x, ...){
 
-  cat(" An object of '", class(x), "' class", sep = "", "\n\n")
-  cat(" Number of Compound(s): ", length(x[[1]]), sep = "", "\n")
+  cat("\n")
+  cat(" An object of class ", "'", class(x), "'", sep = "", "\n\n")
+  cat(" Number of instances: ", length(x), "\n\n", sep = "")
 
-  meta_data <- x[[1]][[1]][["meta_data"]]
-  cat("   - ", )
 }
 
-# Define a generic print method
-print <- function(x, ...) {
+## PubChemInstance ----
+print.PubChemInstance <- function(x, ...){
+
+  cat("\n")
+  cat(" An object of class ", "'", class(x), "'", sep = "", "\n\n")
+  cat(" Number of instances: ", length(x), "\n\n", sep = "")
+
+}
+
+print <- function(x, ...){
   UseMethod("print")
 }
 
-print(asp)
+
 
