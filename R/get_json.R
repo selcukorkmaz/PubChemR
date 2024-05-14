@@ -35,13 +35,15 @@ get_json <- function(identifier, namespace = 'cid', domain = 'compound', operati
   result_list <- fromJSON(result)
 
   # If not failed with an error.
-  if (!is.null(result_list$Fault)){
-    for (i in 1:length(identifier)){
-      result_list[[1]][[i]][["meta_data"]] <- list(
-        namespace = namespace,
-        identifier = identifier[i]
-      )
-    }
+  if (is.null(result_list$Fault)){
+    result_list[["success"]] <- TRUE
+
+    result_list[["PC_Compounds"]][[1]][["meta_data"]] <- list(
+      namespace = namespace,
+      identifier = identifier
+    )
+  } else {
+    result_list[["success"]] <- FALSE
   }
 
   class(result_list) <- "get_json_Object"
