@@ -87,11 +87,25 @@ print.PubChemInstanceList <- function(x, ...){
 
 ## PubChemInstance ----
 print.PubChemInstance <- function(x, ...){
-
   cat("\n")
   cat(" An object of class ", "'", class(x), "'", sep = "", "\n\n")
-  cat(" Number of instances: ", length(x), "\n\n", sep = "")
+  cat(" Details of the compound with CID=", unlist(x$id), ". ", "A list with following components.", "\n\n", sep = "")
 
+  for (item in names(x)){
+    itemNames <- names(x[[item]])
+    if (length(itemNames) > 3){
+      itemNames <- c(itemNames[1:3], "...")
+    }
+
+    if (is.null(itemNames)){
+      itemNames <- paste0("<unnamed ", class(x[[item]]), ">")
+    }
+
+    cat("  - ", item, " (", length(x[[item]]), ")", ": ", paste0(itemNames, collapse = ", "), sep = "", "\n")
+  }
+
+  cat("\n")
+  cat(" NOTE: Run getter function with compound name above to extract data from corresponding list, e.g., atoms(...).", "\n\n")
 }
 
 print <- function(x, ...){

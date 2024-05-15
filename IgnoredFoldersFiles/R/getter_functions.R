@@ -8,8 +8,18 @@ call_params <- function(object, ...){
   UseMethod("call_params")
 }
 
-instance.PubChemRequest <- function(object, .which = "aspirin", ....){
-  return(object[[1]][[.which]])
+
+instance.PubChemRequest <- function(object, .which = NULL, ....){
+  if (is.null(.which)){
+    idx <- 1
+  } else {
+    if (!(.which %in% object$call_parameters$identifier)){
+      stop("Compound identifier is not available within 'object'.")
+    }
+    idx <- which(object$call_parameters$identifier == .which)
+  }
+
+  return(object[[1]][[idx]])
 }
 
 instance <- function(object, ...){
@@ -17,21 +27,23 @@ instance <- function(object, ...){
 }
 
 
-
-
-
-
-
-
-
 ## PubChemInstance class ----
 atoms.PubChemInstance <- function(object, ...){
   object[["atoms"]]
 }
 
-atoms.PubChemRequest <- function(object){
-  object <- object[[1]][[1]]
-  object[["atoms"]]
+atoms.PubChemRequest <- function(object, .which = NULL, ...){
+  if (is.null(.which)){
+    idx <- 1
+  } else {
+    if (!(.which %in% object$call_parameters$identifier)){
+      stop("Compound identifier is not available within 'object'.")
+    }
+    idx <- which(object$call_parameters$identifier == .which)
+  }
+
+  object <- instance(object, .which = object$call_parameters$identifier[idx])
+  atoms(object, ...)
 }
 
 atoms <- function(object, ...){
@@ -40,39 +52,126 @@ atoms <- function(object, ...){
 
 
 bonds.PubChemInstance <- function(object, ...){
-  object[["atoms"]]
+  object[["bonds"]]
+}
+
+bonds.PubChemRequest <- function(object, .which = NULL, ...){
+  if (is.null(.which)){
+    idx <- 1
+  } else {
+    if (!(.which %in% object$call_parameters$identifier)){
+      stop("Compound identifier is not available within 'object'.")
+    }
+    idx <- which(object$call_parameters$identifier == .which)
+  }
+
+  object <- instance(object, .which = object$call_parameters$identifier[idx])
+  bonds(object, ...)
 }
 
 bonds <- function(object, ...){
   UseMethod("bonds")
 }
 
-coords.PubChemInstance <- function(object, ...){
 
+coords.PubChemInstance <- function(object, ...){
+  object[["coords"]]
+}
+
+coords.PubChemRequest <- function(object, .which = NULL, ...){
+  if (is.null(.which)){
+    idx <- 1
+  } else {
+    if (!(.which %in% object$call_parameters$identifier)){
+      stop("Compound identifier is not available within 'object'.")
+    }
+    idx <- which(object$call_parameters$identifier == .which)
+  }
+
+  object <- instance(object, .which = object$call_parameters$identifier[idx])
+  coords(object, ...)
 }
 
 coords <- function(object, ...){
   UseMethod("coords")
 }
 
-charge.PubChemInstance <- function(object, ...){
 
+charge.PubChemInstance <- function(object, ...){
+  object[["charge"]]
+}
+
+charge.PubChemRequest <- function(object, .which = NULL, ...){
+  if (is.null(.which)){
+    idx <- 1
+  } else {
+    if (!(.which %in% object$call_parameters$identifier)){
+      stop("Compound identifier is not available within 'object'.")
+    }
+    idx <- which(object$call_parameters$identifier == .which)
+  }
+
+  object <- instance(object, .which = object$call_parameters$identifier[idx])
+  charge(object, ...)
 }
 
 charge <- function(object, ...){
   UseMethod("charge")
 }
 
-props.PubChemInstance <- function(object, ...){
 
+props.PubChemInstance <- function(object, .to.data.frame = FALSE, ...){
+  if (.to.data.frame){
+    tmp <- lapply(object[["props"]], function(x){
+      as.data.frame(as.matrix(bind_cols(x)))
+    })
+
+    res <- tmp[[1]]
+    for (i in 2:length(tmp)){
+      res <- suppressMessages(full_join(res, tmp[[i]]))
+    }
+
+    return(res)
+  } else {
+    object[["props"]]
+  }
+}
+
+props.PubChemRequest <- function(object, .which = NULL, .to.data.frame = FALSE, ...){
+  if (is.null(.which)){
+    idx <- 1
+  } else {
+    if (!(.which %in% object$call_parameters$identifier)){
+      stop("Compound identifier is not available within 'object'.")
+    }
+    idx <- which(object$call_parameters$identifier == .which)
+  }
+
+  object <- instance(object, .which = object$call_parameters$identifier[idx])
+  props(object, .to.data.frame, ...)
 }
 
 props <- function(object, ...){
   UseMethod("props")
 }
 
-count.PubChemInstance <- function(object, ...){
 
+count.PubChemInstance <- function(object, ...){
+  object[["count"]]
+}
+
+count.PubChemRequest <- function(object, .which = NULL, ...){
+  if (is.null(.which)){
+    idx <- 1
+  } else {
+    if (!(.which %in% object$call_parameters$identifier)){
+      stop("Compound identifier is not available within 'object'.")
+    }
+    idx <- which(object$call_parameters$identifier == .which)
+  }
+
+  object <- instance(object, .which = object$call_parameters$identifier[idx])
+  count(object, ...)
 }
 
 count <- function(object, ...){

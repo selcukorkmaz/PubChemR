@@ -21,14 +21,6 @@
 #'   identifier = "aspirin",
 #'   namespace = "name"
 #' )
-
-identifier = c("2244", "2519")
-namespace = "cid"
-domain = 'compound'
-operation = NULL
-searchtype = NULL
-options = NULL
-
 get_json <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL, searchtype = NULL, options = NULL, ...) {
 
   result <- tryCatch({
