@@ -1,31 +1,15 @@
 # Getter Functions ----
 ## PubChemRequest class ----
+call_params.PubChemRequest <- function(object){
+  return(object[["call_parameters"]])
+}
 
-#' Call Function Parameters
-#'
-#' @param object <details here>
-#' @param ... <details here>
-#'
-#' @return
-#'
-#' @examples
-#' 1L
-#'
 #' @export
 call_params <- function(object, ...){
   UseMethod("call_params")
 }
 
-#' @export
-call_params.PubChemRequest <- function(object){
-  return(object[["call_parameters"]])
-}
 
-
-
-
-
-#' @export
 instance.PubChemRequest <- function(object, .which = NULL, ....){
   if (is.null(.which)){
     idx <- 1
@@ -39,7 +23,6 @@ instance.PubChemRequest <- function(object, .which = NULL, ....){
   return(object[[1]][[idx]])
 }
 
-#' @exportS3method instance
 #' @export
 instance <- function(object, ...){
   UseMethod("instance")
@@ -47,12 +30,10 @@ instance <- function(object, ...){
 
 
 ## PubChemInstance class ----
-#' @export
 atoms.PubChemInstance <- function(object, ...){
   object[["atoms"]]
 }
 
-#' @export
 atoms.PubChemRequest <- function(object, .which = NULL, ...){
   if (is.null(.which)){
     idx <- 1
@@ -67,18 +48,16 @@ atoms.PubChemRequest <- function(object, .which = NULL, ...){
   atoms(object, ...)
 }
 
-#' @exportS3method atoms
 #' @export
 atoms <- function(object, ...){
   UseMethod("atoms")
 }
 
-#' @export
+
 bonds.PubChemInstance <- function(object, ...){
   object[["bonds"]]
 }
 
-#' @export
 bonds.PubChemRequest <- function(object, .which = NULL, ...){
   if (is.null(.which)){
     idx <- 1
@@ -93,18 +72,16 @@ bonds.PubChemRequest <- function(object, .which = NULL, ...){
   bonds(object, ...)
 }
 
-#' @exportS3method bonds
 #' @export
 bonds <- function(object, ...){
   UseMethod("bonds")
 }
 
-#' @export
+
 coords.PubChemInstance <- function(object, ...){
   object[["coords"]]
 }
 
-#' @export
 coords.PubChemRequest <- function(object, .which = NULL, ...){
   if (is.null(.which)){
     idx <- 1
@@ -119,18 +96,16 @@ coords.PubChemRequest <- function(object, .which = NULL, ...){
   coords(object, ...)
 }
 
-#' @exportS3method coords
 #' @export
 coords <- function(object, ...){
   UseMethod("coords")
 }
 
-#' @export
+
 charge.PubChemInstance <- function(object, ...){
   object[["charge"]]
 }
 
-#' @export
 charge.PubChemRequest <- function(object, .which = NULL, ...){
   if (is.null(.which)){
     idx <- 1
@@ -145,13 +120,12 @@ charge.PubChemRequest <- function(object, .which = NULL, ...){
   charge(object, ...)
 }
 
-#' @exportS3method charge
 #' @export
 charge <- function(object, ...){
   UseMethod("charge")
 }
 
-#' @export
+
 props.PubChemInstance <- function(object, .to.data.frame = FALSE, ...){
   if (.to.data.frame){
     tmp <- lapply(object[["props"]], function(x){
@@ -169,7 +143,6 @@ props.PubChemInstance <- function(object, .to.data.frame = FALSE, ...){
   }
 }
 
-#' @export
 props.PubChemRequest <- function(object, .which = NULL, .to.data.frame = FALSE, ...){
   if (is.null(.which)){
     idx <- 1
@@ -184,18 +157,16 @@ props.PubChemRequest <- function(object, .which = NULL, .to.data.frame = FALSE, 
   props(object, .to.data.frame, ...)
 }
 
-#' @exportS3method props
 #' @export
 props <- function(object, ...){
   UseMethod("props")
 }
 
-#' @export
+
 count.PubChemInstance <- function(object, ...){
   object[["count"]]
 }
 
-#' @export
 count.PubChemRequest <- function(object, .which = NULL, ...){
   if (is.null(.which)){
     idx <- 1
@@ -210,7 +181,6 @@ count.PubChemRequest <- function(object, .which = NULL, ...){
   count(object, ...)
 }
 
-#' @exportS3method count
 #' @export
 count <- function(object, ...){
   UseMethod("count")
