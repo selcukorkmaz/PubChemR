@@ -1,15 +1,28 @@
 # Getter Functions ----
 ## PubChemRequest class ----
-call_params.PubChemRequest <- function(object){
-  return(object[["call_parameters"]])
-}
 
+#' Call Function Parameters
+#'
+#' @param object <details here>
+#' @param ... <details here>
+#'
+#' @return a list
+#'
+#' @examples
+#' 1L
+#'
 #' @export
 call_params <- function(object, ...){
   UseMethod("call_params")
 }
 
+#' @rdname call_params
+#' @export
+call_params.PubChemRequest <- function(object){
+  return(object[["call_parameters"]])
+}
 
+#' @export
 instance.PubChemRequest <- function(object, .which = NULL, ....){
   if (is.null(.which)){
     idx <- 1
@@ -23,6 +36,7 @@ instance.PubChemRequest <- function(object, .which = NULL, ....){
   return(object[[1]][[idx]])
 }
 
+
 #' @export
 instance <- function(object, ...){
   UseMethod("instance")
@@ -30,10 +44,12 @@ instance <- function(object, ...){
 
 
 ## PubChemInstance class ----
+#' @export
 atoms.PubChemInstance <- function(object, ...){
   object[["atoms"]]
 }
 
+#' @export
 atoms.PubChemRequest <- function(object, .which = NULL, ...){
   if (is.null(.which)){
     idx <- 1
@@ -53,11 +69,12 @@ atoms <- function(object, ...){
   UseMethod("atoms")
 }
 
-
+#' @export
 bonds.PubChemInstance <- function(object, ...){
   object[["bonds"]]
 }
 
+#' @export
 bonds.PubChemRequest <- function(object, .which = NULL, ...){
   if (is.null(.which)){
     idx <- 1
@@ -77,11 +94,12 @@ bonds <- function(object, ...){
   UseMethod("bonds")
 }
 
-
+#' @export
 coords.PubChemInstance <- function(object, ...){
   object[["coords"]]
 }
 
+#' @export
 coords.PubChemRequest <- function(object, .which = NULL, ...){
   if (is.null(.which)){
     idx <- 1
@@ -101,11 +119,12 @@ coords <- function(object, ...){
   UseMethod("coords")
 }
 
-
+#' @export
 charge.PubChemInstance <- function(object, ...){
   object[["charge"]]
 }
 
+#' @export
 charge.PubChemRequest <- function(object, .which = NULL, ...){
   if (is.null(.which)){
     idx <- 1
@@ -125,7 +144,7 @@ charge <- function(object, ...){
   UseMethod("charge")
 }
 
-
+#' @export
 props.PubChemInstance <- function(object, .to.data.frame = FALSE, ...){
   if (.to.data.frame){
     tmp <- lapply(object[["props"]], function(x){
@@ -143,6 +162,7 @@ props.PubChemInstance <- function(object, .to.data.frame = FALSE, ...){
   }
 }
 
+#' @export
 props.PubChemRequest <- function(object, .which = NULL, .to.data.frame = FALSE, ...){
   if (is.null(.which)){
     idx <- 1
@@ -163,10 +183,12 @@ props <- function(object, ...){
 }
 
 
+#' @export
 count.PubChemInstance <- function(object, ...){
   object[["count"]]
 }
 
+#' @export
 count.PubChemRequest <- function(object, .which = NULL, ...){
   if (is.null(.which)){
     idx <- 1

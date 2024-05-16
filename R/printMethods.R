@@ -1,8 +1,18 @@
 # Print Methods ----
 ## PubChemRequest class ----
 
+#' Print Method Dispatch
+#'
+#' @param x An object to print.
+#' @param ... Additional arguments.
+#'
+#' @name print
+NULL
+
+#' @rdname print
 #' @importFrom dplyr case_when
 #' @importFrom utils object.size
+#' @export
 print.PubChemRequest <- function(x, ...){
   # If PubChem retrieval has encountered with an error.
   if (!(x$success)){
@@ -77,6 +87,7 @@ print.PubChemRequest <- function(x, ...){
 }
 
 ## PubChemInstanceList ----
+#' @export
 print.PubChemInstanceList <- function(x, ...){
 
   cat("\n")
@@ -86,6 +97,7 @@ print.PubChemInstanceList <- function(x, ...){
 }
 
 ## PubChemInstance ----
+#' @export
 print.PubChemInstance <- function(x, ...){
   cat("\n")
   cat(" An object of class ", "'", class(x), "'", sep = "", "\n\n")
@@ -108,10 +120,7 @@ print.PubChemInstance <- function(x, ...){
   cat(" NOTE: Run getter function with compound name above to extract data from corresponding list, e.g., atoms(...).", "\n\n")
 }
 
-#' @export
-print <- function(x, ...){
-  UseMethod("print")
-}
+
 
 
 
