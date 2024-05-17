@@ -14,9 +14,21 @@ NULL
 #' @importFrom utils object.size
 #' @export
 print.PubChemRequest <- function(x, ...){
+
+  cat("\n")
+  cat(" An object of class ", "'", class(x)[1], "'", sep = "", "\n\n")
+
   # If PubChem retrieval has encountered with an error.
   if (!(x$success)){
+    # Command as a string
+    command_string <- x$Fault["Message"]
 
+    # Parsing and evaluating the command string
+    ERR_list <- eval(parse(text = command_string))
+
+    cat(" Process stopped with an error.", "\n")
+    cat("  - CODE: \"", ERR_list$Code, "\"", sep = "", "\n")
+    cat("  - ERROR MESSAGE: \"", ERR_list$Message, "\"", sep = "", "\n\n")
   } else {
     call_args <- call_params(x)
 
@@ -59,8 +71,6 @@ print.PubChemRequest <- function(x, ...){
       call_args$domain == "standardize" ~ "Standardize"
     )
 
-    cat("\n")
-    cat(" An object of class ", "'", class(x), "'", sep = "", "\n\n")
     cat(" A list with instance(s) retrieved from 'PubChem' Database using;", "\n")
     cat("   - Instance Identifier (", compound_identifier_text, "): ", paste0(call_args$identifier, collapse = ", ", sep = ""), sep = "", "\n")
     cat("   - Domain: ", domain_text, sep = "", "\n")
@@ -89,11 +99,9 @@ print.PubChemRequest <- function(x, ...){
 ## PubChemInstanceList ----
 #' @export
 print.PubChemInstanceList <- function(x, ...){
-
   cat("\n")
   cat(" An object of class ", "'", class(x), "'", sep = "", "\n\n")
   cat(" Number of instances: ", length(x), "\n\n", sep = "")
-
 }
 
 ## PubChemInstance ----
@@ -120,7 +128,11 @@ print.PubChemInstance <- function(x, ...){
   cat(" NOTE: Run getter function with compound name above to extract data from corresponding list, e.g., atoms(...).", "\n\n")
 }
 
+## get_aids ----
 
+print.get_aids <- function(x, ...){
+  cat("deneme")
+}
 
 
 

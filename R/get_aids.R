@@ -26,21 +26,30 @@
 #'   identifier = "aspirin",
 #'   namespace = "name"
 #' )
+
+identifier = c("2244", "2519")
+namespace = 'cid'
+domain = 'compound'
+searchtype = NULL
+as_data_frame = TRUE
+options = NULL
+
+
 get_aids <- function(identifier, namespace = 'cid', domain = 'compound', searchtype = NULL, as_data_frame = TRUE, options = NULL) {
 
   # Try to get the response and parse JSON
-  result <- tryCatch({
-    # Assuming 'get_json' is a function you've previously defined, similar to your Python environment
-    aidsList <- list()
+  # Assuming 'get_json' is a function you've previously defined, similar to your Python environment
+  aidsList <- list()
 
-    for (i in 1:length(identifier)){
-      response_json <- get_json(identifier[i], namespace, domain, 'aids', searchtype, options)
+  for (i in 1:length(identifier)){
+    response_json <- get_json(identifier[i], namespace, domain, 'aids', searchtype, options)
 
-      # Check if the response contains the expected information
-      if (is.null(response_json)) {
-        aidsList[[i]] <- list(Identifier = identifier[i], aid = "No aid")
+    # Check if the response contains the expected information
+    if (!(response_json$success)) {
+      aidsList[[i]] <- list(Identifier = identifier[i], aid = "No aid")
 
-      } else if (!is.null(response_json$IdentifierList) && !is.null(response_json$IdentifierList$aid)) {
+    } else {
+      if (!is.null(response_json$IdentifierList) && !is.null(response_json$IdentifierList$aid)) {
         aidsList[[i]] <- response_json$IdentifierList$aid
 
       } else if (!is.null(response_json$InformationList) && !is.null(response_json$InformationList$Information)) {
@@ -50,10 +59,7 @@ get_aids <- function(identifier, namespace = 'cid', domain = 'compound', searcht
         return(list())  # Return an empty list if neither aids nor Information is found
       }
     }
-  }, error = function(e) {
-    message(paste("An error occurred:", e$message))  # Log the error message
-    return(list())  # Return an empty list in case of an error
-  })
+  }
 
   if (as_data_frame){
     # Initialize empty data frame
@@ -122,6 +128,11 @@ get_aids <- function(identifier, namespace = 'cid', domain = 'compound', searcht
     names(aidsList) <- paste0("'", identifier, "'")
     result <- aidsList
   }
+
+  structure(list(
+
+  ),
+  class = c("PubChemRequest", "get_aids"))
 
   return(result)
 }
