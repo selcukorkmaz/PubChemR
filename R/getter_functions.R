@@ -22,6 +22,15 @@ call_params.PubChemRequest <- function(object){
   return(object[["call_parameters"]])
 }
 
+#' @rdname call_params
+#' @export
+call_params.get_aids <- function(object){
+  return(object[["call_parameters"]])
+}
+
+call_params.get_cids <- call_params.get_aids
+call_params.get_sids <- call_params.get_aids
+
 #' @export
 instance.PubChemRequest <- function(object, .which = NULL, ....){
   if (is.null(.which)){
@@ -206,4 +215,38 @@ count.PubChemRequest <- function(object, .which = NULL, ...){
 #' @export
 count <- function(object, ...){
   UseMethod("count")
+}
+
+# get_aids ----
+#' @export
+AIDs.get_aids <- function(object, ...){
+  return(object[["AID"]])
+}
+
+#' @export
+AIDs <- function(object, ...){
+  UseMethod("AIDs")
+}
+
+# get_cids ----
+#' @export
+CIDs.get_cids <- function(object, ...){
+  return(object[["CID"]])
+}
+
+#' @export
+CIDs <- function(object, ...){
+  UseMethod("CIDs")
+}
+
+
+# get_sids ----
+#' @export
+SIDs.get_sids <- function(object, ...){
+  return(object[["SID"]])
+}
+
+#' @export
+SIDs <- function(object, ...){
+  UseMethod("SIDs")
 }

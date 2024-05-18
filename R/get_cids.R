@@ -72,6 +72,13 @@ get_cids <- function(identifier, namespace = 'name', domain = 'compound', search
     unnest_longer(CID) %>%  # This makes multiple rows if there are multiple CIDs
     select(-row)  # This removes the 'row' column, as we don't need it anymore
 
-  return(result)
+  structure(list(
+    CID = result,
+    call_parameters = list(
+      identifier = identifier,
+      namespace = namespace
+    )
+  ),
+  class = c("get_cids"))
 }
 

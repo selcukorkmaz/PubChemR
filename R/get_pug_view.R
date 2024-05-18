@@ -7,7 +7,7 @@
 #' @param annotation A character string specifying the type of annotation to retrieve.
 #' @param identifier A single identifier for the query, either numeric or character.
 #' @param domain A character string specifying the domain for the request. Default is 'compound'.
-#' @param output A character string specifying the output format. Possible values are 'JSON', 'XML', and 'SVG'. Default is 'JSON'.
+#' @param output A character string specifying the output format. Possible values are 'JSON' and 'SVG'. Default is 'JSON'.
 #' @param heading An optional character string for specifying a heading in the request.
 #' @param headingType An optional character string for specifying a heading type in the request.
 #' @param page An optional character string for specifying a page number in the request.
@@ -139,17 +139,17 @@ get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compoun
     content <- image_read(str)
   }
 
-  else if(output == "XML"){
-    responseContent <- rawToChar(response$content)
-    xml_file <- read_xml(responseContent)
-    content <-  xml2::as_list(xml_file)
-
-    if(save){
-
-      write_xml(xml_file, file = paste0(domain, "_", identifier, ".", output))
-
-    }
-  }
+  # else if(output == "XML"){
+  #   responseContent <- rawToChar(response$content)
+  #   content <- read_xml(responseContent)
+  #   # content <-  xml2::as_list(xml_file)
+  #
+  #   if(save){
+  #
+  #     write_xml(content, file = paste0(domain, "_", identifier, ".", output))
+  #
+  #   }
+  # }
 
   else {
     content <- content(response, "text", encoding = "UTF-8")
@@ -157,4 +157,3 @@ get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compoun
 
   return(content)
 }
-

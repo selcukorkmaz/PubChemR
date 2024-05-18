@@ -106,6 +106,13 @@ get_sids <- function(identifier, namespace = 'cid', domain = 'compound', searcht
   df <- do.call(rbind.data.frame, resultList)
   result <- df %>% as_tibble()
 
-  return(result)
+  structure(list(
+    SID = result,
+    call_parameters = list(
+      identifier = identifier,
+      namespace = namespace
+    )
+  ),
+  class = c("get_sids"))
 }
 

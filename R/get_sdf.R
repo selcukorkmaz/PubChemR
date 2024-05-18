@@ -45,6 +45,9 @@ get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operatio
     }
   }
 
+  # Initialize the full path
+  full_path <- file.path(path, file_name)
+
   # Use tryCatch to handle errors gracefully
   result <- tryCatch({
     # Make the request. The 'get' function is expected to return the response content directly.
@@ -53,7 +56,7 @@ get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operatio
     # Check if the response is not empty or NULL before proceeding
     if (url.exists(response_sdf)) {
       # Write the content to a file in SDF format in the current working directory
-      download.file(response_sdf, file.path(path, file_name))
+      download.file(response_sdf, full_path)
       message("  SDF file to save --> '", file_name, "'", sep = "", "\n")
       message("  Saved into folder --> ", path, sep = "", "\n")
       message("  Completed options", "\n")
@@ -65,7 +68,10 @@ get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operatio
     # Here, you could check for specific types of errors (like NotFoundError)
     # and handle them as needed. For simplicity, we're just printing the error message.
     message(paste("Info:", e$message))
-    # return(NULL)  # Return NULL to indicate no result or failure in the process
+    return(NULL)  # Return NULL to indicate no result or failure in the process
   })
-}
 
+  # Return the full path invisibly if no error occurred
+  return(invisible(full_path))
+
+}

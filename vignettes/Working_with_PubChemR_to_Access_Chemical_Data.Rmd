@@ -185,7 +185,12 @@ aids_result
 ```
 
 ```{r}
+# Extract AID data.
+AIDs(aids_result)
+```
 
+
+```{r}
 # Retrieve AIDs by name
 aids_result_name <- get_aids(
   identifier = "aspirin",
@@ -228,6 +233,9 @@ cids <- get_cids(
 ```{r}
 # Display the retrieved CIDs
 cids
+
+# Extract CID data
+CIDs(cids)
 ```
 
 **Practical Applications**
@@ -244,18 +252,19 @@ For more advanced applications, `get_cids` can be combined with other functions 
 
 ```{r}
 # Retrieve CIDs for multiple compounds
-compounds <- c("Aspirin", "Caffeine")
+compounds <- c("Aspirin", "Caffeine", "Ibuprofen")
 cids_list <- lapply(compounds, function(compound) {
   get_cids(identifier = compound, namespace = "name")
 })
 
+cids_df <- bind_rows(lapply(cids_list, CIDs))
 # Use the retrieved CIDs to fetch additional data
-for (cids in cids_list) {
-  for (cid in cids$CID) {
-    properties <- get_properties("MolecularWeight", cid)
-    print(properties)
-  }
-}
+MolecularWeight <- sapply(cids_df$CID, function(x){
+  get_properties(properties = "MolecularWeight", identifier = x, namespace = "cid")[[1]][["MolecularWeight"]]
+})
+
+cids_df[["MolecularWeight"]] <- MolecularWeight
+cids_df
 ```
 
 In this advanced example, get_cids is used to fetch CIDs for multiple compounds, and then these CIDs are used to retrieve molecular weights for each compound. This approach is useful in studies where comparative analysis of different compounds is required.

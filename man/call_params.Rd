@@ -3,11 +3,14 @@
 \name{call_params}
 \alias{call_params}
 \alias{call_params.PubChemRequest}
+\alias{call_params.get_aids}
 \title{Call Function Parameters}
 \usage{
 call_params(object, ...)
 
 \method{call_params}{PubChemRequest}(object)
+
+\method{call_params}{get_aids}(object)
 }
 \arguments{
 \item{object}{<details here>}

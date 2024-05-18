@@ -92,7 +92,7 @@ print.PubChemRequest <- function(x, ...){
       file_size_unit == "GB" ~ file_size / (1024 ** 3),
       file_size_unit == "PB" ~ file_size / (1024 ** 4)
     )
-    cat("\n", " Downloaded File Size: ", round(file_size, digits = 3), " ", file_size_unit, sep = "", "\n\n")
+    cat("\n", " Downloaded File Size: ", round(file_size, digits = 2), " ", file_size_unit, sep = "", "\n\n")
   }
 }
 
@@ -129,10 +129,73 @@ print.PubChemInstance <- function(x, ...){
 }
 
 ## get_aids ----
-
+#' @export
 print.get_aids <- function(x, ...){
-  cat("deneme")
+  cat("\n")
+  cat(" Assay IDs (AIDs) from PubChem Database", sep = "", "\n\n")
+
+  call_args <- call_params(x)
+  cat(" Number of elements: ", length(call_args$identifier), sep = "", "\n")
+
+  itemNames <- call_args$identifier
+  if (length(itemNames) > 3){
+    itemNames <- c(itemNames[1:3], "...")
+  }
+
+  cat("  - Compounds (", compound_identifier_text(call_args$namespace), "): ", paste0(itemNames, collapse = ", "), sep = "", "\n")
+  column_names <- names(x$AID)
+  if (length(column_names) > 4){
+    column_names <- c(column_names[1:4], "...")
+  }
+  cat("  - AIDs [a ", "\"", class(x$AID)[1], "\"", " object]: ", paste0(column_names, collapse = ", "), sep = "", "\n\n")
+  cat(" NOTE: run AIDs(...) to extract AID data. See ?AIDs for help.", "\n")
 }
 
 
+# get_cids ----
+#' @export
+print.get_cids <- function(x, ...){
+  cat("\n")
+  cat(" Compound IDs (CIDs) from PubChem Database", sep = "", "\n\n")
+
+  call_args <- call_params(x)
+  cat(" Number of elements: ", length(call_args$identifier), sep = "", "\n")
+
+  itemNames <- call_args$identifier
+  if (length(itemNames) > 3){
+    itemNames <- c(itemNames[1:3], "...")
+  }
+
+  cat("  - Compounds (", compound_identifier_text(call_args$namespace), "): ", paste0(itemNames, collapse = ", "), sep = "", "\n")
+  column_names <- names(x$CID)
+  if (length(column_names) > 4){
+    column_names <- c(column_names[1:4], "...")
+  }
+  cat("  - CIDs [a ", "\"", class(x$CID)[1], "\"", " object]: ", paste0(column_names, collapse = ", "), sep = "", "\n\n")
+  cat(" NOTE: run CIDs(...) to extract CID data. See ?CIDs for help.", "\n")
+}
+
+
+# get_sids ----
+#' @export
+print.get_sids <- function(x, ...){
+  cat("\n")
+  cat(" Substance IDs (SIDs) from PubChem Database", sep = "", "\n\n")
+
+  call_args <- call_params(x)
+  cat(" Number of elements: ", length(call_args$identifier), sep = "", "\n")
+
+  itemNames <- call_args$identifier
+  if (length(itemNames) > 3){
+    itemNames <- c(itemNames[1:3], "...")
+  }
+
+  cat("  - Compounds (", compound_identifier_text(call_args$namespace), "): ", paste0(itemNames, collapse = ", "), sep = "", "\n")
+  column_names <- names(x$SID)
+  if (length(column_names) > 4){
+    column_names <- c(column_names[1:4], "...")
+  }
+  cat("  - SIDs [a ", "\"", class(x$SID)[1], "\"", " object]: ", paste0(column_names, collapse = ", "), sep = "", "\n\n")
+  cat(" NOTE: run SIDs(...) to extract CID data. See ?CIDs for help.", "\n")
+}
 

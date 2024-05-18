@@ -1,0 +1,1 @@
+# 1. get_pug_view, get_assays fonksiyonlarında çok kapsamlı bilgiler geliyor. Bunlar için kapsamlı bir print methodu gerekecek. Yazmadan önce üzerinde detaylıca düşünmemiz gerekiyor.

@@ -2,6 +2,7 @@
 #'
 #' This function sends a request to PubChem to retrieve JSON data based on the specified parameters.
 #' It handles errors and warnings gracefully, providing informative messages when they occur.
+#' This function used internally by all get_* functions, and users will not typically run this function directly.
 #'
 #' @param identifier A vector of positive integers (e.g. cid, sid, aid) or identifier strings (source, inchikey, formula). In some cases, only a single identifier string (name, smiles, xref; inchi, sdf by POST only).
 #' @param namespace Specifies the namespace for the query. For the 'compound' domain, possible values include 'cid', 'name', 'smiles', 'inchi', 'sdf', 'inchikey', 'formula', 'substructure', 'superstructure', 'similarity', 'identity', 'xref', 'listkey', 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure', and 'fastformula'. For other domains, the possible namespaces are domain-specific.
@@ -13,14 +14,10 @@
 #'
 #' @return A list containing the parsed JSON response from PubChem. Returns NULL if an error or warning occurs.
 #'
-#' @importFrom RJSONIO fromJSON
-#' @export
+#' @importFrom RJSONIO fromJSON toJSON
+#' @keywords internal
 #'
-#' @examples
-#' get_json(
-#'   identifier = "aspirin",
-#'   namespace = "name"
-#' )
+#' @export
 get_json <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL, searchtype = NULL, options = NULL, ...) {
 
   result <- tryCatch({

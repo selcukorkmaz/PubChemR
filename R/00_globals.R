@@ -142,3 +142,54 @@ property_map <- list(
   effective_rotor_count_3d = 'EffectiveRotorCount3D',
   conformer_count_3d = 'ConformerCount3D'
 )
+
+
+#' @importFrom dplyr case_when
+compound_identifier_text <- function(x){
+  txt <- case_when(
+    .default = "Domain-Specific",
+    x == "name" ~ "Name",
+    x == "cid" ~ "CID",
+    x == "smiles" ~ "SMILES",
+    x == "inchi" ~ "INCHI",
+    x == "inchikey" ~ "INCHI Key",
+    x == "sdf" ~ "SDF",
+    x == "formula" ~ "Formula",
+    x == "substructure" ~ "Sub-structure",
+    x == "superstructure" ~ "Super-structure",
+    x == "similarity" ~ "Similarity",
+    x == "identity" ~ "Identity",
+    x == "xref" ~ "Cross-Reference",
+    x == "listkey" ~ "List Key",
+    x == "fastidentity" ~ "Fast Identity",
+    x == "fastsimilarity_2d" ~ "2-D Fast Similarity",
+    x == "fastsimilarity_3d" ~ "3-D Fast Similarity",
+    x == "fastsubstructure" ~ "Fast Sub-structure",
+    x == "fastsuperstructure" ~ "Fast Super-structure",
+    x == "fastformula" ~ "Fast Formula"
+  )
+
+  return(txt)
+}
+
+#' @importFrom dplyr case_when
+domain_text <- function(x){
+  txt <- case_when(
+    .default = "Substance",
+    x == "compound" ~ "Compound",
+    x == "assay" ~ "Assay",
+    x == "gene" ~ "Gene",
+    x == "protein" ~ "Protein",
+    x == "taxonomy" ~ "Taxonomy",
+    x == "cell" ~ "Cell",
+    x == "sources" ~ "Sources",
+    x == "sourcetable" ~ "Source Table",
+    x == "conformers" ~ "Conformers",
+    x == "annotations" ~ "Annotations",
+    x == "classification" ~ "Classification",
+    x == "standardize" ~ "Standardize"
+  )
+
+  return(txt)
+}
+

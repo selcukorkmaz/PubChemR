@@ -26,15 +26,6 @@
 #'   identifier = "aspirin",
 #'   namespace = "name"
 #' )
-
-identifier = c("2244", "2519")
-namespace = 'cid'
-domain = 'compound'
-searchtype = NULL
-as_data_frame = TRUE
-options = NULL
-
-
 get_aids <- function(identifier, namespace = 'cid', domain = 'compound', searchtype = NULL, as_data_frame = TRUE, options = NULL) {
 
   # Try to get the response and parse JSON
@@ -117,7 +108,7 @@ get_aids <- function(identifier, namespace = 'cid', domain = 'compound', searcht
           resultList[[i]] <- temp_df
         }
 
-      # Perhaps, we might prefer using DoCall(options) function under DescTools packace, which is claimed
+      # Perhaps, we might prefer using DoCall(options) function under DescTools package, which is claimed
       # faster alternative to base "do.call" function.
       df <- do.call(rbind.data.frame, resultList)
     }
@@ -130,9 +121,11 @@ get_aids <- function(identifier, namespace = 'cid', domain = 'compound', searcht
   }
 
   structure(list(
-
+    AID = result,
+    call_parameters = list(
+      identifier = identifier,
+      namespace = namespace
+    )
   ),
-  class = c("PubChemRequest", "get_aids"))
-
-  return(result)
+  class = c("get_aids"))
 }
