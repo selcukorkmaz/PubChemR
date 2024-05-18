@@ -35,10 +35,6 @@ A list containing the parsed JSON response from PubChem. Returns NULL if an erro
 \description{
 This function sends a request to PubChem to retrieve JSON data based on the specified parameters.
 It handles errors and warnings gracefully, providing informative messages when they occur.
+This function used internally by all get_* functions, and users will not typically run this function directly.
 }
-\examples{
-get_json(
-  identifier = "aspirin",
-  namespace = "name"
-)
-}
+\keyword{internal}

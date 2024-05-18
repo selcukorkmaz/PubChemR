@@ -12,24 +12,25 @@
 #' 1L
 #'
 #' @export
-call_params <- function(object, ...){
-  UseMethod("call_params")
+request_args <- function(object, ...){
+  UseMethod("request_args")
 }
 
-#' @rdname call_params
+#' @rdname request_args
 #' @export
-call_params.PubChemRequest <- function(object){
-  return(object[["call_parameters"]])
+request_args.PubChemInstance <- function(object){
+  return(object[["request_args"]])
 }
 
-#' @rdname call_params
+
+#' @rdname request_args
 #' @export
-call_params.get_aids <- function(object){
-  return(object[["call_parameters"]])
+request_args.PubChemInstance_AIDs <- function(object){
+  return(object[["request_args"]])
 }
 
-call_params.get_cids <- call_params.get_aids
-call_params.get_sids <- call_params.get_aids
+# request_args.get_cids <- request_args.get_aids
+# request_args.get_sids <- request_args.get_aids
 
 #' @export
 instance.PubChemRequest <- function(object, .which = NULL, ....){
@@ -55,7 +56,11 @@ instance <- function(object, ...){
 ## PubChemInstance class ----
 #' @export
 atoms.PubChemInstance <- function(object, ...){
-  object[["atoms"]]
+  if (!object$success){
+    return(stop("'object' encountered an error. Nothing to return. \n See error details in 'object'."))
+  }
+
+  object$result[[1]][[1]][["atoms"]]
 }
 
 #' @export
@@ -80,7 +85,11 @@ atoms <- function(object, ...){
 
 #' @export
 bonds.PubChemInstance <- function(object, ...){
-  object[["bonds"]]
+  if (!object$success){
+    return(stop("'object' encountered an error. Nothing to return. \n See error details in 'object'."))
+  }
+
+  object$result[[1]][[1]][["bonds"]]
 }
 
 #' @export
@@ -105,7 +114,11 @@ bonds <- function(object, ...){
 
 #' @export
 coords.PubChemInstance <- function(object, ...){
-  object[["coords"]]
+  if (!object$success){
+    return(stop("'object' encountered an error. Nothing to return. \n See error details in 'object'."))
+  }
+
+  object$result[[1]][[1]][["coords"]]
 }
 
 #' @export
@@ -130,7 +143,11 @@ coords <- function(object, ...){
 
 #' @export
 charge.PubChemInstance <- function(object, ...){
-  object[["charge"]]
+  if (!object$success){
+    return(stop("'object' encountered an error. Nothing to return. \n See error details in 'object'."))
+  }
+
+  object$result[[1]][[1]][["charge"]]
 }
 
 #' @export
@@ -153,21 +170,31 @@ charge <- function(object, ...){
   UseMethod("charge")
 }
 
+#' @importFrom tidyr as_tibble
+#' @importFrom magrittr '%>%'
 #' @export
 props.PubChemInstance <- function(object, .to.data.frame = FALSE, ...){
+
+  if (!object$success){
+    return(stop("'object' encountered an error. Nothing to return. \n See error details in 'object'."))
+  }
+
+  tmp <- object$result[[1]][[1]][["props"]]
+
   if (.to.data.frame){
-    tmp <- lapply(object[["props"]], function(x){
+    tmp <- lapply(tmp, function(x){
       as.data.frame(as.matrix(bind_cols(x)))
     })
 
     res <- tmp[[1]]
     for (i in 2:length(tmp)){
-      res <- suppressMessages(full_join(res, tmp[[i]]))
+      res <- suppressMessages(full_join(res, tmp[[i]])) %>%
+        as_tibble(.)
     }
 
     return(res)
   } else {
-    object[["props"]]
+    return(tmp)
   }
 }
 
@@ -194,7 +221,11 @@ props <- function(object, ...){
 
 #' @export
 count.PubChemInstance <- function(object, ...){
-  object[["count"]]
+  if (!object$success){
+    return(stop("'object' encountered an error. Nothing to return. \n See error details in 'object'."))
+  }
+
+  object$result[[1]][[1]][["count"]]
 }
 
 #' @export
@@ -217,10 +248,22 @@ count <- function(object, ...){
   UseMethod("count")
 }
 
-# get_aids ----
+# PubChemInstance_AIDs ----
 #' @export
-AIDs.get_aids <- function(object, ...){
-  return(object[["AID"]])
+AIDs.PubChemInstance_AIDs <- function(object, .to.data.frame = TRUE, ...){
+  tmp <- object$result
+
+  if (.to.data.frame){
+    res <- lapply(tmp, function(x){
+      bind_cols(x$result$InformationList$Information)
+    }) %>%
+      bind_rows(.) %>%
+      as_tibble(.)
+  } else {
+    res <- lapply(tmp, "[[", "result")
+  }
+
+  return(res)
 }
 
 #' @export

@@ -19,7 +19,7 @@ get_pug_rest(
 )
 }
 \arguments{
-\item{identifier}{A single identifier for the query, either numeric or character.}
+\item{identifier}{A vector of identifier for the query, either numeric or character.}
 
 \item{namespace}{A character string specifying the namespace for the request. Default is 'cid'.}
 
@@ -27,7 +27,7 @@ get_pug_rest(
 
 \item{operation}{An optional character string specifying the operation for the request.}
 
-\item{output}{A character string specifying the output format. Possible values are 'JSON', 'JSONP', 'XML', 'CSV', 'TXT', and 'PNG'. Default is 'JSON'.}
+\item{output}{A character string specifying the output format. Possible values are 'JSON', 'JSONP', 'CSV', 'TXT', and 'PNG'. Default is 'JSON'.}
 
 \item{searchtype}{An optional character string specifying the search type.}
 
@@ -44,7 +44,6 @@ get_pug_rest(
 \value{
 Depending on the output format, this function returns different types of content:
         JSON or JSONP format returns parsed JSON content.
-        XML format returns an XML object.
         CSV format returns a data frame.
         TXT format returns a table.
         PNG format returns an image object or saves an image file.

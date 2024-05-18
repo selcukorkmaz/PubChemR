@@ -30,102 +30,25 @@ get_aids <- function(identifier, namespace = 'cid', domain = 'compound', searcht
 
   # Try to get the response and parse JSON
   # Assuming 'get_json' is a function you've previously defined, similar to your Python environment
-  aidsList <- list()
+  result <- lapply(identifier, function(x){
+    tmp <- get_json(identifier = x, namespace, domain, 'aids', searchtype, options)
+    class(tmp) <- NULL
+    return(tmp)
+  })
 
-  for (i in 1:length(identifier)){
-    response_json <- get_json(identifier[i], namespace, domain, 'aids', searchtype, options)
-
-    # Check if the response contains the expected information
-    if (!(response_json$success)) {
-      aidsList[[i]] <- list(Identifier = identifier[i], aid = "No aid")
-
-    } else {
-      if (!is.null(response_json$IdentifierList) && !is.null(response_json$IdentifierList$aid)) {
-        aidsList[[i]] <- response_json$IdentifierList$aid
-
-      } else if (!is.null(response_json$InformationList) && !is.null(response_json$InformationList$Information)) {
-        aidsList[[i]] <- response_json$InformationList$Information[[1]]
-
-      } else {
-        return(list())  # Return an empty list if neither aids nor Information is found
-      }
-    }
-  }
-
-  if (as_data_frame){
-    # Initialize empty data frame
-    df <- data.frame(CID = numeric(), AID = numeric(), stringsAsFactors = FALSE)
-    resultList <- list()
-
-    # Loop through each list
-    for (i in seq_along(aidsList)) {
-        # Extract CID. It assumes there's only one CID per sublist
-        current_CID <- aidsList[[i]]$CID
-
-        # Check if aids are present and are numeric
-        if (is.numeric(aidsList[[i]]$AID)) {
-          current_aid <- aidsList[[i]]$AID
-
-          # Create a temporary data frame for current CID and its aids
-          temp_df <- data.frame(CID = rep(current_CID, length(current_aid)),
-                                AID = current_aid,
-                                stringsAsFactors = FALSE)
-
-          if (namespace == "name"){
-            temp_df <- cbind(Identifier = identifier[i], temp_df)
-            names(temp_df)[1] <- str_to_title(domain)
-          }
-
-          # Bind to the main data frame
-          # df <- bind_rows(df, temp_df)
-          resultList[[i]] <- temp_df
-
-        } else if (is.character(aidsList[[i]]$AID)) {
-          # Handle the case for "No aids" or similar cases
-          # Here, we add the CID with an NA or a specific indicator for the aid
-          temp_df <- data.frame(CID = current_CID,
-                                aid = NA,  # or "No aids" or another indicator
-                                stringsAsFactors = FALSE)
-
-          if (namespace == "name"){
-            temp_df <- cbind(Identifier = identifier[i], temp_df)
-            names(temp_df)[1] <- str_to_title(domain)
-          }
-
-          # Bind to the main data frame
-          # df <- bind_rows(df, temp_df)
-          resultList[[i]] <- temp_df
-
-        } else if (is.character(aidsList[[i]]$AID)) {
-          # Handle the case for "No aids" or similar cases
-          # Here, we add the CID with an NA or a specific indicator for the aid
-          temp_df <- data.frame(CID = current_CID,
-                                aid = NA,  # or "No aids" or another indicator
-                                stringsAsFactors = FALSE)
-
-          # Bind to the main data frame
-          # df <- bind_rows(df, temp_df)
-          resultList[[i]] <- temp_df
-        }
-
-      # Perhaps, we might prefer using DoCall(options) function under DescTools package, which is claimed
-      # faster alternative to base "do.call" function.
-      df <- do.call(rbind.data.frame, resultList)
-    }
-
-    result <- df %>% as_tibble()
-
-  } else {
-    names(aidsList) <- paste0("'", identifier, "'")
-    result <- aidsList
-  }
-
-  structure(list(
-    AID = result,
-    call_parameters = list(
+  AIDs_List <- list(
+    result = result,
+    request_args = list(
+      namespace = namespace,
       identifier = identifier,
-      namespace = namespace
-    )
-  ),
-  class = c("get_aids"))
+      domain = domain
+    ),
+    success = logical(),
+    error = NULL
+  )
+
+  structure(
+    AIDs_List,
+    class = c("PubChemInstance_AIDs")
+  )
 }

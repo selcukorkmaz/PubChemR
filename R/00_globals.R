@@ -145,11 +145,12 @@ property_map <- list(
 
 
 #' @importFrom dplyr case_when
-compound_identifier_text <- function(x){
+namespace_text <- function(x){
   txt <- case_when(
     .default = "Domain-Specific",
+    x == "aid" ~ "Assay ID",
     x == "name" ~ "Name",
-    x == "cid" ~ "CID",
+    x == "cid" ~ "Compound ID",
     x == "smiles" ~ "SMILES",
     x == "inchi" ~ "INCHI",
     x == "inchikey" ~ "INCHI Key",

@@ -20,36 +20,46 @@
 #' @export
 get_json <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL, searchtype = NULL, options = NULL, ...) {
 
-  result <- tryCatch({
-    get_pubchem(identifier, namespace, domain, operation, "JSON", searchtype, options)
-  },
-  error = function(e) {
-    err.text <- c("Failed", e$message)
-    names(err.text) <- c("Code", "Message")
-    return(toJSON(list(Fault = err.text)))
-  })
-
-  result_list <- fromJSON(result)
-
-  # If not failed with an error.
-  if (is.null(result_list$Fault)){
-    result_list[["success"]] <- TRUE
-
-    result_list[["call_parameters"]] <- list(
+  PubChemList <- list(
+    result = list(),
+    request_args = list(
       namespace = namespace,
       identifier = identifier,
       domain = domain
-    )
+    ),
+    success = logical(),
+    error = NULL
+  )
 
-    class(result_list[[1]]) <- "PubChemInstanceList"
-    for (i in 1:length(result_list[[1]])){
-      class(result_list[[1]][[i]]) <- "PubChemInstance"
-    }
+  result <- fromJSON({
+    tryCatch({
+      get_pubchem(identifier, namespace, domain, operation, "JSON", searchtype, options)
+    },
+    error = function(e) {
+      err.text <- c("Failed", e$message)
+      names(err.text) <- c("Code", "Message")
+      return(toJSON(list(Fault = err.text)))
+    })
+  })
 
+  # If not failed with an error.
+  if (is.null(result$Fault)){
+    PubChemList[["result"]] <- result
+    PubChemList[["success"]] <- TRUE
   } else {
-    result_list[["success"]] <- FALSE
+    PubChemList[["success"]] <- FALSE
+
+    # Command as a string
+    command_string <- result$Fault["Message"]
+
+    # Parsing and evaluating the command string
+    error_details <- eval(parse(text = command_string))
+
+    PubChemList[["error"]] <- error_details
   }
 
-  class(result_list) <- c("PubChemRequest")
-  return(result_list)
+  structure(
+    PubChemList,
+    class = "PubChemInstance"
+  )
 }

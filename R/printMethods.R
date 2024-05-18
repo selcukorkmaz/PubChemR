@@ -109,46 +109,90 @@ print.PubChemInstanceList <- function(x, ...){
 print.PubChemInstance <- function(x, ...){
   cat("\n")
   cat(" An object of class ", "'", class(x), "'", sep = "", "\n\n")
-  cat(" Details of the compound with CID=", unlist(x$id), ". ", "A list with following components.", "\n\n", sep = "")
+  cat(" Request Details: ", "\n")
+  cat("  - Domain: ", domain_text(x$request_args$domain), sep = "", "\n")
+  cat("  - Namespace: ", namespace_text(x$request_args$namespace), sep = "", "\n")
 
-  for (item in names(x)){
-    itemNames <- names(x[[item]])
-    if (length(itemNames) > 3){
-      itemNames <- c(itemNames[1:3], "...")
-    }
-
-    if (is.null(itemNames)){
-      itemNames <- paste0("<unnamed ", class(x[[item]]), ">")
-    }
-
-    cat("  - ", item, " (", length(x[[item]]), ")", ": ", paste0(itemNames, collapse = ", "), sep = "", "\n")
+  identifiers <- x$request_args$identifier
+  nIdentifiers <- length(identifiers)
+  suffix_identifiers <- ""
+  if (length(identifiers) > 2){
+    identifiers <- identifiers[1:2]
+    suffix_identifiers <- paste0(", ... and ", nIdentifiers - 2, " more.")
   }
 
-  cat("\n")
-  cat(" NOTE: Run getter function with compound name above to extract data from corresponding list, e.g., atoms(...).", "\n\n")
+  cat("  - Identifier: ", paste0(identifiers, collapse = ", "), suffix_identifiers, sep = "", "\n\n")
+  #cat(" Details:", "\n\n", sep = "")
+
+  if (!x$success){
+    cat(" Stopped with an ERROR. Details are below:", "\n\n")
+
+    for (i in names(x$error)){
+      cat("  - ", i, ": ", x$error[[i]], sep = "", "\n")
+    }
+
+    cat("\n\n")
+  }
+
+  if (x$success){
+    cat(" Instance Details: ", "\n")
+    instance <- x$result[[1]][[1]]
+    instanceNames <- names(instance)
+
+    for (item in instanceNames){
+      itemClass <- class(instance[[item]])[1]
+      itemNames <- names(instance[[item]])
+
+      if (!is.null(itemNames) & length(itemNames) > 4){
+        itemNames <- c(itemNames[1:4], "...")
+        named_unnamed <- "named"
+      }
+
+      named_unnamed <- ifelse(is.null(itemNames), "unnamed", "named")
+
+      cat("  - ", item, " (", length(instance[[item]]), ")", ": ", "[<", named_unnamed, " ", itemClass, ">] ",
+          paste(itemNames, collapse = ", "), sep = "", "\n")
+    }
+
+    cat("\n")
+    cat(" NOTE: Run getter function with element name above to extract data from corresponding list, e.g., atoms(...).", "\n\n")
+  }
 }
 
 ## get_aids ----
 #' @export
-print.get_aids <- function(x, ...){
+print.PubChemInstance_AIDs <- function(x, ...){
   cat("\n")
   cat(" Assay IDs (AIDs) from PubChem Database", sep = "", "\n\n")
+  cat(" Reuqest Details: ", "\n")
+  cat("  - Domain: ", domain_text(x$request_args$domain), sep = "", "\n")
+  cat("  - Namespace: ", namespace_text(x$request_args$namespace), sep = "", "\n")
 
-  call_args <- call_params(x)
-  cat(" Number of elements: ", length(call_args$identifier), sep = "", "\n")
-
-  itemNames <- call_args$identifier
-  if (length(itemNames) > 3){
-    itemNames <- c(itemNames[1:3], "...")
+  identifiers <- x$request_args$identifier
+  nIdentifiers <- length(identifiers)
+  suffix_identifiers <- ""
+  if (length(identifiers) > 2){
+    identifiers <- identifiers[1:2]
+    suffix_identifiers <- paste0(", ... and ", nIdentifiers - 2, " more.")
   }
 
-  cat("  - Compounds (", compound_identifier_text(call_args$namespace), "): ", paste0(itemNames, collapse = ", "), sep = "", "\n")
-  column_names <- names(x$AID)
-  if (length(column_names) > 4){
-    column_names <- c(column_names[1:4], "...")
+  cat("  - Identifier: ", paste0(identifiers, collapse = ", "), suffix_identifiers, sep = "", "\n\n")
+  success <- unlist(lapply(x$result, "[[", "success"))
+
+  if (!all(success)){
+    if (any(success)){
+      cat(" WARNING: AIDs cannot be retrieved succecfully for some instances.", "\n")
+      cat("          Results were returned for elements which are successfully retrieved.", "\n\n")
+    }
+
+    if (all(!success)){
+      cat(" Stopped with an ERROR. No results are returned.", "\n")
+    }
   }
-  cat("  - AIDs [a ", "\"", class(x$AID)[1], "\"", " object]: ", paste0(column_names, collapse = ", "), sep = "", "\n\n")
-  cat(" NOTE: run AIDs(...) to extract AID data. See ?AIDs for help.", "\n")
+
+  if (any(success)){
+    cat(" NOTE: run AIDs(...) to extract AID data. See ?AIDs for help.", "\n\n")
+  }
 }
 
 
