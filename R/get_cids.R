@@ -29,56 +29,26 @@ utils::globalVariables(c("data", "CID"))
 #' )
 get_cids <- function(identifier, namespace = 'name', domain = 'compound', searchtype = NULL, options = NULL) {
 
-  # Try to get the response and parse JSON
-  result <- tryCatch({
-    # Assuming 'get_json' is a function you've previously defined, similar to your Python environment
-
-    cidsList <- list()
-
-    for (i in 1:length(identifier)){
-    response_json <- get_json(identifier[i], namespace, domain, 'cids', searchtype, options)
-
-    # Check if the response contains the expected information
-    if (is.null(response_json)) {
-      cidsList[[i]] <- list(Identifier = identifier[i], CID = "No CID")
-
-    } else if (!is.null(response_json$IdentifierList) && !is.null(response_json$IdentifierList$CID)) {
-      cidsList[[i]] <- list(Identifier = identifier[i], CID = response_json$IdentifierList$CID)
-
-    } else if (!is.null(response_json$InformationList) && !is.null(response_json$InformationList$Information)) {
-      cidsList[[i]] <- list(Identifier = identifier[i], Info = response_json$InformationList$Information)
-
-    } else {
-      return(list())  # Return an empty list if neither CIDs nor Information is found
-    }
-    }
-  }, error = function(e) {
-    message(paste("An error occurred:", e$message))  # Log the error message
-    return(list())  # Return an empty list in case of an error
+  result <- lapply(identifier, function(x){
+    tmp <- get_json(identifier = x, namespace, domain, 'cids', searchtype, options)
+    class(tmp) <- NULL
+    return(tmp)
   })
 
-  # First, convert the list to a tibble (a type of data frame)
-  cidsList <- lapply(cidsList, function(item) {
-    item$CID <- as.character(item$CID)  # Convert CID to character
-    return(item)
-  })
-
-  result <- tibble(data = cidsList)
-
-  # Now, we need to unnest the data because it's in a complex form
-  result <- result %>%
-    mutate(row = row_number()) %>%  # This is to keep track of original list order
-    unnest_wider(data) %>%  # This makes the Name and CID columns
-    unnest_longer(CID) %>%  # This makes multiple rows if there are multiple CIDs
-    select(-row)  # This removes the 'row' column, as we don't need it anymore
-
-  structure(list(
-    CID = result,
-    call_parameters = list(
+  CIDs_List <- list(
+    result = result,
+    request_args = list(
+      namespace = namespace,
       identifier = identifier,
-      namespace = namespace
-    )
-  ),
-  class = c("get_cids"))
+      domain = domain
+    ),
+    success = logical(),
+    error = NULL
+  )
+
+  structure(
+    CIDs_List,
+    class = c("PubChemInstance_CIDs")
+  )
 }
 

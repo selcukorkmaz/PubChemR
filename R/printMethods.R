@@ -164,7 +164,7 @@ print.PubChemInstance <- function(x, ...){
 print.PubChemInstance_AIDs <- function(x, ...){
   cat("\n")
   cat(" Assay IDs (AIDs) from PubChem Database", sep = "", "\n\n")
-  cat(" Reuqest Details: ", "\n")
+  cat(" Request Details: ", "\n")
   cat("  - Domain: ", domain_text(x$request_args$domain), sep = "", "\n")
   cat("  - Namespace: ", namespace_text(x$request_args$namespace), sep = "", "\n")
 
@@ -191,32 +191,45 @@ print.PubChemInstance_AIDs <- function(x, ...){
   }
 
   if (any(success)){
-    cat(" NOTE: run AIDs(...) to extract AID data. See ?AIDs for help.", "\n\n")
+    cat(" NOTE: run AIDs(...) to extract Assays ID data. See ?AIDs for help.", "\n\n")
   }
 }
 
 
 # get_cids ----
 #' @export
-print.get_cids <- function(x, ...){
+print.PubChemInstance_CIDs <- function(x, ...){
   cat("\n")
   cat(" Compound IDs (CIDs) from PubChem Database", sep = "", "\n\n")
+  cat(" Request Details: ", "\n")
+  cat("  - Domain: ", domain_text(x$request_args$domain), sep = "", "\n")
+  cat("  - Namespace: ", namespace_text(x$request_args$namespace), sep = "", "\n")
 
-  call_args <- call_params(x)
-  cat(" Number of elements: ", length(call_args$identifier), sep = "", "\n")
-
-  itemNames <- call_args$identifier
-  if (length(itemNames) > 3){
-    itemNames <- c(itemNames[1:3], "...")
+  identifiers <- x$request_args$identifier
+  nIdentifiers <- length(identifiers)
+  suffix_identifiers <- ""
+  if (length(identifiers) > 2){
+    identifiers <- identifiers[1:2]
+    suffix_identifiers <- paste0(", ... and ", nIdentifiers - 2, " more.")
   }
 
-  cat("  - Compounds (", compound_identifier_text(call_args$namespace), "): ", paste0(itemNames, collapse = ", "), sep = "", "\n")
-  column_names <- names(x$CID)
-  if (length(column_names) > 4){
-    column_names <- c(column_names[1:4], "...")
+  cat("  - Identifier: ", paste0(identifiers, collapse = ", "), suffix_identifiers, sep = "", "\n\n")
+  success <- unlist(lapply(x$result, "[[", "success"))
+
+  if (!all(success)){
+    if (any(success)){
+      cat(" WARNING: AIDs cannot be retrieved succecfully for some instances.", "\n")
+      cat("          Results were returned for elements which are successfully retrieved.", "\n\n")
+    }
+
+    if (all(!success)){
+      cat(" Stopped with an ERROR. No results are returned.", "\n")
+    }
   }
-  cat("  - CIDs [a ", "\"", class(x$CID)[1], "\"", " object]: ", paste0(column_names, collapse = ", "), sep = "", "\n\n")
-  cat(" NOTE: run CIDs(...) to extract CID data. See ?CIDs for help.", "\n")
+
+  if (any(success)){
+    cat(" NOTE: run CIDs(...) to extract Compound ID data. See ?CIDs for help.", "\n\n")
+  }
 }
 
 

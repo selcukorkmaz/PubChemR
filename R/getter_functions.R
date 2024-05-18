@@ -29,8 +29,6 @@ request_args.PubChemInstance_AIDs <- function(object){
   return(object[["request_args"]])
 }
 
-# request_args.get_cids <- request_args.get_aids
-# request_args.get_sids <- request_args.get_aids
 
 #' @export
 instance.PubChemRequest <- function(object, .which = NULL, ....){
@@ -173,7 +171,7 @@ charge <- function(object, ...){
 #' @importFrom tidyr as_tibble
 #' @importFrom magrittr '%>%'
 #' @export
-props.PubChemInstance <- function(object, .to.data.frame = FALSE, ...){
+props.PubChemInstance <- function(object, .to.data.frame = TRUE, ...){
 
   if (!object$success){
     return(stop("'object' encountered an error. Nothing to return. \n See error details in 'object'."))
@@ -271,10 +269,28 @@ AIDs <- function(object, ...){
   UseMethod("AIDs")
 }
 
-# get_cids ----
+# PubChemInstance_CIDs ----
 #' @export
-CIDs.get_cids <- function(object, ...){
-  return(object[["CID"]])
+CIDs.PubChemInstance_CIDs <- function(object, .to.data.frame = TRUE, ...){
+  tmp <- object$result
+
+  if (.to.data.frame){
+    res <- lapply(tmp, function(x){
+      xx <- suppressMessages({
+        list(x$request_args$identifier, CID = x$result$IdentifierList$CID) %>%
+          bind_cols()
+      })
+
+      names(xx)[1] <- namespace_text(x$request_args$namespace)
+      return(xx)
+    }) %>%
+      bind_rows(.) %>%
+      as_tibble(.)
+  } else {
+    res <- lapply(tmp, "[[", "result")
+  }
+
+  return(res)
 }
 
 #' @export
