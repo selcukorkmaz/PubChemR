@@ -10,7 +10,8 @@ get_json(
   domain = "compound",
   operation = NULL,
   searchtype = NULL,
-  options = NULL
+  options = NULL,
+  ...
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ get_json(
 \item{searchtype}{Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.}
 
 \item{options}{Additional parameters passed to \code{\link{get_json}}.}
+
+\item{...}{other arguments. Deprecated.}
 }
 \value{
 A list containing the parsed JSON response from PubChem. Returns NULL if an error or warning occurs.
@@ -32,10 +35,6 @@ A list containing the parsed JSON response from PubChem. Returns NULL if an erro
 \description{
 This function sends a request to PubChem to retrieve JSON data based on the specified parameters.
 It handles errors and warnings gracefully, providing informative messages when they occur.
+This function used internally by all get_* functions, and users will not typically run this function directly.
 }
-\examples{
-get_json(
-  identifier = "aspirin",
-  namespace = "name"
-)
-}
+\keyword{internal}

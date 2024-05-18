@@ -34,10 +34,6 @@ A constructed URL for the PubChem API.
 }
 \description{
 Constructs a URL for the PubChem API based on the provided parameters.
+This function used internally by all get_* functions, and users will not typically run this function directly.
 }
-\examples{
-request(
-  identifier = "aspirin",
-  namespace = "name"
-)
-}
+\keyword{internal}

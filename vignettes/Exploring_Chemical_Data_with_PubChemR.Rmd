@@ -50,12 +50,12 @@ The `PubChemR` package introduces a pivotal function, `get_pug_rest`, designed t
 
 ## 2. PUG REST: A Gateway to Chemical Data
 
-PUG REST, standing for Power User Gateway RESTful interface, is a simplified access route to PubChem's data and services. It is designed for scripts, web page embedded JavaScript, and third-party applications, eliminating the need for the more complex XML and SOAP envelopes required by other PUG variants. PUG REST's design revolves around the PubChem identifier (SID for substances, CID for compounds, and AID for assays) and is structured into three main request components: input (identifiers), operation (actions on identifiers), and output (desired information format).
+PUG REST, standing for Power User Gateway RESTful interface, is a simplified access route to PubChem's data and services. It is designed for scripts, web page embedded JavaScript, and third-party applications, eliminating the need for the more complex JSON and SOAP envelopes required by other PUG variants. PUG REST's design revolves around the PubChem identifier (SID for substances, CID for compounds, and AID for assays) and is structured into three main request components: input (identifiers), operation (actions on identifiers), and output (desired information format).
 
 ### 2.1. Key Features of PUG REST:
 
 * **Flexibility and Combinatorial Use:** PUG REST allows a wide range of combinations of inputs, operations, and outputs, enabling users to create customized requests.
-* **Support for Various Formats:** It supports multiple output formats, including XML, JSON, CSV, PNG, and plain text, catering to different application needs.
+* **Support for Various Formats:** It supports multiple output formats, including JSON, JSON, CSV, PNG, and plain text, catering to different application needs.
 * **RESTful Design:** The service is based on HTTP requests with details encoded in the URL path, making it RESTful and user-friendly.
 
 **Usage Policy:**
@@ -73,10 +73,10 @@ The `get_pug_rest` function in the `PubChemR` package provides a versatile inter
 
 The input part of a PUG REST request specifies the records of interest. There are several ways to define this input, with the most common methods detailed below:
 
-**1. By Identifier:** Directly specify SIDs or CIDs. For example, to get the names of a substance with SID 10000 in XML format:
+**1. By Identifier:** Directly specify SIDs or CIDs. For example, to get the names of a substance with SID 10000 in JSON format:
 
 ```{r}
-result <- get_pug_rest(identifier = "10000", namespace = "sid", domain = "substance", operation = "synonyms", output = "XML")
+result <- get_pug_rest(identifier = "10000", namespace = "sid", domain = "substance", operation = "synonyms", output = "JSON")
 ```
 
 ```{r}
@@ -116,7 +116,7 @@ result
 **4. By Structure Search:** More sophisticated searches like substructure or similarity searches. These may require asynchronous operations due to the time taken to search the database.
 
 ```{r, eval=FALSE}
-result <- get_pug_rest(identifier = "C1CCCCCC1", namespace = "smiles", domain = "compound",  output = "XML", searchtype = "substructure")
+result <- get_pug_rest(identifier = "C1CCCCCC1", namespace = "smiles", domain = "compound",  output = "JSON", searchtype = "substructure")
 ```
 
 ```{r}
@@ -148,7 +148,7 @@ result
 
 Once you've specified the records of interest in PUG REST, the next step is to define what information you want to retrieve about these records. PUG REST excels in providing access to specific data points about each record, such as individual properties or cross-references, without the need to download and sift through large datasets.
 
-**1. Full Records:** PUG REST allows the retrieval of entire records in various formats like ASN.1, XML, SDF, and JSON(P). For example, to retrieve the record for aspirin (CID 2244) in SDF format:
+**1. Full Records:** PUG REST allows the retrieval of entire records in various formats like ASN.1, JSON, SDF, and JSON(P). For example, to retrieve the record for aspirin (CID 2244) in SDF format:
 
 ```{r, eval=FALSE}
 get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", output = "SDF")
@@ -186,7 +186,7 @@ result
 **4. Synonyms:** To view all synonyms of a compound, such as Vioxx:
 
 ```{r}
-result <- get_pug_rest(identifier = "vioxx", namespace = "name", domain = "compound", operation = "synonyms", output = "XML")
+result <- get_pug_rest(identifier = "vioxx", namespace = "name", domain = "compound", operation = "synonyms", output = "JSON")
 ```
 
 ```{r}
@@ -196,7 +196,7 @@ result
 **5. Cross-References (XRefs):** PUG REST provides access to various cross-references. For example, to retrieve MMDB identifiers for protein structures containing aspirin:
 
 ```{r}
-result <- get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", operation = c("xrefs","MMDBID"), output = "XML")
+result <- get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", operation = c("xrefs","MMDBID"), output = "JSON")
 ```
 
 ```{r}
@@ -223,7 +223,7 @@ PubChem BioAssays are complex entities containing a wealth of data. PUG REST pro
 **1. Assay Description:** To obtain the description section of a BioAssay, which includes authorship, general description, protocol, and data readout definitions, use a request like:
 
 ```{r}
-result <- get_pug_rest(identifier = "504526", namespace = "aid", domain = "assay", operation = "description", output = "XML")
+result <- get_pug_rest(identifier = "504526", namespace = "aid", domain = "assay", operation = "description", output = "JSON")
 ```
 
 For a simplified summary format that includes target information, active and inactive SID and CID counts:
@@ -241,7 +241,7 @@ result <- get_pug_rest(identifier = "504526", namespace = "aid", domain = "assay
 For a subset of data rows, specify the SIDs:
 
 ```{r}
-result <- get_pug_rest(identifier = "504526", namespace = "aid", domain = "assay", operation = "XML?sid=104169547,109967232", output = "XML")
+result <- get_pug_rest(identifier = "504526", namespace = "aid", domain = "assay", operation = "JSON?sid=104169547,109967232", output = "JSON")
 ```
 
 For concise data (e.g., active concentration readout) with additional information:
@@ -259,7 +259,7 @@ result <- get_pug_rest(identifier = "504526", namespace = "aid", domain = "assay
 **3. Targets:** To retrieve assay targets, including protein or gene identifiers:
 
 ```{r}
-result <- get_pug_rest(identifier = "490,1000", namespace = "aid", domain = "assay", operation = "targets/ProteinGI,ProteinName,GeneID,GeneSymbol", output = "XML")
+result <- get_pug_rest(identifier = "490,1000", namespace = "aid", domain = "assay", operation = "targets/ProteinGI,ProteinName,GeneID,GeneSymbol", output = "JSON")
 ```
 
 To select assays via target identifier:

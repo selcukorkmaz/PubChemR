@@ -1,6 +1,7 @@
 #' PubChem API Base URL
 #'
 #' @description The base URL for the PubChem API.
+#' @noRd
 
 api_base <- "https://pubchem.ncbi.nlm.nih.gov/rest/pug"
 
@@ -22,6 +23,7 @@ CompoundIdType <- list(
 #' Bond Types
 #'
 #' @description List of bond types.
+#' @noRd
 
 BondType <- list(
   SINGLE = 1,
@@ -37,6 +39,7 @@ BondType <- list(
 #' Coordinate Types
 #'
 #' @description List of coordinate types.
+#' @noRd
 
 CoordinateType <- list(
   TWO_D = 1,
@@ -59,6 +62,7 @@ CoordinateType <- list(
 #' Project Categories
 #'
 #' @description List of project categories.
+#' @noRd
 
 ProjectCategory <- list(
   MLSCN = 1,
@@ -77,6 +81,7 @@ ProjectCategory <- list(
 #' Elements
 #'
 #' @description Vector of chemical elements.
+#' @noRd
 
 ELEMENTS <- c(
   'H', 'He', 'Li', 'Be', 'B', 'C', 'N', 'O', 'F', 'Ne',
@@ -99,6 +104,7 @@ names(ELEMENTS) <- 1:118
 #' Property Map
 #'
 #' @description Map of properties to their respective names.
+#' @noRd
 
 property_map <- list(
   molecular_formula = 'MolecularFormula',

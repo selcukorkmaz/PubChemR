@@ -6,7 +6,7 @@ test_that("pulling JSON file via 'name' is succesful", {
   ))
 
   expect_false(inherits(tmp, "try-error"))
-  expect_true(inherits(tmp, "list"))
+  expect_true(inherits(tmp, "get_json_Object"))
   expect_true(length(tmp) > 0)
 })
 
@@ -18,7 +18,7 @@ test_that("pulling JSON file via 'smiles' is succesful", {
   ))
 
   expect_false(inherits(tmp, "try-error"))
-  expect_true(inherits(tmp, "list"))
+  expect_true(inherits(tmp, "get_json_Object"))
   expect_true(length(tmp) > 0)
 })
 
@@ -30,7 +30,7 @@ test_that("pulling JSON file via 'cid' is succesful", {
   ))
 
   expect_false(inherits(tmp, "try-error"))
-  expect_true(inherits(tmp, "list"))
+  expect_true(inherits(tmp, "get_json_Object"))
   expect_true(length(tmp) > 0)
 })
 

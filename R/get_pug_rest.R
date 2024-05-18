@@ -3,11 +3,11 @@
 #' This function sends a request to the PubChem PUG REST API to retrieve various types of data
 #' for a given identifier. It supports fetching data in different formats and allows saving the output.
 #'
-#' @param identifier A single identifier for the query, either numeric or character.
+#' @param identifier A vector of identifier for the query, either numeric or character.
 #' @param namespace A character string specifying the namespace for the request. Default is 'cid'.
 #' @param domain A character string specifying the domain for the request. Default is 'compound'.
 #' @param operation An optional character string specifying the operation for the request.
-#' @param output A character string specifying the output format. Possible values are 'JSON', 'JSONP', 'XML', 'CSV', 'TXT', and 'PNG'. Default is 'JSON'.
+#' @param output A character string specifying the output format. Possible values are 'JSON', 'JSONP', 'CSV', 'TXT', and 'PNG'. Default is 'JSON'.
 #' @param searchtype An optional character string specifying the search type.
 #' @param property An optional character string specifying the property for the request.
 #' @param options A list of additional options for the request.
@@ -17,7 +17,6 @@
 #'
 #' @return Depending on the output format, this function returns different types of content:
 #'         JSON or JSONP format returns parsed JSON content.
-#'         XML format returns an XML object.
 #'         CSV format returns a data frame.
 #'         TXT format returns a table.
 #'         PNG format returns an image object or saves an image file.
@@ -25,15 +24,12 @@
 #' @examples
 #'   get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", output = "JSON")
 #'
-#' @importFrom httr GET
+#' @importFrom httr GET RETRY
 #' @importFrom RJSONIO fromJSON
-#' @importFrom xml2 read_xml
 #' @importFrom magick image_read
 #' @importFrom png readPNG writePNG
 #' @importFrom RCurl getURLContent curlEscape
 #' @importFrom utils read.csv write.csv read.table write.table
-#' @importFrom XML xmlParse
-#' @importFrom xml2 write_xml
 #' @export
 
 get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compound',
@@ -120,7 +116,9 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
  }else{
 
   # Make the HTTP GET request and return the response
-  response <- GET(URLencode(apiurl))
+  # response <- GET(URLencode(apiurl))
+   response <- RETRY("GET", URLencode(apiurl), times = 3, pause_min = 1, pause_base = 2)
+
 
   if(response$status_code != 400){
 
@@ -133,11 +131,11 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
     }
   }
 
-  if(output == "XML"){
-    responseContent <- rawToChar(response$content)
-    xml_file <- read_xml(responseContent)
-    content <-  xml2::as_list(xml_file)
-  }
+  # if(output == "XML"){
+  #   responseContent <- rawToChar(response$content)
+  #   xml_file <- read_xml(responseContent)
+  #   content <-  xml2::as_list(xml_file)
+  # }
 
   # Check if the response is asking to wait and has a ListKey
   if ('Waiting' %in% names(content) && !is.null(content$Waiting[["ListKey"]])) {
@@ -151,13 +149,13 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
       response <- GET(request(identifier, namespace, domain, operation, output, options))
       responseContent <- rawToChar(response$content)
 
-      if(output == "XML"){
-        xml_file <- read_xml(responseContent)
-        content <-  xml2::as_list(xml_file)
-
-      }else{
+      # if(output == "XML"){
+      #   xml_file <- read_xml(responseContent)
+      #   content <-  xml2::as_list(xml_file)
+      #
+      # }else{
         content <- fromJSON(responseContent)
-      }
+      # }
     }
 
   }
@@ -208,11 +206,11 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
 
     }
 
-    else if(output == "XML"){
-
-      write_xml(xml_file, file = paste0(domain, "_", identifier, ".", output))
-
-    }
+    # else if(output == "XML"){
+    #
+    #   write_xml(xml_file, file = paste0(domain, "_", identifier, ".", output))
+    #
+    # }
   }
 
   if(output == "PNG"){
