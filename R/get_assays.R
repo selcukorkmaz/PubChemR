@@ -8,7 +8,6 @@
 #' @param operation The operation to be performed (default: NULL).
 #' @param searchtype The type of search to be performed (default: NULL).
 #' @param options Additional parameters. Currently has no effect on the results.
-#' @param to_dataframe Convert list to dataframe.
 #'
 #' @return A named list where each element corresponds to an assay retrieved from PubChem.
 #'         The names of the list elements are based on the provided identifiers.
@@ -25,86 +24,37 @@
 #'   namespace = 'aid',
 #'   to_dataframe = TRUE
 #' )
-get_assays <- function(identifier, namespace = 'aid', operation = NULL, searchtype = NULL, options = NULL, to_dataframe = FALSE) {
+get_assays <- function(identifier, namespace = 'aid', operation = NULL, searchtype = NULL, options = NULL) {
 
-  assays <- list()
-  assays_df = list()
-  data <- list()
+  # identifier = c(1234, 7815, "ssda")
+  # namespace = 'aid'
+  # operation = NULL
+  # searchtype = NULL
+  # options = NULL
+  # to_dataframe = TRUE
 
-  for (i in 1:length(identifier)) {
-    # Retrieve the JSON data
-    results <- get_json(identifier[i], namespace, 'assay', 'description', searchtype, options)
+  # Try to get the response and parse JSON
+  # Assuming 'get_json' is a function you've previously defined, similar to your Python environment
+  result <- lapply(identifier, function(x){
+    tmp <- get_json(identifier = x, namespace, 'assay', 'description', searchtype, options)
+    class(tmp) <- c(class(tmp), "PC_Assay")
+    return(tmp)
+  })
 
-    # Check if not failed.
-    if (results$success) {
-      # Create a list of assays (here, you might want to define what an 'Assay' contains)
-      if (!is.null(results$result$PC_AssayContainer)) {
-        assays[[i]] <- results$result$PC_AssayContainer
-      } else {
-        assays[[i]] <- "No assay"
-      }
-    }
+  Assays_List <- list(
+    result = result,
+    request_args = list(
+      namespace = namespace,
+      identifier = identifier,
+      domain = "assay",
+      operation = "description"
+    ),
+    success = logical(),
+    error = NULL
+  )
 
-    if (to_dataframe){
-      # Separate elements into vectors and lists
-      vectors <- assays[[i]][[1]][[1]]$descr %>% keep(~ is.atomic(.x) && !is.list(.x))
-      lists <- assays[[i]][[1]][[1]]$descr %>% keep(~ is.list(.x))
-      lists_result = list()
-
-      # Convert multi-element vectors into single strings
-      vectors <- vectors %>%
-        map(~ if (length(.x) > 1) paste(.x, collapse = " ") else .x)
-
-      # Convert vectors to dataframe
-      vector_df <- as_tibble(vectors)
-
-      for (j in 1:length(lists)){
-        if (length(lists[[j]]) == 1){
-          lists_result[[j]] = as_tibble(lists[[j]][[1]])
-
-        } else {
-          lists_result[[j]] <- tryCatch({
-            # Perform the transformations
-            lists[[j]] %>%
-              enframe(name = NULL, value = names(lists)[j]) %>%
-              unnest_wider(col = names(lists)[j]) %>%
-              unnest_wider(col = names(lists)[j])
-          }, error = function(e) {
-            # Handle the error
-            return("Error")  # Return NULL in case of error
-          })
-
-          if (!is.data.frame(lists_result[[j]]) && lists_result[[j]] == "Error"){
-
-            lists_result[[j]] <- tryCatch({
-              # Perform the transformations
-              lists[[j]] %>%
-                enframe(name = NULL, value = names(lists)[j]) %>%
-                unnest_wider(col = names(lists)[j])
-            }, error = function(e) {
-              # Handle the error
-              return("Error")  # Return NULL in case of error
-            })
-          }
-        }
-      }
-
-      names(lists_result) = names(lists)
-      lists_result$descr = vector_df
-      lists_result <- lists_result[c("descr", names(lists))]
-
-      assays_df[[i]] = lists_result
-    }
-  }
-
-  if (to_dataframe){
-    assay_res = assays_df
-  } else {
-    assay_res = assays
-  }
-
-  names(assay_res) <- paste0("'", identifier, "'")
-  results <- assay_res
-
-  return(results)
+  structure(
+    Assays_List,
+    class = c("PubChemInstanceList")
+  )
 }

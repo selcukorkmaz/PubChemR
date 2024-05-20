@@ -100,20 +100,36 @@ print.PubChemRequest <- function(x, ...){
 #' @export
 print.PubChemInstanceList <- function(x, ...){
   cat("\n")
-  cat(" An object of class ", "'", class(x), "'", sep = "", "\n\n")
-  cat(" Number of instances: ", length(x), "\n\n", sep = "")
+  cat(" An object of class ", "'", primaryClass(x), "'", sep = "", "\n\n")
+  cat(" Number of instances: ", length(x$result), "\n", sep = "")
+
+  cat("  - Domain: ", domain_text(request_args(x, "domain")), sep = "", "\n")
+  cat("  - Namespace: ", namespace_text(request_args(x, "namespace")), sep = "", "\n")
+
+  identifiers <- request_args(x, "identifier")
+  nIdentifiers <- length(identifiers)
+  suffix_identifiers <- ""
+  if (length(identifiers) > 2){
+    identifiers <- identifiers[1:2]
+    suffix_identifiers <- paste0(", ... and ", nIdentifiers - 2, " more.")
+  }
+
+  cat("  - Identifier(s): ", paste0(identifiers, collapse = ", "), suffix_identifiers, sep = "", "\n\n")
+  cat(" * Run 'instance(...)' function to extract specific instances from the complete list, and", "\n", sep = "")
+  cat("   'request_args(...)' to see all the requested instance identifiers.", sep = "", "\n")
+  cat(" * See ?instance and ?request_args for details.", "\n\n")
 }
 
 ## PubChemInstance ----
 #' @export
 print.PubChemInstance <- function(x, ...){
   cat("\n")
-  cat(" An object of class ", "'", class(x), "'", sep = "", "\n\n")
+  cat(" An object of class ", "'", primaryClass(x), "'", sep = "", "\n\n")
   cat(" Request Details: ", "\n")
-  cat("  - Domain: ", domain_text(x$request_args$domain), sep = "", "\n")
-  cat("  - Namespace: ", namespace_text(x$request_args$namespace), sep = "", "\n")
+  cat("  - Domain: ", domain_text(request_args(x, "domain")), sep = "", "\n")
+  cat("  - Namespace: ", namespace_text(request_args(x, "namespace")), sep = "", "\n")
 
-  identifiers <- x$request_args$identifier
+  identifiers <- request_args(x, "identifier")
   nIdentifiers <- length(identifiers)
   suffix_identifiers <- ""
   if (length(identifiers) > 2){
@@ -136,7 +152,12 @@ print.PubChemInstance <- function(x, ...){
 
   if (x$success){
     cat(" Instance Details: ", "\n")
-    instance <- x$result[[1]][[1]]
+    instance <- if (request_args(x, "domain") %in% c("assay")){
+       x$result$PC_AssayContainer[[1]]$assay$descr
+    } else if (request_args(x, "domain") %in% c("compound")){
+      x$result[[1]][[1]]
+    }
+
     instanceNames <- names(instance)
 
     for (item in instanceNames){
@@ -154,8 +175,17 @@ print.PubChemInstance <- function(x, ...){
           paste(itemNames, collapse = ", "), sep = "", "\n")
     }
 
-    cat("\n")
-    cat(" NOTE: Run getter function with element name above to extract data from corresponding list, e.g., atoms(...).", "\n\n")
+    # print notes for getter functions.
+    if (!is.null(instanceNames)){
+      getterFuncText <- if (length(instanceNames) > 2){
+        paste0(paste0(instanceNames[1:2], "(...)"), collapse = ", ")
+      } else {
+        paste0(instanceNames[1], "(...)")
+      }
+      cat("\n")
+      cat(" NOTE: Run getter function with element name above to extract data from corresponding list, \n")
+      cat("       for example, ", getterFuncText, ifelse(length(instanceNames) > 1, ", etc.", ""), sep = "", "\n")
+    }
   }
 }
 
@@ -196,7 +226,7 @@ print.PubChemInstance_AIDs <- function(x, ...){
 }
 
 
-# get_cids ----
+## get_cids ----
 #' @export
 print.PubChemInstance_CIDs <- function(x, ...){
   cat("\n")
@@ -233,26 +263,39 @@ print.PubChemInstance_CIDs <- function(x, ...){
 }
 
 
-# get_sids ----
+## get_sids ----
 #' @export
-print.get_sids <- function(x, ...){
+print.PubChemInstance_SIDs <- function(x, ...){
   cat("\n")
   cat(" Substance IDs (SIDs) from PubChem Database", sep = "", "\n\n")
+  cat(" Request Details: ", "\n")
+  cat("  - Domain: ", domain_text(x$request_args$domain), sep = "", "\n")
+  cat("  - Namespace: ", namespace_text(x$request_args$namespace), sep = "", "\n")
 
-  call_args <- call_params(x)
-  cat(" Number of elements: ", length(call_args$identifier), sep = "", "\n")
-
-  itemNames <- call_args$identifier
-  if (length(itemNames) > 3){
-    itemNames <- c(itemNames[1:3], "...")
+  identifiers <- x$request_args$identifier
+  nIdentifiers <- length(identifiers)
+  suffix_identifiers <- ""
+  if (length(identifiers) > 2){
+    identifiers <- identifiers[1:2]
+    suffix_identifiers <- paste0(", ... and ", nIdentifiers - 2, " more.")
   }
 
-  cat("  - Compounds (", compound_identifier_text(call_args$namespace), "): ", paste0(itemNames, collapse = ", "), sep = "", "\n")
-  column_names <- names(x$SID)
-  if (length(column_names) > 4){
-    column_names <- c(column_names[1:4], "...")
+  cat("  - Identifier: ", paste0(identifiers, collapse = ", "), suffix_identifiers, sep = "", "\n\n")
+  success <- unlist(lapply(x$result, "[[", "success"))
+
+  if (!all(success)){
+    if (any(success)){
+      cat(" WARNING: SIDs cannot be retrieved succecfully for some instances.", "\n")
+      cat("          Results were returned for elements which are successfully retrieved.", "\n\n")
+    }
+
+    if (all(!success)){
+      cat(" Stopped with an ERROR. No results are returned.", "\n")
+    }
   }
-  cat("  - SIDs [a ", "\"", class(x$SID)[1], "\"", " object]: ", paste0(column_names, collapse = ", "), sep = "", "\n\n")
-  cat(" NOTE: run SIDs(...) to extract CID data. See ?CIDs for help.", "\n")
+
+  if (any(success)){
+    cat(" NOTE: run SIDs(...) to extract Substance ID data. See ?SIDs for help.", "\n\n")
+  }
 }
 

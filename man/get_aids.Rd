@@ -9,7 +9,6 @@ get_aids(
   namespace = "cid",
   domain = "compound",
   searchtype = NULL,
-  as_data_frame = TRUE,
   options = NULL
 )
 }
@@ -21,8 +20,6 @@ get_aids(
 \item{domain}{Specifies the domain of the query. Possible values are 'substance', 'compound', 'assay', 'gene', 'protein', 'pathway', 'taxonomy', 'cell', 'sources', 'sourcetable', 'conformers', 'annotations', 'classification', and 'standardize'.}
 
 \item{searchtype}{Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.}
-
-\item{as_data_frame}{A logical value indicating whether to return the results as a tibble (data frame). Default is TRUE.}
 
 \item{options}{Additional arguments passed to \code{\link{get_json}}}
 }

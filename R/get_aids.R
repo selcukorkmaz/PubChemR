@@ -9,7 +9,6 @@
 #' @param namespace Specifies the namespace for the query. For the 'compound' domain, possible values include 'cid', 'name', 'smiles', 'inchi', 'sdf', 'inchikey', 'formula', 'substructure', 'superstructure', 'similarity', 'identity', 'xref', 'listkey', 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure', and 'fastformula'. For other domains, the possible namespaces are domain-specific.
 #' @param domain Specifies the domain of the query. Possible values are 'substance', 'compound', 'assay', 'gene', 'protein', 'pathway', 'taxonomy', 'cell', 'sources', 'sourcetable', 'conformers', 'annotations', 'classification', and 'standardize'.
 #' @param searchtype Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.
-#' @param as_data_frame A logical value indicating whether to return the results as a tibble (data frame). Default is TRUE.
 #' @param options Additional arguments passed to \code{\link{get_json}}
 #'
 #' @return If `as_data_frame` is TRUE, a tibble (data frame) where each row corresponds to a provided identifier and its AID.
@@ -26,7 +25,7 @@
 #'   identifier = "aspirin",
 #'   namespace = "name"
 #' )
-get_aids <- function(identifier, namespace = 'cid', domain = 'compound', searchtype = NULL, as_data_frame = TRUE, options = NULL) {
+get_aids <- function(identifier, namespace = 'cid', domain = 'compound', searchtype = NULL, options = NULL) {
 
   # Try to get the response and parse JSON
   # Assuming 'get_json' is a function you've previously defined, similar to your Python environment

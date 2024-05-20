@@ -12,33 +12,23 @@
 #' 1L
 #'
 #' @export
-request_args <- function(object, ...){
-  UseMethod("request_args")
+request_args <- function(object, .which = NULL, ...){
+  if (is.null(.which)){
+    return(object[["request_args"]])
+  } else {
+    return(object[["request_args"]][[.which]])
+  }
 }
 
-#' @rdname request_args
 #' @export
-request_args.PubChemInstance <- function(object){
-  return(object[["request_args"]])
-}
-
-
-#' @rdname request_args
-#' @export
-request_args.PubChemInstance_AIDs <- function(object){
-  return(object[["request_args"]])
-}
-
-
-#' @export
-instance.PubChemRequest <- function(object, .which = NULL, ....){
+instance.PubChemInstanceList <- function(object, .which = NULL, ....){
   if (is.null(.which)){
     idx <- 1
   } else {
-    if (!(.which %in% object$call_parameters$identifier)){
-      stop("Compound identifier is not available within 'object'.")
+    if (!(.which %in% request_args(object, "identifier"))){
+      stop("Unknown instance identifier. Run 'request_args(object, \"identifier\")' to see all the requested instance identifiers.")
     }
-    idx <- which(object$call_parameters$identifier == .which)
+    idx <- which(request_args(object, "identifier") == .which)
   }
 
   return(object[[1]][[idx]])
@@ -299,10 +289,30 @@ CIDs <- function(object, ...){
 }
 
 
-# get_sids ----
+# PubChemInstance_SIDs ----
+#' @importFrom dplyr bind_rows
+#' @importFrom tidyr as_tibble
 #' @export
-SIDs.get_sids <- function(object, ...){
-  return(object[["SID"]])
+SIDs.PubChemInstance_SIDs <- function(object, .to.data.frame = TRUE, ...){
+  tmp <- object$result
+
+  if (.to.data.frame){
+    res <- lapply(tmp, function(x){
+      xx <- suppressMessages({
+        list(x$request_args$identifier, SID = x$result$InformationList$Information[[1]]$SID) %>%
+          bind_cols()
+      })
+
+      names(xx)[1] <- namespace_text(x$request_args$namespace)
+      return(xx)
+    }) %>%
+      bind_rows(.) %>%
+      as_tibble(.)
+  } else {
+    res <- lapply(tmp, "[[", "result")
+  }
+
+  return(res)
 }
 
 #' @export

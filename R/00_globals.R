@@ -194,3 +194,6 @@ domain_text <- function(x){
   return(txt)
 }
 
+primaryClass <- function(x){
+  class(x)[1]
+}

@@ -37,13 +37,9 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
                          saveFile = FALSE, saveImage = FALSE, dpi = 300) {
 
   if(!is.null(output)){
-
     output = toupper(output)
-
-  }else{
-
+  } else {
     stop("output argument cannot be NULL.")
-
   }
 
   # Construct the base URL for PUG REST
@@ -60,11 +56,8 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
 
   # Add identifier to the URL if provided
   if (!is.null(identifier)) {
-
     identifier <- toupper(identifier)
-
-    if(length(identifier)>1){
-
+    if (length(identifier)>1){
       identifier = paste0(identifier, collapse = ",")
     }
 
@@ -79,11 +72,10 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
 
   # Add searchtype to the URL if provided
   if (!is.null(property)) {
-
-    if(length(property)>1){
-
+    if (length(property)>1){
       property = paste0(property, collapse = ",")
     }
+
     apiurl <- paste0(apiurl, "property/", property, "/")
   }
 
@@ -92,19 +84,18 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
 
   # Add options to the URL if provided
   if (!is.null(options)) {
-    if(namespace == "inchi"){
+    if (namespace == "inchi"){
       options <- paste0("?", paste0("inchi=", curlEscape(unlist(options)), collapse = "&"))
       options <- gsub(" ", "", options)
-    }
-    else{
+    } else {
       options <- paste0("?", paste0( names(options), unlist(options), collapse = "&"))
       options <- gsub(" ", "", options)
     }
+
     apiurl <- paste0(apiurl, options)
   }
 
-  if(output == "SDF"){
-
+  if (output == "SDF"){
     if (url.exists(apiurl)) {
       # Write the content to a file in SDF format in the current working directory
       path = paste0(domain, "_", identifier, ".", output)
@@ -113,20 +104,16 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
     } else {
       message("Received no content to write to the SDF file.")
     }
-  }else{
-
+  } else {
     # Make the HTTP GET request and return the response
     # response <- GET(URLencode(apiurl))
     response <- RETRY("GET", URLencode(apiurl), times = 3, pause_min = 1, pause_base = 2)
 
+    if (response$status_code != 400){
 
-    if(response$status_code != 400){
-
-      if(output == "CSV"){
+      if (output == "CSV"){
         content <- read.csv(response$url)
-
-        if(saveFile){
-
+        if (saveFile){
           write.csv(content, file = paste0(domain, "_", identifier, ".", output), row.names = FALSE)
         }
       }
@@ -149,83 +136,51 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
           response <- GET(request(identifier, namespace, domain, operation, output, options))
           responseContent <- rawToChar(response$content)
 
-          # if(output == "XML"){
-          #   xml_file <- read_xml(responseContent)
-          #   content <-  xml2::as_list(xml_file)
-          #
-          # }else{
           content <- fromJSON(responseContent)
-          # }
         }
-
       }
 
       # Handling response based on output format
       if (!is.null(output) && output %in% c('JSON', 'JSONP')) {
         savedContent <- content(response, "text", encoding = "UTF-8")
 
-        if(output == "JSONP"){
+        if (output == "JSONP"){
           savedContent <- sub('[^;\\{]*', '', savedContent)  # remove function name and opening parenthesis
           savedContent <- sub('\\)$', '', savedContent) # remove closing parenthesis
         }
 
         content <- fromJSON(savedContent)
-
       }
 
-      if(!is.null(output) && output == "PNG"){
-
+      if (!is.null(output) && output == "PNG"){
         str = readPNG(getURLContent(apiurl))
 
-
-        if(saveImage){
-
+        if (saveImage){
           writePNG(str, target = paste0(identifier, ".", output), dpi = dpi)
         }
 
         print(image_read(str))
       }
 
-
-      if(output == "TXT"){
-
+      if (output == "TXT"){
         content <- read.table(response$url)
       }
 
-      if(saveFile){
-
-        if(output == "TXT"){
-
+      if (saveFile){
+        if (output == "TXT"){
           write.table(content, file = paste0(domain, "_", identifier, ".", output), quote = F, row.names = F)
-
-        }
-
-        else if(output == "JSON"){
-
+        } else if(output == "JSON"){
           write(savedContent, file = paste0(domain, "_", identifier, ".", output))
-
         }
-
-        # else if(output == "XML"){
-        #
-        #   write_xml(xml_file, file = paste0(domain, "_", identifier, ".", output))
-        #
-        # }
       }
 
-      if(output == "PNG"){
-
+      if (output == "PNG"){
         message('File has been saved as ', paste0(identifier, ".png"))
-
-      }else{
-
+      } else {
         invisible(content)
-
       }
-    }else{
-
+    } else {
       stop(content(response, "text", encoding = "UTF-8"))
     }
-
   }
 }
