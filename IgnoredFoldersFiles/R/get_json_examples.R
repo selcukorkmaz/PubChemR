@@ -49,15 +49,34 @@ names(asp_caf_formula$PC_Compounds[[2]]) ## for caffein
 
 
 # 2. Class and Getter examples ----
-asp_caf_cid <- get_json(identifier = c("2244","2519"), namespace = "cid")
-asp_caf_cid
+comp <- get_compounds(identifier = c("aspirin", "caffein", "dncr"), namespace = "name")
+comp
 
-# Çoklu liste içerisinden spesifik bir elemanın bilgilerine ulaşmak için
-instance(asp_caf_cid, 2244)
+instance(comp, "aspirin")
+instance(comp, "dncr")  # Results with error.
 
-bonds(asp_caf_cid)
-bonds(instance(asp_caf_cid))  # .which tanımlanmaz ise listenin ilk sırasındaki bileşene ait bilgiler otomatik dönüyor.
+ass <- get_assays(identifier = c(1234, 7815, "dncr"), namespace = "aid")
+ass
 
-bonds(asp_caf_cid, .which = 2244)
-bonds(asp_caf_cid, .which = 2519)
-bonds(asp_caf_cid, .which = 3333)   # Error returns.
+instance(ass, 7815)
+aid_source(ass, .which = "7815")
+aid_source(ass, .which = "dncr")
+aid_source(ass, .which = "2222")
+
+description(ass, .which = "7815")
+
+results(ass, .which = "1234", .to.data.frame = TRUE)
+xref(instance(ass, 7815), .verbose = FALSE)
+xref(instance(ass, 7815), .verbose = TRUE)
+
+comment(ass, .which = "7815")
+comment(ass, .which = "1234")
+
+
+(cids <- get_cids(identifier = c("aspirin", "caffein", "dncr", "ibuprofen"), namespace = "name"))
+(aids <- get_aids(identifier = c("aspirin", "caffein", "dncr", "ibuprofen"), namespace = "name"))
+(sids <- get_sids(identifier = c("aspirin", "caffein", "dncr", "ibuprofen"), namespace = "name"))
+
+CIDs(cids)
+AIDs(aids)
+SIDs(sids)

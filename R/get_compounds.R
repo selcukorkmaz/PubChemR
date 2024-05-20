@@ -21,37 +21,31 @@
 #'   namespace = "name"
 #' )
 get_compounds <- function(identifier, namespace = 'cid', operation = NULL, searchtype = NULL, options = NULL) {
+  # Try to get the response and parse JSON
+  # Assuming 'get_json' is a function you've previously defined, similar to your Python environment
+  result <- lapply(identifier, function(x){
+    tmp <- get_json(identifier = x, namespace, operation = operation, searchtype = searchtype, options = options)
+    class(tmp) <- c(class(tmp), "PC_Compounds")
+    return(tmp)
+  })
 
-  compounds <- list()
+  Compounds_List <- list(
+    result = result,
+    request_args = list(
+      namespace = namespace,
+      identifier = identifier,
+      domain = "compound",
+      operation = "description",
+      options = options,
+      searchtype = searchtype
+    ),
+    success = logical(),
+    error = NULL
+  )
 
-  # compounds <- lapply(identifier, function(id){
-  #   tmp <- get_json(identifier = id, namespace = namespace, operation = operation, searchtype = searchtype, options = options)
-  #
-  #
-  # })
-
-
-  for (i in 1:length(identifier)) {
-    # Retrieve the JSON data
-    results <- get_json(identifier[i], namespace, operation = operation, searchtype = searchtype, options = options)
-
-    # Check if results are not empty
-    if (!is.null(results)) {
-      # Create a list of compounds (here, you might want to define what an 'compound' contains)
-
-    if (!is.null(results$PC_Compounds)) {
-        compounds[[i]] <- results$PC_Compounds
-      } else {
-        compounds[[i]] <- results
-      }
-    }}
-
-    if (length(compounds) >= 1){
-
-      names(compounds) <- paste0("'", identifier, "'")
-      results <- compounds
-
-      return(results)
-  }
+  structure(
+    Compounds_List,
+    class = c("PubChemInstanceList")
+  )
 }
 

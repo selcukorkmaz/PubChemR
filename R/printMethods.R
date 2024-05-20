@@ -189,7 +189,7 @@ print.PubChemInstance <- function(x, ...){
   }
 }
 
-## get_aids ----
+## PubChemInstance_AIDs ----
 #' @export
 print.PubChemInstance_AIDs <- function(x, ...){
   cat("\n")
@@ -226,7 +226,7 @@ print.PubChemInstance_AIDs <- function(x, ...){
 }
 
 
-## get_cids ----
+## PubChemInstance_CIDs ----
 #' @export
 print.PubChemInstance_CIDs <- function(x, ...){
   cat("\n")
@@ -248,7 +248,7 @@ print.PubChemInstance_CIDs <- function(x, ...){
 
   if (!all(success)){
     if (any(success)){
-      cat(" WARNING: AIDs cannot be retrieved succecfully for some instances.", "\n")
+      cat(" WARNING: CIDs cannot be retrieved succecfully for some instances.", "\n")
       cat("          Results were returned for elements which are successfully retrieved.", "\n\n")
     }
 
@@ -263,7 +263,7 @@ print.PubChemInstance_CIDs <- function(x, ...){
 }
 
 
-## get_sids ----
+## PubChemInstance_SIDs ----
 #' @export
 print.PubChemInstance_SIDs <- function(x, ...){
   cat("\n")
