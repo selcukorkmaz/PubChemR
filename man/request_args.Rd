@@ -2,15 +2,9 @@
 % Please edit documentation in R/getter_functions.R
 \name{request_args}
 \alias{request_args}
-\alias{request_args.PubChemInstance}
-\alias{request_args.PubChemInstance_AIDs}
 \title{Call Function Parameters}
 \usage{
-request_args(object, ...)
-
-\method{request_args}{PubChemInstance}(object)
-
-\method{request_args}{PubChemInstance_AIDs}(object)
+request_args(object, .which = NULL, ...)
 }
 \arguments{
 \item{object}{<details here>}

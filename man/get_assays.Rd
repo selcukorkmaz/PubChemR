@@ -9,8 +9,7 @@ get_assays(
   namespace = "aid",
   operation = NULL,
   searchtype = NULL,
-  options = NULL,
-  to_dataframe = FALSE
+  options = NULL
 )
 }
 \arguments{
@@ -23,8 +22,6 @@ get_assays(
 \item{searchtype}{The type of search to be performed (default: NULL).}
 
 \item{options}{Additional parameters. Currently has no effect on the results.}
-
-\item{to_dataframe}{Convert list to dataframe.}
 }
 \value{
 A named list where each element corresponds to an assay retrieved from PubChem.
