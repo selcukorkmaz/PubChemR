@@ -100,48 +100,93 @@ names(ELEMENTS) <- 1:118
 #'
 #' @description Map of properties to their respective names.
 
-property_map <- list(
-  molecular_formula = 'MolecularFormula',
-  molecular_weight = 'MolecularWeight',
-  canonical_smiles = 'CanonicalSMILES',
-  isomeric_smiles = 'IsomericSMILES',
-  inchi = 'InChI',
-  inchikey = 'InChIKey',
-  iupac_name = 'IUPACName',
-  xlogp = 'XLogP',
-  exact_mass = 'ExactMass',
-  monoisotopic_mass = 'MonoisotopicMass',
-  tpsa = 'TPSA',
-  complexity = 'Complexity',
-  charge = 'Charge',
-  h_bond_donor_count = 'HBondDonorCount',
-  h_bond_acceptor_count = 'HBondAcceptorCount',
-  rotatable_bond_count = 'RotatableBondCount',
-  heavy_atom_count = 'HeavyAtomCount',
-  isotope_atom_count = 'IsotopeAtomCount',
-  atom_stereo_count = 'AtomStereoCount',
-  defined_atom_stereo_count = 'DefinedAtomStereoCount',
-  undefined_atom_stereo_count = 'UndefinedAtomStereoCount',
-  bond_stereo_count = 'BondStereoCount',
-  defined_bond_stereo_count = 'DefinedBondStereoCount',
-  undefined_bond_stereo_count = 'UndefinedBondStereoCount',
-  covalent_unit_count = 'CovalentUnitCount',
-  volume_3d = 'Volume3D',
-  conformer_rmsd_3d = 'ConformerModelRMSD3D',
-  conformer_model_rmsd_3d = 'ConformerModelRMSD3D',
-  x_steric_quadrupole_3d = 'XStericQuadrupole3D',
-  y_steric_quadrupole_3d = 'YStericQuadrupole3D',
-  z_steric_quadrupole_3d = 'ZStericQuadrupole3D',
-  feature_count_3d = 'FeatureCount3D',
-  feature_acceptor_count_3d = 'FeatureAcceptorCount3D',
-  feature_donor_count_3d = 'FeatureDonorCount3D',
-  feature_anion_count_3d = 'FeatureAnionCount3D',
-  feature_cation_count_3d = 'FeatureCationCount3D',
-  feature_ring_count_3d = 'FeatureRingCount3D',
-  feature_hydrophobe_count_3d = 'FeatureHydrophobeCount3D',
-  effective_rotor_count_3d = 'EffectiveRotorCount3D',
-  conformer_count_3d = 'ConformerCount3D'
-)
+property_map <- function(x, type = c("match", "contain", "start", "end"), .ignore.case = TRUE, ...){
+  properties_list <- c(
+    'MolecularFormula', 'MolecularWeight', 'CanonicalSMILES', 'IsomericSMILES', 'InChI', 'InChIKey', 'IUPACName', 'XLogP',
+    'ExactMass', 'MonoisotopicMass', 'TPSA', 'Complexity', 'Charge', 'HBondDonorCount', 'HBondAcceptorCount', 'RotatableBondCount',
+    'HeavyAtomCount', 'IsotopeAtomCount', 'AtomStereoCount', 'DefinedAtomStereoCount', 'UndefinedAtomStereoCount', 'BondStereoCount',
+    'DefinedBondStereoCount', 'UndefinedBondStereoCount', 'CovalentUnitCount', 'Volume3D', 'ConformerModelRMSD3D', 'ConformerModelRMSD3D',
+    'XStericQuadrupole3D', 'YStericQuadrupole3D', 'ZStericQuadrupole3D', 'FeatureCount3D', 'FeatureAcceptorCount3D', 'FeatureDonorCount3D',
+    'FeatureAnionCount3D', 'FeatureCationCount3D', 'FeatureRingCount3D', 'FeatureHydrophobeCount3D', 'EffectiveRotorCount3D', 'ConformerCount3D'
+  )
+
+  type = match.arg(type)
+
+  res <- sapply(x, function(xx){
+    idx <- if (type == "start"){
+      starts_with(match = xx, vars = properties_list, ignore.case = .ignore.case)
+    } else if (type == "end"){
+      ends_with(match = xx, vars = properties_list, ignore.case = .ignore.case)
+    } else if (type == "match"){
+      if (.ignore.case){
+        x <- tolower(xx)
+        which(xx == tolower(properties_list))
+      } else {
+        which(xx == properties_list)
+      }
+    } else {
+      contains(match = xx, vars = properties_list, ignore.case = .ignore.case)
+    }
+
+    if (length(idx) == 0){
+      return(NULL)
+    }
+
+    return(idx)
+  }, simplify = FALSE)
+
+
+  res <- unlist(res)
+
+  if (length(res) == 0){
+    return(NULL)
+  }
+
+  return(properties_list[res])
+}
+
+# property_map <- list(
+#   molecular_formula = 'MolecularFormula',
+#   molecular_weight = 'MolecularWeight',
+#   canonical_smiles = 'CanonicalSMILES',
+#   isomeric_smiles = 'IsomericSMILES',
+#   inchi = 'InChI',
+#   inchikey = 'InChIKey',
+#   iupac_name = 'IUPACName',
+#   xlogp = 'XLogP',
+#   exact_mass = 'ExactMass',
+#   monoisotopic_mass = 'MonoisotopicMass',
+#   tpsa = 'TPSA',
+#   complexity = 'Complexity',
+#   charge = 'Charge',
+#   h_bond_donor_count = 'HBondDonorCount',
+#   h_bond_acceptor_count = 'HBondAcceptorCount',
+#   rotatable_bond_count = 'RotatableBondCount',
+#   heavy_atom_count = 'HeavyAtomCount',
+#   isotope_atom_count = 'IsotopeAtomCount',
+#   atom_stereo_count = 'AtomStereoCount',
+#   defined_atom_stereo_count = 'DefinedAtomStereoCount',
+#   undefined_atom_stereo_count = 'UndefinedAtomStereoCount',
+#   bond_stereo_count = 'BondStereoCount',
+#   defined_bond_stereo_count = 'DefinedBondStereoCount',
+#   undefined_bond_stereo_count = 'UndefinedBondStereoCount',
+#   covalent_unit_count = 'CovalentUnitCount',
+#   volume_3d = 'Volume3D',
+#   conformer_rmsd_3d = 'ConformerModelRMSD3D',
+#   conformer_model_rmsd_3d = 'ConformerModelRMSD3D',
+#   x_steric_quadrupole_3d = 'XStericQuadrupole3D',
+#   y_steric_quadrupole_3d = 'YStericQuadrupole3D',
+#   z_steric_quadrupole_3d = 'ZStericQuadrupole3D',
+#   feature_count_3d = 'FeatureCount3D',
+#   feature_acceptor_count_3d = 'FeatureAcceptorCount3D',
+#   feature_donor_count_3d = 'FeatureDonorCount3D',
+#   feature_anion_count_3d = 'FeatureAnionCount3D',
+#   feature_cation_count_3d = 'FeatureCationCount3D',
+#   feature_ring_count_3d = 'FeatureRingCount3D',
+#   feature_hydrophobe_count_3d = 'FeatureHydrophobeCount3D',
+#   effective_rotor_count_3d = 'EffectiveRotorCount3D',
+#   conformer_count_3d = 'ConformerCount3D'
+# )
 
 
 #' @importFrom dplyr case_when

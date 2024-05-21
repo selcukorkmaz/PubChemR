@@ -29,3 +29,20 @@ comment(ass, .which = "1234")
 CIDs(cids)
 AIDs(aids)
 SIDs(sids)
+
+props <- get_properties(
+  properties = c("mass", "molecular", "smile") ,
+  identifier = c("aspirin", "caffein", "ibuprofen", "dncr"),
+  namespace = "name",
+  propertyMatch = list(
+    .ignore.case = TRUE,
+    type = "contain"
+  )
+)
+
+instanceProperties(props, .which = "aspirin", .to.data.frame = TRUE)
+instanceProperties(props, .which = "aspirin", .to.data.frame = FALSE)
+instanceProperties(props, .which = "dncr", .to.data.frame = FALSE)
+instanceProperties(props, .which = "selcuk", .to.data.frame = FALSE)
+instanceProperties(props, .to.data.frame = TRUE, .combine.all = TRUE)
+instanceProperties(props, .to.data.frame = FALSE, .combine.all = TRUE)

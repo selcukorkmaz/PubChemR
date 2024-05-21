@@ -542,8 +542,6 @@ comment.PubChemInstance <- function(object, ..., .verbose = TRUE){
 
 #' @export
 comment.PubChemInstanceList <- function(object, ..., .which = NULL, .verbose = TRUE){
-  res <- NULL
-
   if (is.null(.which)){
     idx <- 1
   } else {
@@ -557,6 +555,7 @@ comment.PubChemInstanceList <- function(object, ..., .which = NULL, .verbose = T
 }
 
 
+#' @export
 xref <- function(object, ..., .verbose = TRUE){
   UseMethod("xref")
 }
@@ -600,8 +599,6 @@ xref.PubChemInstance <- function(object, ..., .verbose = TRUE){
 
 #' @export
 xref.PubChemInstanceList <- function(object, ..., .which = NULL, .verbose = TRUE){
-  res <- NULL
-
   if (is.null(.which)){
     idx <- 1
   } else {
@@ -614,7 +611,7 @@ xref.PubChemInstanceList <- function(object, ..., .which = NULL, .verbose = TRUE
   xref(object$result[[idx]], .verbose = .verbose)
 }
 
-
+#' @export
 results <- function(object, ...){
   UseMethod("results")
 }
@@ -640,8 +637,6 @@ results.PubChemInstance <- function(object, ..., .to.data.frame = TRUE){
 
 #' @export
 results.PubChemInstanceList <- function(object, ..., .to.data.frame = TRUE, .which = NULL){
-  res <- NULL
-
   if (is.null(.which)){
     idx <- 1
   } else {
@@ -652,4 +647,58 @@ results.PubChemInstanceList <- function(object, ..., .to.data.frame = TRUE, .whi
   }
 
   results(object$result[[idx]], .to.data.frame = .to.data.frame)
+}
+
+
+#' @export
+instanceProperties <- function(object, ...){
+  UseMethod("instanceProperties")
+}
+
+#' @importFrom dplyr bind_rows bind_cols
+#'
+#' @export
+instanceProperties.PubChemInstance <- function(object, ..., .to.data.frame = TRUE){
+  res <- NULL
+
+  if ("PC_Properties" %in% class(object) & object$success){
+    tmp <- object$result[[1]][[1]][[1]]
+
+    if (.to.data.frame){
+      res <- bind_rows(bind_cols(tmp))
+    } else {
+      res <- tmp
+    }
+  }
+
+  return(res)
+}
+
+#' @importFrom magrittr "%>%"
+#' @importFrom dplyr bind_rows
+#'
+#' @export
+instanceProperties.PubChemInstanceList <- function(object, ..., .to.data.frame = TRUE, .which = NULL, .combine.all = FALSE){
+  if (!.combine.all){
+    if (is.null(.which)){
+      idx <- 1
+    } else {
+      if (!(.which %in% request_args(object, "identifier"))){
+        stop("Unknown instance identifier. Run 'request_args(object, \"identifier\")' to see all the requested instance identifiers.")
+      }
+      idx <- which(request_args(object, "identifier") == .which)
+    }
+
+    res <- instanceProperties(object$result[[idx]], .to.data.frame = .to.data.frame)
+  } else {
+    .to.data.frame <- TRUE
+
+    res <- lapply(request_args(object, "identifier"), function(x){
+      tmp <- instance(object, .which = x)
+      instanceProperties(tmp, .to.data.frame = .to.data.frame)
+    }) %>%
+      bind_rows()
+  }
+
+  return(res)
 }

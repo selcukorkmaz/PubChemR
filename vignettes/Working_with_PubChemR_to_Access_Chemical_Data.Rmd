@@ -253,12 +253,10 @@ For more advanced applications, `get_cids` can be combined with other functions 
 ```{r}
 # Retrieve CIDs for multiple compounds
 compounds <- c("Aspirin", "Caffeine", "Ibuprofen")
-cids_list <- lapply(compounds, function(compound) {
-  get_cids(identifier = compound, namespace = "name")
-})
+result <- get_cids(identifier = compounds, namespace = "name")
 
-cids_df <- bind_rows(lapply(cids_list, CIDs))
-# Use the retrieved CIDs to fetch additional data
+cids_df <- CIDs(result)
+
 MolecularWeight <- sapply(cids_df$CID, function(x){
   get_properties(properties = "MolecularWeight", identifier = x, namespace = "cid")[[1]][["MolecularWeight"]]
 })

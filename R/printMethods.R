@@ -142,27 +142,29 @@ print.PubChemInstance <- function(x, ...){
 
   if (!x$success){
     cat(" Stopped with an ERROR. Details are below:", "\n\n")
-
     for (i in names(x$error)){
       cat("  - ", i, ": ", x$error[[i]], sep = "", "\n")
     }
-
     cat("\n\n")
   }
 
   if (x$success){
     cat(" Instance Details: ", "\n")
-    instance <- if (request_args(x, "domain") %in% c("assay")){
+    instance_results <- if (request_args(x, "domain") %in% c("assay")){
        x$result$PC_AssayContainer[[1]]$assay$descr
     } else if (request_args(x, "domain") %in% c("compound")){
-      x$result[[1]][[1]]
+      if ("PC_Properties" %in% class(x)){
+        x$result[[1]][[1]][[1]]
+      } else {
+        x$result[[1]][[1]]
+      }
     }
 
-    instanceNames <- names(instance)
+    instanceNames <- names(instance_results)
 
     for (item in instanceNames){
-      itemClass <- class(instance[[item]])[1]
-      itemNames <- names(instance[[item]])
+      itemClass <- class(instance_results[[item]])[1]
+      itemNames <- names(instance_results[[item]])
 
       if (!is.null(itemNames) & length(itemNames) > 4){
         itemNames <- c(itemNames[1:4], "...")
@@ -171,20 +173,27 @@ print.PubChemInstance <- function(x, ...){
 
       named_unnamed <- ifelse(is.null(itemNames), "unnamed", "named")
 
-      cat("  - ", item, " (", length(instance[[item]]), ")", ": ", "[<", named_unnamed, " ", itemClass, ">] ",
+      cat("  - ", item, " (", length(instance_results[[item]]), ")", ": ", "[<", named_unnamed, " ", itemClass, ">] ",
           paste(itemNames, collapse = ", "), sep = "", "\n")
     }
 
     # print notes for getter functions.
     if (!is.null(instanceNames)){
-      getterFuncText <- if (length(instanceNames) > 2){
-        paste0(paste0(instanceNames[1:2], "(...)"), collapse = ", ")
-      } else {
-        paste0(instanceNames[1], "(...)")
-      }
       cat("\n")
-      cat(" NOTE: Run getter function with element name above to extract data from corresponding list, \n")
-      cat("       for example, ", getterFuncText, ifelse(length(instanceNames) > 1, ", etc.", ""), sep = "", "\n")
+      if ("PC_Properties" %in% class(x)){
+
+        cat(" NOTE: Run getter function 'instanceProperties(...)' to extract properties from requested elements. \n")
+        cat("       See ?instanceProperties for details.", sep = "", "\n")
+      } else {
+        getterFuncText <- if (length(instanceNames) > 2){
+          paste0(paste0(instanceNames[1:2], "(...)"), collapse = ", ")
+        } else {
+          paste0(instanceNames[1], "(...)")
+        }
+
+        cat(" NOTE: Run getter function with element name above to extract data from corresponding list, \n")
+        cat("       for example, ", getterFuncText, ifelse(length(instanceNames) > 1, ", etc.", ""), sep = "", "\n")
+      }
     }
   }
 }
