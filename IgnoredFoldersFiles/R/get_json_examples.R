@@ -1,5 +1,5 @@
 # Examples ----
-comp <- get_compounds(identifier = c("aspirin", "caffein", "dncr"), namespace = "name")
+comp <- get_compounds(identifier = c("1234", "3452", "dncr"), namespace = "cid")
 comp
 
 instance(comp, "aspirin")
@@ -10,7 +10,7 @@ atoms(asp)
 count(asp)
 charge(asp)
 
-ass <- get_assays(identifier = c(1234, 7815, "dncr"), namespace = "aid")
+ass <- get_assays(identifier = c(1234, 7815, 3642, 2856, 6214), namespace = "aid")
 ass
 
 instance(ass, 7815)
@@ -36,9 +36,9 @@ AIDs(aids)
 SIDs(sids)
 
 props <- get_properties(
-  properties = c("mass", "molecular", "smile") ,
-  identifier = c("aspirin", "caffein", "ibuprofen", "dncr"),
-  namespace = "name",
+  properties = c("mass"),
+  identifier = c(1234:1350),
+  namespace = "cid",
   propertyMatch = list(
     .ignore.case = TRUE,
     type = "contain"

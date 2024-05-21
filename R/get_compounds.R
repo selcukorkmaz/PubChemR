@@ -48,4 +48,3 @@ get_compounds <- function(identifier, namespace = 'cid', operation = NULL, searc
     class = c("PubChemInstanceList")
   )
 }
-

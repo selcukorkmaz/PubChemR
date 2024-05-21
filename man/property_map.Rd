@@ -6,7 +6,7 @@
 \usage{
 property_map(
   x,
-  type = c("match", "contain", "start", "end"),
+  type = c("match", "contain", "start", "end", "all"),
   .ignore.case = TRUE,
   ...
 )

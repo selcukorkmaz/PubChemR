@@ -100,7 +100,7 @@ names(ELEMENTS) <- 1:118
 #'
 #' @description Map of properties to their respective names.
 
-property_map <- function(x, type = c("match", "contain", "start", "end"), .ignore.case = TRUE, ...){
+property_map <- function(x, type = c("match", "contain", "start", "end", "all"), .ignore.case = TRUE, ...){
   properties_list <- c(
     'MolecularFormula', 'MolecularWeight', 'CanonicalSMILES', 'IsomericSMILES', 'InChI', 'InChIKey', 'IUPACName', 'XLogP',
     'ExactMass', 'MonoisotopicMass', 'TPSA', 'Complexity', 'Charge', 'HBondDonorCount', 'HBondAcceptorCount', 'RotatableBondCount',
@@ -112,31 +112,34 @@ property_map <- function(x, type = c("match", "contain", "start", "end"), .ignor
 
   type = match.arg(type)
 
-  res <- sapply(x, function(xx){
-    idx <- if (type == "start"){
-      starts_with(match = xx, vars = properties_list, ignore.case = .ignore.case)
-    } else if (type == "end"){
-      ends_with(match = xx, vars = properties_list, ignore.case = .ignore.case)
-    } else if (type == "match"){
-      if (.ignore.case){
-        x <- tolower(xx)
-        which(xx == tolower(properties_list))
+  if (type != "all"){
+    res <- sapply(x, function(xx){
+      idx <- if (type == "start"){
+        starts_with(match = xx, vars = properties_list, ignore.case = .ignore.case)
+      } else if (type == "end"){
+        ends_with(match = xx, vars = properties_list, ignore.case = .ignore.case)
+      } else if (type == "match"){
+        if (.ignore.case){
+          x <- tolower(xx)
+          which(xx == tolower(properties_list))
+        } else {
+          which(xx == properties_list)
+        }
       } else {
-        which(xx == properties_list)
+        contains(match = xx, vars = properties_list, ignore.case = .ignore.case)
       }
-    } else {
-      contains(match = xx, vars = properties_list, ignore.case = .ignore.case)
-    }
 
-    if (length(idx) == 0){
-      return(NULL)
-    }
+      if (length(idx) == 0){
+        return(NULL)
+      }
 
-    return(idx)
-  }, simplify = FALSE)
+      return(idx)
+    }, simplify = FALSE)
 
-
-  res <- unlist(res)
+    res <- unlist(res)
+  } else {
+    res <- 1:length(properties_list)
+  }
 
   if (length(res) == 0){
     return(NULL)
