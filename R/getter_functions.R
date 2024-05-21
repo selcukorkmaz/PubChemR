@@ -132,8 +132,6 @@ props.PubChemInstance <- function(object, .to.data.frame = TRUE, ...){
   }
 }
 
-
-
 #' @export
 props <- function(object, ...){
   UseMethod("props")
@@ -148,8 +146,6 @@ count.PubChemInstance <- function(object, ...){
 
   object$result[[1]][[1]][["count"]]
 }
-
-
 
 #' @export
 count <- function(object, ...){
@@ -576,7 +572,8 @@ xref.PubChemInstance <- function(object, ..., .verbose = TRUE){
           for (j in 1:length(tmp[[i]])){
             ref <- tmp[[i]][[j]]
             refName <- names(ref)
-            cat(" > ", ifelse(is.null(slotNames[j]), "", paste0(slotNames[j], ifelse(is.null(refName), ": ", paste0(" (", refName, "): ")))), ref, sep = "", "\n")
+            cat(ifelse(j == 1, " > ", "   "), sep = "")
+            cat(ifelse(is.null(slotNames[j]), "", paste0(slotNames[j], ifelse(is.null(refName), ": ", paste0(" (", refName, "): ")))), ref, sep = "", "\n")
           }
           cat("\n")
         }
@@ -588,7 +585,7 @@ xref.PubChemInstance <- function(object, ..., .verbose = TRUE){
   } else {
     if (.verbose){
       cat("\n")
-      cat(" PubChem Assay Details (comment)", "\n\n")
+      cat(" PubChem Assay Details (xref)", "\n\n")
       cat(" Nothing to return. An error has been occurred. See requested assay results for details.", "\n")
       cat("\n")
     }

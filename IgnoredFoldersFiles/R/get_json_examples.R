@@ -5,6 +5,11 @@ comp
 instance(comp, "aspirin")
 instance(comp, "dncr")  # Results with error.
 
+asp <- instance(comp, "aspirin")
+atoms(asp)
+count(asp)
+charge(asp)
+
 ass <- get_assays(identifier = c(1234, 7815, "dncr"), namespace = "aid")
 ass
 

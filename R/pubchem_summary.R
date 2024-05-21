@@ -160,7 +160,7 @@ pubchem_summary <- function(identifier,
   if (!is.null(properties)){
     if (check_request){
       tryCatch({
-        summary_data$Properties <- get_properties(properties, identifier, namespace, as_dataframe = TRUE)
+        summary_data$Properties <- get_properties(properties, identifier, namespace)
 
         if (nrow(summary_data$Properties) > 0){
           message("Successfully retrieved properties data.")
