@@ -9,8 +9,8 @@ get_properties(
   identifier,
   namespace = "cid",
   searchtype = NULL,
-  as_dataframe = FALSE,
-  options = NULL
+  options = NULL,
+  propertyMatch = list(.ignore.case = FALSE, type = "contain")
 )
 }
 \arguments{
@@ -21,8 +21,6 @@ get_properties(
 \item{namespace}{Specifies the namespace for the query. For the 'compound' domain, possible values include 'cid', 'name', 'smiles', 'inchi', 'sdf', 'inchikey', 'formula', 'substructure', 'superstructure', 'similarity', 'identity', 'xref', 'listkey', 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure', and 'fastformula'. For other domains, the possible namespaces are domain-specific.}
 
 \item{searchtype}{Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.}
-
-\item{as_dataframe}{If TRUE it return a dataframe.}
 
 \item{options}{Additional arguments passed to \code{\link{get_json}}.}
 }
