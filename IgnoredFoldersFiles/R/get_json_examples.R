@@ -35,10 +35,12 @@ CIDs(cids)
 AIDs(aids)
 SIDs(sids)
 
+AIDs(get_aids(identifier = "CC(=O)OC1=CC=CC=C1C(=O)O", namespace = "smiles"))
+
 props <- get_properties(
-  properties = c("mass"),
-  identifier = c(1234:1350),
-  namespace = "cid",
+  properties = c("smile"),
+  identifier = c("aspirin", "ibuprofen"),
+  namespace = "name",
   propertyMatch = list(
     .ignore.case = TRUE,
     type = "contain"

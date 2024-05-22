@@ -159,7 +159,20 @@ AIDs.PubChemInstance_AIDs <- function(object, .to.data.frame = TRUE, ...){
 
   if (.to.data.frame){
     res <- lapply(tmp, function(x){
-      bind_cols(x$result$InformationList$Information)
+      if (!x$success){
+        return(NULL)
+      }
+
+      tmp2 <- bind_cols(x$result$InformationList$Information)
+
+      if (request_args(x, "namespace") != "cid"){
+        tbl <- tibble(request_args(x, .which = "identifier"))
+        names(tbl) <- stringr::str_to_title(request_args(x, .which = "namespace"))
+        tmp2 <- bind_cols(tbl, tmp2) %>%
+          select(-CID)
+      }
+
+      return(tmp2)
     }) %>%
       bind_rows(.) %>%
       as_tibble(.)
@@ -644,6 +657,106 @@ results.PubChemInstanceList <- function(object, ..., .to.data.frame = TRUE, .whi
   }
 
   results(object$result[[idx]], .to.data.frame = .to.data.frame)
+}
+
+
+
+#' @export
+revision <- function(object, ...){
+  UseMethod("revision")
+}
+
+#' @importFrom dplyr bind_rows bind_cols
+#'
+#' @export
+revision.PubChemInstance <- function(object, ...){
+  res <- NULL
+
+  if ("PC_Assay" %in% class(object) & object$success){
+    res <- object$result$PC_AssayContainer[[1]]$assay$descr$revision
+  }
+
+  return(res)
+}
+
+#' @export
+revision.PubChemInstanceList <- function(object, ..., .which = NULL){
+  if (is.null(.which)){
+    idx <- 1
+  } else {
+    if (!(.which %in% request_args(object, "identifier"))){
+      stop("Unknown instance identifier. Run 'request_args(object, \"identifier\")' to see all the requested instance identifiers.")
+    }
+    idx <- which(request_args(object, "identifier") == .which)
+  }
+
+  revision(object$result[[idx]])
+}
+
+
+#' @export
+activity_outcome_method <- function(object, ...){
+  UseMethod("activity_outcome_method")
+}
+
+#' @importFrom dplyr bind_rows bind_cols
+#'
+#' @export
+activity_outcome_method.PubChemInstance <- function(object, ...){
+  res <- NULL
+
+  if ("PC_Assay" %in% class(object) & object$success){
+    res <- object$result$PC_AssayContainer[[1]]$assay$descr$activity_outcome_method
+  }
+
+  return(res)
+}
+
+#' @export
+activity_outcome_method.PubChemInstanceList <- function(object, ..., .which = NULL){
+  if (is.null(.which)){
+    idx <- 1
+  } else {
+    if (!(.which %in% request_args(object, "identifier"))){
+      stop("Unknown instance identifier. Run 'request_args(object, \"identifier\")' to see all the requested instance identifiers.")
+    }
+    idx <- which(request_args(object, "identifier") == .which)
+  }
+
+  activity_outcome_method(object$result[[idx]])
+}
+
+
+#' @export
+project_category <- function(object, ...){
+  UseMethod("project_category")
+}
+
+#' @importFrom dplyr bind_rows bind_cols
+#'
+#' @export
+project_category.PubChemInstance <- function(object, ...){
+  res <- NULL
+
+  if ("PC_Assay" %in% class(object) & object$success){
+    res <- object$result$PC_AssayContainer[[1]]$assay$descr$project_category
+  }
+
+  return(res)
+}
+
+#' @export
+project_category.PubChemInstanceList <- function(object, ..., .which = NULL){
+  if (is.null(.which)){
+    idx <- 1
+  } else {
+    if (!(.which %in% request_args(object, "identifier"))){
+      stop("Unknown instance identifier. Run 'request_args(object, \"identifier\")' to see all the requested instance identifiers.")
+    }
+    idx <- which(request_args(object, "identifier") == .which)
+  }
+
+  project_category(object$result[[idx]])
 }
 
 
