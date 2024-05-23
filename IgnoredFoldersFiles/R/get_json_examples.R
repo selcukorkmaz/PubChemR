@@ -53,3 +53,14 @@ instanceProperties(props, .which = "dncr", .to.data.frame = FALSE)
 instanceProperties(props, .which = "selcuk", .to.data.frame = FALSE)
 instanceProperties(props, .to.data.frame = TRUE, .combine.all = TRUE)
 instanceProperties(props, .to.data.frame = FALSE, .combine.all = TRUE)
+
+
+
+
+# Getter için genel bir fonksiyon -----
+comp <- get_compounds(identifier = c("1234", "3452", "dncr"), namespace = "cid")
+comp1234 <- instance(comp, "1234")
+comp1234
+
+extract(comp1234, .slot = "props", .to.data.frame = TRUE)
+extract(comp, .slot = "props", .which = "1234", .to.data.frame = TRUE, .combine.all = TRUE)
