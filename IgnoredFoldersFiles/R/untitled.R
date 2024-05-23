@@ -49,7 +49,8 @@ extract.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE,
 
 
 #' @export
-extract.PubChemInstanceList <- function(object, .which = NULL, .slot = NULL, .to.data.frame = TRUE, .combine.all = FALSE, ...){
+extract.PubChemInstanceList <- function(object, .which = NULL, .slot = NULL,
+                                        .to.data.frame = TRUE, .combine.all = FALSE, ...){
   if (is.null(.which)){
     idx <- 1
   } else {
@@ -60,10 +61,11 @@ extract.PubChemInstanceList <- function(object, .which = NULL, .slot = NULL, .to
   }
 
   dots <- list(...)
-  args <- c(list(object = object$result[[idx]], .slot = .slot, .to.data.frame = .to.data.frame, .combine.all = .combine.all), dots)
+  args <- c(list(object = object$result[[idx]], .slot = .slot,
+                 .to.data.frame = .to.data.frame,
+                 .combine.all = .combine.all), dots)
 
   do.call("extract", args)
-  # extract(object = object$result[[idx]], .slot = .slot, .to.data.frame = .to.data.frame, .combine.all = .combine.all, ...)
 }
 
 #' @export
