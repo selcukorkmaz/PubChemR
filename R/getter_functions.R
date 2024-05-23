@@ -1,5 +1,4 @@
 # Getter Functions ----
-## PubChemRequest class ----
 
 #' Call Function Parameters
 #'
@@ -34,122 +33,98 @@ instance.PubChemInstanceList <- function(object, .which = NULL, ....){
   return(object[[1]][[idx]])
 }
 
-
 #' @export
 instance <- function(object, ...){
   UseMethod("instance")
 }
 
 
-## PubChemInstance class ----
+## Global function for extracting elements. ----
 #' @export
-atoms.PubChemInstance <- function(object, ...){
-  if (!object$success){
-    return(stop("'object' encountered an error. Nothing to return. \n See error details in 'object'."))
-  }
-
-  object$result[[1]][[1]][["atoms"]]
+extract <- function(object, ...){
+  UseMethod("extract")
 }
 
-
-#' @export
-atoms <- function(object, ...){
-  UseMethod("atoms")
-}
-
-#' @export
-bonds.PubChemInstance <- function(object, ...){
-  if (!object$success){
-    return(stop("'object' encountered an error. Nothing to return. \n See error details in 'object'."))
-  }
-
-  object$result[[1]][[1]][["bonds"]]
-}
-
-
-#' @export
-bonds <- function(object, ...){
-  UseMethod("bonds")
-}
-
-#' @export
-coords.PubChemInstance <- function(object, ...){
-  if (!object$success){
-    return(stop("'object' encountered an error. Nothing to return. \n See error details in 'object'."))
-  }
-
-  object$result[[1]][[1]][["coords"]]
-}
-
-
-
-#' @export
-coords <- function(object, ...){
-  UseMethod("coords")
-}
-
-#' @export
-charge.PubChemInstance <- function(object, ...){
-  if (!object$success){
-    return(stop("'object' encountered an error. Nothing to return. \n See error details in 'object'."))
-  }
-
-  object$result[[1]][[1]][["charge"]]
-}
-
-
-
-#' @export
-charge <- function(object, ...){
-  UseMethod("charge")
-}
-
+#' @importFrom dplyr bind_cols bind_rows full_join
 #' @importFrom tidyr as_tibble
-#' @importFrom magrittr '%>%'
+#'
 #' @export
-props.PubChemInstance <- function(object, .to.data.frame = TRUE, ...){
+extract.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE, ...){
+
+  dots <- list(...)
 
   if (!object$success){
     return(stop("'object' encountered an error. Nothing to return. \n See error details in 'object'."))
   }
 
-  tmp <- object$result[[1]][[1]][["props"]]
+  # Gather all the elements from selected slot. ----
+  if ("PC_Compounds" %in% class(object)){
+    slotContents <- object$result[[1]][[1]][[.slot]]
+  }
 
-  if (.to.data.frame){
-    tmp <- lapply(tmp, function(x){
-      as.data.frame(as.matrix(bind_cols(x)))
-    })
+  if (is.null(slotContents)){
+    return(NULL)
+  }
 
-    res <- tmp[[1]]
-    for (i in 2:length(tmp)){
-      res <- suppressMessages(full_join(res, tmp[[i]])) %>%
-        as_tibble(.)
+  # If the structure of "slotContents" is a "vector"
+  if (!any(is.list(slotContents), is.matrix(slotContents), is.data.frame(slotContents), is.array(slotContents))){
+    slotNames <- if (is.null(names(slotContents))){
+      if (length(slotContents) == 1){
+        .slot
+      } else {
+        paste0(1:length(slotContents))
+      }
+    } else {
+      names(slotContents)
     }
 
-    return(res)
+    slotContents <- list(Name = slotNames, Value = slotContents)
+  }
+
+  # Convert into data.frame if possible. ----
+  if (.to.data.frame){
+    successDF <- try({
+      if (.slot == "props" & ("PC_Compounds" %in% class(object))){
+        slotContents <- lapply(slotContents, function(x){
+          as.data.frame(as.matrix(bind_cols(x)))
+        })
+
+        res <- slotContents[[1]]
+        for (i in 2:length(slotContents)){
+          res <- suppressMessages(full_join(res, slotContents[[i]])) %>%
+            as_tibble(.)
+        }
+      } else {
+        res <- bind_cols(slotContents)
+      }
+
+      TRUE
+    })
+
+    if (!inherits(successDF, "try-error")){
+      return(res)
+    }
+  }
+
+  return(slotContents)
+}
+
+#' @export
+extract.PubChemInstanceList <- function(object, .which = NULL, .slot = NULL, .to.data.frame = TRUE, .combine.all = FALSE, ...){
+  if (is.null(.which)){
+    idx <- 1
   } else {
-    return(tmp)
-  }
-}
-
-#' @export
-props <- function(object, ...){
-  UseMethod("props")
-}
-
-
-#' @export
-count.PubChemInstance <- function(object, ...){
-  if (!object$success){
-    return(stop("'object' encountered an error. Nothing to return. \n See error details in 'object'."))
+    if (!(.which %in% request_args(object, "identifier"))){
+      stop("Unknown instance identifier. Run 'request_args(object, \"identifier\")' to see all the requested instance identifiers.")
+    }
+    idx <- which(request_args(object, "identifier") == .which)
   }
 
-  object$result[[1]][[1]][["count"]]
-}
+  dots <- list(...)
+  args <- c(list(object = object$result[[idx]], .slot = .slot, .to.data.frame = .to.data.frame, .combine.all = .combine.all), dots)
 
-#' @export
-count <- function(object, ...){
-  UseMethod("count")
+  do.call("extract", args)
+  # extract(object = object$result[[idx]], .slot = .slot, .to.data.frame = .to.data.frame, .combine.all = .combine.all, ...)
 }
 
 # PubChemInstance_AIDs ----
@@ -351,8 +326,6 @@ aid_source.PubChemInstanceList <- function(object, ..., .which = NULL, .verbose 
   aid_source(object$result[[idx]], .verbose = .verbose)
 }
 
-
-
 #' @export
 name <- function(object, ..., .verbose = TRUE){
   UseMethod("name")
@@ -458,7 +431,6 @@ description.PubChemInstanceList <- function(object, ..., .which = NULL, .verbose
   description(object$result[[idx]], .verbose = .verbose)
 }
 
-
 #' @export
 protocol <- function(object, ..., .verbose = TRUE){
   UseMethod("protocol")
@@ -511,8 +483,6 @@ protocol.PubChemInstanceList <- function(object, ..., .which = NULL, .verbose = 
   protocol(object$result[[idx]], .verbose = .verbose)
 }
 
-
-
 #' @export
 comment <- function(object, ..., .verbose = TRUE){
   UseMethod("comment")
@@ -562,7 +532,6 @@ comment.PubChemInstanceList <- function(object, ..., .which = NULL, .verbose = T
 
   comment(object$result[[idx]], .verbose = .verbose)
 }
-
 
 #' @export
 xref <- function(object, ..., .verbose = TRUE){
@@ -659,8 +628,6 @@ results.PubChemInstanceList <- function(object, ..., .to.data.frame = TRUE, .whi
   results(object$result[[idx]], .to.data.frame = .to.data.frame)
 }
 
-
-
 #' @export
 revision <- function(object, ...){
   UseMethod("revision")
@@ -692,7 +659,6 @@ revision.PubChemInstanceList <- function(object, ..., .which = NULL){
 
   revision(object$result[[idx]])
 }
-
 
 #' @export
 activity_outcome_method <- function(object, ...){
@@ -760,6 +726,7 @@ project_category.PubChemInstanceList <- function(object, ..., .which = NULL){
 }
 
 
+# get_properties(...) ----
 #' @export
 instanceProperties <- function(object, ...){
   UseMethod("instanceProperties")
@@ -813,94 +780,7 @@ instanceProperties.PubChemInstanceList <- function(object, ..., .to.data.frame =
   return(res)
 }
 
-#' @export
-extractSlot <- function(object, ...){
-  UseMethod("extract")
-}
 
-# Global function for extracting elements. ----
-#' @importFrom dplyr bind_cols bind_rows full_join
-#' @importFrom tidyr as_tibble
-#'
-#' @export
-extract.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE, ...){
-
-  dots <- list(...)
-
-  if (!object$success){
-    return(stop("'object' encountered an error. Nothing to return. \n See error details in 'object'."))
-  }
-
-  # Gather all the elements from selected slot. ----
-  if ("PC_Compounds" %in% class(object)){
-    slotContents <- object$result[[1]][[1]][[.slot]]
-  }
-
-  if (is.null(slotContents)){
-    return(NULL)
-  }
-
-  # If the structure of "slotContents" is a "vector"
-  if (!any(is.list(slotContents), is.matrix(slotContents), is.data.frame(slotContents), is.array(slotContents))){
-    slotNames <- if (is.null(names(slotContents))){
-      if (length(slotContents) == 1){
-        .slot
-      } else {
-        paste0(1:length(slotContents))
-      }
-    } else {
-      names(slotContents)
-    }
-
-    slotContents <- list(Name = slotNames, Value = slotContents)
-  }
-
-  # Convert into data.frame if possible. ----
-  if (.to.data.frame){
-    successDF <- try({
-      if (.slot == "props" & ("PC_Compounds" %in% class(object))){
-        slotContents <- lapply(slotContents, function(x){
-          as.data.frame(as.matrix(bind_cols(x)))
-        })
-
-        res <- slotContents[[1]]
-        for (i in 2:length(slotContents)){
-          res <- suppressMessages(full_join(res, slotContents[[i]])) %>%
-            as_tibble(.)
-        }
-      } else {
-        res <- bind_cols(slotContents)
-      }
-
-      TRUE
-    })
-
-    if (!inherits(successDF, "try-error")){
-      return(res)
-    }
-  }
-
-  return(slotContents)
-}
-
-
-#' @export
-extract.PubChemInstanceList <- function(object, .which = NULL, .slot = NULL, .to.data.frame = TRUE, .combine.all = FALSE, ...){
-  if (is.null(.which)){
-    idx <- 1
-  } else {
-    if (!(.which %in% request_args(object, "identifier"))){
-      stop("Unknown instance identifier. Run 'request_args(object, \"identifier\")' to see all the requested instance identifiers.")
-    }
-    idx <- which(request_args(object, "identifier") == .which)
-  }
-
-  dots <- list(...)
-  args <- c(list(object = object$result[[idx]], .slot = .slot, .to.data.frame = .to.data.frame, .combine.all = .combine.all), dots)
-
-  do.call("extract", args)
-  # extract(object = object$result[[idx]], .slot = .slot, .to.data.frame = .to.data.frame, .combine.all = .combine.all, ...)
-}
 
 
 
