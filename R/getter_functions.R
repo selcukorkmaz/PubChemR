@@ -813,6 +813,10 @@ instanceProperties.PubChemInstanceList <- function(object, ..., .to.data.frame =
   return(res)
 }
 
+#' @export
+extractSlot <- function(object, ...){
+  UseMethod("extract")
+}
 
 # Global function for extracting elements. ----
 #' @importFrom dplyr bind_cols bind_rows full_join
@@ -836,10 +840,14 @@ extract.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE,
     return(NULL)
   }
 
-  ###### BURADA KALDIM
-  if (is.vector(slotContents)){
+  # If the structure of "slotContents" is a "vector"
+  if (!any(is.list(slotContents), is.matrix(slotContents), is.data.frame(slotContents), is.array(slotContents))){
     slotNames <- if (is.null(names(slotContents))){
-      paste0(1:length(slotContents))
+      if (length(slotContents) == 1){
+        .slot
+      } else {
+        paste0(1:length(slotContents))
+      }
     } else {
       names(slotContents)
     }
@@ -892,11 +900,6 @@ extract.PubChemInstanceList <- function(object, .which = NULL, .slot = NULL, .to
 
   do.call("extract", args)
   # extract(object = object$result[[idx]], .slot = .slot, .to.data.frame = .to.data.frame, .combine.all = .combine.all, ...)
-}
-
-#' @export
-extract <- function(object, ...){
-  UseMethod("extract")
 }
 
 
