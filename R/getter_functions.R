@@ -836,6 +836,17 @@ extract.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE,
     return(NULL)
   }
 
+  ###### BURADA KALDIM
+  if (is.vector(slotContents)){
+    slotNames <- if (is.null(names(slotContents))){
+      paste0(1:length(slotContents))
+    } else {
+      names(slotContents)
+    }
+
+    slotContents <- list(Name = slotNames, Value = slotContents)
+  }
+
   # Convert into data.frame if possible. ----
   if (.to.data.frame){
     successDF <- try({
