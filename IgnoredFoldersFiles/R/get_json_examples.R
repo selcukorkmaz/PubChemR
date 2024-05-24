@@ -61,5 +61,5 @@ comp <- get_compounds(identifier = c("1234", "3452", "dncr"), namespace = "cid")
 comp1234 <- instance(comp, "1234")
 comp1234
 
-extract(comp1234, .slot = "props", .to.data.frame = TRUE)
-extract(comp, .slot = "props", .which = "1234", .to.data.frame = TRUE, .combine.all = TRUE)
+retrieve(comp1234, .slot = "props", .to.data.frame = TRUE)
+retrieve(comp, .slot = "props", .which = "1234", .to.data.frame = TRUE, .combine.all = TRUE)
