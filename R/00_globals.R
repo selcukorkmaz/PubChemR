@@ -202,3 +202,19 @@ domain_text <- function(x){
 primaryClass <- function(x){
   class(x)[1]
 }
+
+
+find_last_layer <- function(x, ...) {
+  # Base case: if the current list has multiple elements, return it
+  if (length(x) > 1) {
+    return(x)
+  }
+
+  # Recursive case: go deeper into the single element
+  if (is.list(x[[1]])) {
+    return(find_last_layer(x[[1]]))
+  }
+
+  # If not a list or single element list, return NULL
+  return(x)
+}

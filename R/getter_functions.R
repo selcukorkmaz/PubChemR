@@ -46,72 +46,139 @@ retrieve <- function(object, ...){
   UseMethod("retrieve")
 }
 
-#' @importFrom dplyr bind_cols bind_rows full_join
-#' @importFrom tidyr as_tibble
+#' @importFrom dplyr bind_cols bind_rows full_join mutate_all
+#' @importFrom tibble as_tibble as_tibble_col tibble
 #'
 #' @export
-retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE, ...){
+retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE, .verbose = FALSE, ...){
 
   dots <- list(...)
+  returnInvisible <- FALSE
 
   if (!object$success){
     return(stop("'object' encountered an error. Nothing to return. \n See error details in 'object'."))
   }
 
   # Gather all the elements from selected slot. ----
-  if ("PC_Compounds" %in% class(object)){
-    slotContents <- object$result[[1]][[1]][[.slot]]
+  slotContents <- if ("PC_Compounds" %in% class(object)){
+    object$result[[1]][[1]][[.slot]]
+  } else if ("PC_Assay" %in% class(object)){
+    object$result$PC_AssayContainer[[1]]$assay$descr[[.slot]]
   }
+
+  # Walk through next layer of slotContents list, if it is, until the last layer.
+  slotContents <- find_last_layer(slotContents)
 
   if (is.null(slotContents)){
     return(NULL)
   }
 
   # If the structure of "slotContents" is a "vector"
-  if (!any(is.list(slotContents), is.matrix(slotContents), is.data.frame(slotContents), is.array(slotContents))){
-    slotNames <- if (is.null(names(slotContents))){
-      if (length(slotContents) == 1){
-        .slot
-      } else {
-        paste0(1:length(slotContents))
-      }
-    } else {
-      names(slotContents)
-    }
-
-    slotContents <- list(Name = slotNames, Value = slotContents)
-  }
+  vectorSlot <- !any(is.list(slotContents), is.matrix(slotContents),
+                     is.data.frame(slotContents), is.array(slotContents))
 
   # Convert into data.frame if possible. ----
+  successDF <- TRUE
   if (.to.data.frame){
     successDF <- try({
-      if (.slot == "props" & ("PC_Compounds" %in% class(object))){
-        slotContents <- lapply(slotContents, function(x){
-          as.data.frame(as.matrix(bind_cols(x)))
-        })
+      if (!vectorSlot){
+        if (.slot == "props" & ("PC_Compounds" %in% class(object))){
+          slotContents <- lapply(slotContents, function(x){
+            as.data.frame(as.matrix(bind_cols(x)))
+          })
 
-        res <- slotContents[[1]]
-        for (i in 2:length(slotContents)){
-          res <- suppressMessages(full_join(res, slotContents[[i]])) %>%
-            as_tibble(.)
+          resDF <- slotContents[[1]]
+          for (i in 2:length(slotContents)){
+            resDF <- suppressMessages(full_join(resDF, slotContents[[i]])) %>%
+              as_tibble
+          }
+        } else if (.slot == "xref" & ("PC_Assay" %in% class(object))){
+          resDF <- suppressMessages({
+            lapply(slotContents, function(x){
+              tibble(source = names(x[[.slot]])) %>%
+                bind_cols(x) %>%
+                mutate_all(as.character)
+            }) %>%
+              bind_rows
+          })
+
+        } else if (.slot == "results" & ("PC_Assay" %in% class(object))){
+          resDF <- suppressMessages({
+            lapply(slotContents, function(x){
+              bind_cols(x) %>%
+                mutate_all(as.character)
+            }) %>% bind_rows
+          })
+
+        } else {
+          resDF <- bind_cols(slotContents)
         }
       } else {
-        res <- bind_cols(slotContents)
+        slotNames <- names(slotContents)
+
+        # If vector slot has names, it will be structured as two column tibble_df, with names in
+        # the first column and values in the second column. Otherwise, a column tibbled_df will be
+        # returned with values only.
+        resDF <- if (is.null(slotNames)){
+          as_tibble_col(slotContents)
+        } else {
+          tibble(Name = slotNames, Value = slotContents)
+        }
       }
 
       TRUE
     })
-
-    if (!inherits(successDF, "try-error")){
-      return(res)
-    }
   }
 
-  return(slotContents)
+  if (!.to.data.frame | inherits(successDF, "try-error")){
+    resDF <- slotContents
+  }
+
+  # Some slots may have long texts including the protocol, description,
+  # references, etc. about the PubChem instances. Such information will be
+  # printed to R console if '.verbose = TRUE'.
+
+  if (.verbose){
+    if ("PC_Assay" %in% class(object)){
+      cat("\n")
+      if (.slot %in% c("description", "protocol", "comment")){
+        cat(" PubChem Assay Details (", .slot, ")", "\n\n", sep = "")
+
+        for (i in 1:length(slotContents)){
+          cat(" ", ifelse(is.null(names(slotContents[1])), "", paste0(" - ", names(slotContents[i]), ": ", sep = "")), slotContents[i], sep = "", "\n")
+        }
+        returnInvisible <- TRUE
+      }
+
+      if (.slot == "xref"){
+        cat(" PubChem Assay Details (", .slot, ")", "\n\n", sep = "")
+        for (i in 1:length(slotContents)){
+          slotNames <- names(slotContents[[i]])
+          for (j in 1:length(slotContents[[i]])){
+            ref <- slotContents[[i]][[j]]
+            refName <- names(ref)
+            cat(ifelse(j == 1, " > ", "   "), sep = "")
+            cat(ifelse(is.null(slotNames[j]), "", paste0(slotNames[j], ifelse(is.null(refName), ": ", paste0(" (", refName, "): ")))), ref, sep = "", "\n")
+          }
+          cat("\n")
+        }
+        returnInvisible <- TRUE
+      }
+    }
+
+    cat("\n")
+  }
+
+  if (returnInvisible){
+    invisible(resDF)
+  } else {
+    return(resDF)
+  }
 }
 
 #' @export
-retrieve.PubChemInstanceList <- function(object, .which = NULL, .slot = NULL, .to.data.frame = TRUE, .combine.all = FALSE, ...){
+retrieve.PubChemInstanceList <- function(object, .which = NULL, .slot = NULL, .to.data.frame = TRUE,
+                                         .combine.all = FALSE, ...){
   if (is.null(.which)){
     idx <- 1
   } else {
@@ -223,507 +290,6 @@ SIDs.PubChemInstance_SIDs <- function(object, .to.data.frame = TRUE, ...){
 #' @export
 SIDs <- function(object, ...){
   UseMethod("SIDs")
-}
-
-
-# PubChemInstance (Assays) ----
-#' @export
-aid <- function(object, ...){
-  UseMethod("aid")
-}
-
-#' @importFrom magrittr '%>%'
-#' @importFrom tibble as_tibble as_tibble_row
-#'
-#' @export
-aid.PubChemInstance <- function(object, ..., .to.data.frame = TRUE){
-  res <- NULL
-
-  if ("PC_Assay" %in% class(object) & object$success){
-    tmp <- object$result$PC_AssayContainer[[1]]$assay$descr$aid
-
-    if (.to.data.frame){
-      if (is.vector(tmp)){
-        res <- tmp %>%
-          as_tibble_row
-      } else {
-        res <- tmp %>%
-          as_tibble
-      }
-    } else {
-      res <- tmp
-    }
-  }
-
-  return(res)
-}
-
-#' @export
-aid.PubChemInstanceList <- function(object, ..., .to.data.frame = TRUE, .which = NULL){
-  res <- NULL
-
-  if (is.null(.which)){
-    idx <- 1
-  } else {
-    if (!(.which %in% request_args(object, "identifier"))){
-      stop("Unknown instance identifier. Run 'request_args(object, \"identifier\")' to see all the requested instance identifiers.")
-    }
-    idx <- which(request_args(object, "identifier") == .which)
-  }
-
-  aid(object$result[[idx]], .to.data.frame = .to.data.frame)
-}
-
-
-#' @export
-aid_source <- function(object, ..., .verbose = TRUE){
-  UseMethod("aid_source")
-}
-
-#' @export
-aid_source.PubChemInstance <- function(object, ..., .verbose = TRUE){
-  res <- NULL
-
-  if (object$success){
-    if ("PC_Assay" %in% class(object)){
-      tmp <- object$result$PC_AssayContainer[[1]]$assay$descr$aid_source[[1]]
-
-      if (.verbose & !is.null(tmp)){
-        cat("\n")
-        cat(" PubChem Assay Source Details", "\n\n")
-        for (i in 1:length(tmp)){
-          cat(" ", ifelse(is.null(names(tmp[1])), "", paste0(" - ", names(tmp[i]), ": ", sep = "")), tmp[[i]], sep = "", "\n")
-        }
-        cat("\n")
-      }
-
-      res <- tmp
-    }
-  } else {
-    if (.verbose){
-      cat("\n")
-      cat(" PubChem Assay Details (aid_source)", "\n\n")
-      cat(" Nothing to return. An error has been occurred. See requested assay results for details.", "\n")
-      cat("\n")
-    }
-  }
-
-  invisible(res)
-}
-
-#' @export
-aid_source.PubChemInstanceList <- function(object, ..., .which = NULL, .verbose = TRUE){
-  res <- NULL
-
-  if (is.null(.which)){
-    idx <- 1
-  } else {
-    if (!(.which %in% request_args(object, "identifier"))){
-      stop("Unknown instance identifier. Run 'request_args(object, \"identifier\")' to see all the requested instance identifiers.")
-    }
-    idx <- which(request_args(object, "identifier") == .which)
-  }
-
-  aid_source(object$result[[idx]], .verbose = .verbose)
-}
-
-#' @export
-name <- function(object, ..., .verbose = TRUE){
-  UseMethod("name")
-}
-
-#' @export
-name.PubChemInstance <- function(object, ..., .verbose = TRUE){
-  res <- NULL
-
-  if (object$success){
-    if ("PC_Assay" %in% class(object)){
-      tmp <- object$result$PC_AssayContainer[[1]]$assay$descr$name
-
-      if (.verbose & !is.null(tmp)){
-        cat("\n")
-        cat(" PubChem Assay Details (name)", "\n\n")
-        for (i in 1:length(tmp)){
-          cat(" ", ifelse(is.null(names(tmp[1])), "", paste0(" - ", names(tmp[i]), ": ", sep = "")), tmp[i], sep = "", "\n")
-        }
-        cat("\n")
-      }
-
-      res <- tmp
-    }
-  } else {
-    if (.verbose){
-      cat("\n")
-      cat(" PubChem Assay Details (name)", "\n\n")
-      cat(" Nothing to return. An error has been occurred. See requested assay results for details.", "\n")
-      cat("\n")
-    }
-  }
-
-  invisible(res)
-}
-
-#' @export
-name.PubChemInstanceList <- function(object, ..., .which = NULL, .verbose = TRUE){
-  res <- NULL
-
-  if (is.null(.which)){
-    idx <- 1
-  } else {
-    if (!(.which %in% request_args(object, "identifier"))){
-      stop("Unknown instance identifier. Run 'request_args(object, \"identifier\")' to see all the requested instance identifiers.")
-    }
-    idx <- which(request_args(object, "identifier") == .which)
-  }
-
-  name(object$result[[idx]], .verbose = .verbose)
-}
-
-
-#' @export
-description <- function(object, ..., .verbose = TRUE){
-  UseMethod("description")
-}
-
-#' @export
-description.PubChemInstance <- function(object, ..., .verbose = TRUE){
-  res <- NULL
-
-  if (object$success){
-    if ("PC_Assay" %in% class(object)){
-      tmp <- object$result$PC_AssayContainer[[1]]$assay$descr$description
-
-      if (.verbose & !is.null(tmp)){
-        cat("\n")
-        cat(" PubChem Assay Details (description)", "\n\n")
-        for (i in 1:length(tmp)){
-          cat(" ", ifelse(is.null(names(tmp[1])), "", paste0(" - ", names(tmp[i]), ": ", sep = "")), tmp[i], sep = "", "\n")
-        }
-        cat("\n")
-      }
-
-      res <- tmp
-    }
-  } else {
-    if (.verbose){
-      cat("\n")
-      cat(" PubChem Assay Details (description)", "\n\n")
-      cat(" Nothing to return. An error has been occurred. See requested assay results for details.", "\n")
-      cat("\n")
-    }
-  }
-
-  invisible(res)
-}
-
-#' @export
-description.PubChemInstanceList <- function(object, ..., .which = NULL, .verbose = TRUE){
-  res <- NULL
-
-  if (is.null(.which)){
-    idx <- 1
-  } else {
-    if (!(.which %in% request_args(object, "identifier"))){
-      stop("Unknown instance identifier. Run 'request_args(object, \"identifier\")' to see all the requested instance identifiers.")
-    }
-    idx <- which(request_args(object, "identifier") == .which)
-  }
-
-  description(object$result[[idx]], .verbose = .verbose)
-}
-
-#' @export
-protocol <- function(object, ..., .verbose = TRUE){
-  UseMethod("protocol")
-}
-
-#' @export
-protocol.PubChemInstance <- function(object, ..., .verbose = TRUE){
-  res <- NULL
-
-  if (object$success){
-    if ("PC_Assay" %in% class(object)){
-      tmp <- object$result$PC_AssayContainer[[1]]$assay$descr$protocol
-
-      if (.verbose && !is.null(tmp)){
-        cat("\n")
-        cat(" PubChem Assay Details (protocol)", "\n\n")
-        for (i in 1:length(tmp)){
-          cat(" ", ifelse(is.null(names(tmp[1])), "", paste0(" - ", names(tmp[i]), ": ", sep = "")), tmp[i], sep = "", "\n")
-        }
-        cat("\n")
-      }
-
-      res <- tmp
-    }
-  } else {
-    if (.verbose){
-      cat("\n")
-      cat(" PubChem Assay Details (protocol)", "\n\n")
-      cat(" Nothing to return. An error has been occurred. See requested assay results for details.", "\n")
-      cat("\n")
-    }
-  }
-
-  invisible(res)
-}
-
-#' @export
-protocol.PubChemInstanceList <- function(object, ..., .which = NULL, .verbose = TRUE){
-  res <- NULL
-
-  if (is.null(.which)){
-    idx <- 1
-  } else {
-    if (!(.which %in% request_args(object, "identifier"))){
-      stop("Unknown instance identifier. Run 'request_args(object, \"identifier\")' to see all the requested instance identifiers.")
-    }
-    idx <- which(request_args(object, "identifier") == .which)
-  }
-
-  protocol(object$result[[idx]], .verbose = .verbose)
-}
-
-#' @export
-comment <- function(object, ..., .verbose = TRUE){
-  UseMethod("comment")
-}
-
-#' @export
-comment.PubChemInstance <- function(object, ..., .verbose = TRUE){
-  res <- NULL
-
-  if (object$success){
-    if ("PC_Assay" %in% class(object)){
-      tmp <- object$result$PC_AssayContainer[[1]]$assay$descr$comment
-
-      if (.verbose && !is.null(tmp)){
-        cat("\n")
-        cat(" PubChem Assay Details (comment)", "\n\n")
-        for (i in 1:length(tmp)){
-          cat(" ", ifelse(is.null(names(tmp[1])), "", paste0(" - ", names(tmp[i]), ": ", sep = "")), tmp[i], sep = "", "\n")
-        }
-        cat("\n")
-      }
-
-      res <- tmp
-    }
-  } else {
-    if (.verbose){
-      cat("\n")
-      cat(" PubChem Assay Details (comment)", "\n\n")
-      cat(" Nothing to return. An error has been occurred. See requested assay results for details.", "\n")
-      cat("\n")
-    }
-  }
-
-  invisible(res)
-}
-
-#' @export
-comment.PubChemInstanceList <- function(object, ..., .which = NULL, .verbose = TRUE){
-  if (is.null(.which)){
-    idx <- 1
-  } else {
-    if (!(.which %in% request_args(object, "identifier"))){
-      stop("Unknown instance identifier. Run 'request_args(object, \"identifier\")' to see all the requested instance identifiers.")
-    }
-    idx <- which(request_args(object, "identifier") == .which)
-  }
-
-  comment(object$result[[idx]], .verbose = .verbose)
-}
-
-#' @export
-xref <- function(object, ..., .verbose = TRUE){
-  UseMethod("xref")
-}
-
-#' @export
-xref.PubChemInstance <- function(object, ..., .verbose = TRUE){
-  res <- NULL
-
-  if (object$success){
-    if ("PC_Assay" %in% class(object)){
-      tmp <- object$result$PC_AssayContainer[[1]]$assay$descr$xref
-
-      if (.verbose && !is.null(tmp)){
-        cat("\n")
-        cat(" PubChem Assay Details (xref)", "\n\n")
-        for (i in 1:length(tmp)){
-          slotNames <- names(tmp[[i]])
-          for (j in 1:length(tmp[[i]])){
-            ref <- tmp[[i]][[j]]
-            refName <- names(ref)
-            cat(ifelse(j == 1, " > ", "   "), sep = "")
-            cat(ifelse(is.null(slotNames[j]), "", paste0(slotNames[j], ifelse(is.null(refName), ": ", paste0(" (", refName, "): ")))), ref, sep = "", "\n")
-          }
-          cat("\n")
-        }
-        cat("\n")
-      }
-
-      res <- tmp
-    }
-  } else {
-    if (.verbose){
-      cat("\n")
-      cat(" PubChem Assay Details (xref)", "\n\n")
-      cat(" Nothing to return. An error has been occurred. See requested assay results for details.", "\n")
-      cat("\n")
-    }
-  }
-
-  invisible(res)
-}
-
-#' @export
-xref.PubChemInstanceList <- function(object, ..., .which = NULL, .verbose = TRUE){
-  if (is.null(.which)){
-    idx <- 1
-  } else {
-    if (!(.which %in% request_args(object, "identifier"))){
-      stop("Unknown instance identifier. Run 'request_args(object, \"identifier\")' to see all the requested instance identifiers.")
-    }
-    idx <- which(request_args(object, "identifier") == .which)
-  }
-
-  xref(object$result[[idx]], .verbose = .verbose)
-}
-
-#' @export
-results <- function(object, ...){
-  UseMethod("results")
-}
-
-#' @importFrom dplyr bind_rows bind_cols
-#'
-#' @export
-results.PubChemInstance <- function(object, ..., .to.data.frame = TRUE){
-  res <- NULL
-
-  if ("PC_Assay" %in% class(object) & object$success){
-    tmp <- object$result$PC_AssayContainer[[1]]$assay$descr$results
-
-    if (.to.data.frame){
-      res <- bind_rows(lapply(tmp, bind_cols))
-    } else {
-      res <- tmp
-    }
-  }
-
-  return(res)
-}
-
-#' @export
-results.PubChemInstanceList <- function(object, ..., .to.data.frame = TRUE, .which = NULL){
-  if (is.null(.which)){
-    idx <- 1
-  } else {
-    if (!(.which %in% request_args(object, "identifier"))){
-      stop("Unknown instance identifier. Run 'request_args(object, \"identifier\")' to see all the requested instance identifiers.")
-    }
-    idx <- which(request_args(object, "identifier") == .which)
-  }
-
-  results(object$result[[idx]], .to.data.frame = .to.data.frame)
-}
-
-#' @export
-revision <- function(object, ...){
-  UseMethod("revision")
-}
-
-#' @importFrom dplyr bind_rows bind_cols
-#'
-#' @export
-revision.PubChemInstance <- function(object, ...){
-  res <- NULL
-
-  if ("PC_Assay" %in% class(object) & object$success){
-    res <- object$result$PC_AssayContainer[[1]]$assay$descr$revision
-  }
-
-  return(res)
-}
-
-#' @export
-revision.PubChemInstanceList <- function(object, ..., .which = NULL){
-  if (is.null(.which)){
-    idx <- 1
-  } else {
-    if (!(.which %in% request_args(object, "identifier"))){
-      stop("Unknown instance identifier. Run 'request_args(object, \"identifier\")' to see all the requested instance identifiers.")
-    }
-    idx <- which(request_args(object, "identifier") == .which)
-  }
-
-  revision(object$result[[idx]])
-}
-
-#' @export
-activity_outcome_method <- function(object, ...){
-  UseMethod("activity_outcome_method")
-}
-
-#' @importFrom dplyr bind_rows bind_cols
-#'
-#' @export
-activity_outcome_method.PubChemInstance <- function(object, ...){
-  res <- NULL
-
-  if ("PC_Assay" %in% class(object) & object$success){
-    res <- object$result$PC_AssayContainer[[1]]$assay$descr$activity_outcome_method
-  }
-
-  return(res)
-}
-
-#' @export
-activity_outcome_method.PubChemInstanceList <- function(object, ..., .which = NULL){
-  if (is.null(.which)){
-    idx <- 1
-  } else {
-    if (!(.which %in% request_args(object, "identifier"))){
-      stop("Unknown instance identifier. Run 'request_args(object, \"identifier\")' to see all the requested instance identifiers.")
-    }
-    idx <- which(request_args(object, "identifier") == .which)
-  }
-
-  activity_outcome_method(object$result[[idx]])
-}
-
-
-#' @export
-project_category <- function(object, ...){
-  UseMethod("project_category")
-}
-
-#' @importFrom dplyr bind_rows bind_cols
-#'
-#' @export
-project_category.PubChemInstance <- function(object, ...){
-  res <- NULL
-
-  if ("PC_Assay" %in% class(object) & object$success){
-    res <- object$result$PC_AssayContainer[[1]]$assay$descr$project_category
-  }
-
-  return(res)
-}
-
-#' @export
-project_category.PubChemInstanceList <- function(object, ..., .which = NULL){
-  if (is.null(.which)){
-    idx <- 1
-  } else {
-    if (!(.which %in% request_args(object, "identifier"))){
-      stop("Unknown instance identifier. Run 'request_args(object, \"identifier\")' to see all the requested instance identifiers.")
-    }
-    idx <- which(request_args(object, "identifier") == .which)
-  }
-
-  project_category(object$result[[idx]])
 }
 
 
