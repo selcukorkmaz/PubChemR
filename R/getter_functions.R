@@ -40,16 +40,17 @@ instance <- function(object, ...){
 
 
 ## Global function for extracting elements. ----
+
 #' @export
-extract <- function(object, ...){
-  UseMethod("extract")
+retrieve <- function(object, ...){
+  UseMethod("retrieve")
 }
 
 #' @importFrom dplyr bind_cols bind_rows full_join
 #' @importFrom tidyr as_tibble
 #'
 #' @export
-extract.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE, ...){
+retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE, ...){
 
   dots <- list(...)
 
@@ -110,7 +111,7 @@ extract.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE,
 }
 
 #' @export
-extract.PubChemInstanceList <- function(object, .which = NULL, .slot = NULL, .to.data.frame = TRUE, .combine.all = FALSE, ...){
+retrieve.PubChemInstanceList <- function(object, .which = NULL, .slot = NULL, .to.data.frame = TRUE, .combine.all = FALSE, ...){
   if (is.null(.which)){
     idx <- 1
   } else {
@@ -123,7 +124,7 @@ extract.PubChemInstanceList <- function(object, .which = NULL, .slot = NULL, .to
   dots <- list(...)
   args <- c(list(object = object$result[[idx]], .slot = .slot, .to.data.frame = .to.data.frame, .combine.all = .combine.all), dots)
 
-  do.call("extract", args)
+  do.call("retrieve", args)
   # extract(object = object$result[[idx]], .slot = .slot, .to.data.frame = .to.data.frame, .combine.all = .combine.all, ...)
 }
 
