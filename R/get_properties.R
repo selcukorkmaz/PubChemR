@@ -14,7 +14,7 @@
 #'         The names of the list elements or row names of the dataframe are based on the provided identifiers.
 #'
 #' @importFrom RJSONIO fromJSON
-#' @importFrom dplyr as_tibble
+#' @importFrom dplyr as_tibble contains
 #' @importFrom magrittr %>%
 #' @export
 #'
