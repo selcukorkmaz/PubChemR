@@ -73,5 +73,4 @@ get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operatio
 
   # Return the full path invisibly if no error occurred
   return(invisible(full_path))
-
 }

@@ -64,10 +64,12 @@ retrieve(ass1234, .slot = "project_category", .verbose = FALSE, .to.data.frame =
 (cids <- get_cids(identifier = c("aspirin", "caffein", "dncr", "ibuprofen"), namespace = "name"))
 (aids <- get_aids(identifier = c("aspirin", "caffein", "dncr", "ibuprofen"), namespace = "name"))
 (sids <- get_sids(identifier = c("aspirin", "caffein", "dncr", "ibuprofen"), namespace = "name"))
+(syns <- get_synonyms(identifier = c("aspirin", "caffein", "dncr", "ibuprofen"), namespace = "name"))
 
 CIDs(cids)
 AIDs(aids)
 SIDs(sids)
+synonyms(syns)
 
 AIDs(get_aids(identifier = "CC(=O)OC1=CC=CC=C1C(=O)O", namespace = "smiles"))
 
@@ -82,8 +84,8 @@ retrieve(comp, .slot = "props", .which = "1234", .to.data.frame = TRUE, .combine
 
 
 props <- get_properties(
-  properties = c("smile"),
-  identifier = c("aspirin", "ibuprofen", "dncr"),
+  properties = c("smile", "mass", "atom"),
+  identifier = c("aspirin", "ibuprofen", "tadalafil", "sildenafil"),
   namespace = "name",
   propertyMatch = list(
     .ignore.case = TRUE,

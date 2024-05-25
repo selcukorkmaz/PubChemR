@@ -51,9 +51,11 @@ get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compoun
     stop("Only one identifier is allowed per request")
   }
 
-  if(domain == "key"){output = NULL}
+  if (domain == "key") {
+    output <- NULL
+  }
 
-  if(!is.null(identifier)){
+  if (!is.null(identifier)){
     identifier <- URLencode(identifier)
   }
 
@@ -68,29 +70,19 @@ get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compoun
 
   if (!is.null(heading)) {
     apiurl <- paste0(paste(comps, collapse = '/'), "?heading=", URLencode(sub(" ", "+", heading)))
-  }
-
-  else if (!is.null(headingType)) {
+  } else if (!is.null(headingType)) {
     apiurl <- paste0(paste(comps, collapse = '/'), "?heading_type=", URLencode(sub(" ", "+", headingType)))
-  }
-
-  else if (!is.null(page)) {
+  } else if (!is.null(page)) {
     apiurl <- paste0(paste(comps, collapse = '/'), "?page=", URLencode(sub(" ", "+", page)))
-  }
-
-  else if (annotation == "qr") {
-    if(qrSize == "short"){
+  } else if (annotation == "qr") {
+    if (qrSize == "short"){
       comps <- Filter(Negate(is.null), list(api_base, annotation, "short", domain, identifier, output))
-    }
-
-    else if(qrSize == "long"){
+    } else if(qrSize == "long"){
       comps <- Filter(Negate(is.null), list(api_base, annotation, "long", domain, identifier, output))
     }
 
     apiurl <- paste(comps, collapse = '/')
-  }
-
-  else{
+  } else {
     apiurl <- paste(comps, collapse = '/')
   }
 
@@ -110,33 +102,23 @@ get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compoun
   if (!is.null(output) && output %in% c('JSON')) {
 
     savedContent <- content(response, "text", encoding = "UTF-8")
-
     content <- fromJSON(savedContent)
 
-    if(save){
-
+    if (save){
       write(savedContent, file = paste0(domain, "_", identifier, ".", output))
-
     }
-
-  }
-
-  else if(!is.null(output) && output == "SVG" && domain != "key"){
-
+  } else if (!is.null(output) && output == "SVG" && domain != "key"){
     str <- charToRaw(content(response, as = "text", encoding = "UTF-8"))
     content <- image_read(str)
 
-    if(save){
-
+    if (save){
       rsvg_png(svg = str, file = paste0(identifier, ".png"))
     }
-
-  }
-
-  else if(domain == "key"){
-
+  } else if (domain == "key"){
     str <- readPNG(getURLContent(apiurl))
     content <- image_read(str)
+  } else {
+    content <- content(response, "text", encoding = "UTF-8")
   }
 
   # else if(output == "XML"){
@@ -150,10 +132,6 @@ get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compoun
   #
   #   }
   # }
-
-  else {
-    content <- content(response, "text", encoding = "UTF-8")
-  }
 
   return(content)
 }

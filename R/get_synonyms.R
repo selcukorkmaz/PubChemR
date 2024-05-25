@@ -22,22 +22,27 @@
 #' )
 get_synonyms <- function(identifier, namespace = 'cid', domain = 'compound', searchtype = NULL, options = NULL) {
 
-  # Try to get the response and parse JSON
-  result <- tryCatch({
-    # Assuming 'get_json' is a function you've previously defined, similar to your Python environment
-    response_json <- get_json(identifier, namespace, domain, 'synonyms', searchtype, options)
-
-    # Check if the response contains the expected information
-    if (!is.null(response_json) && !is.null(response_json$InformationList) && !is.null(response_json$InformationList$Information)) {
-      response_json$InformationList$Information
-    } else {
-      return(list())  # Return an empty list if the expected content is not found
-    }
-  }, error = function(e) {
-    message(paste("An error occurred:", e$message))  # Log the error message
-    return(list())  # Return an empty list in case of an error
+  result <- lapply(identifier, function(x){
+    tmp <- get_json(identifier = x, namespace, domain, 'synonyms', searchtype, options)
+    class(tmp) <- NULL
+    return(tmp)
   })
 
-  return(result)
+  Synonyms_List <- list(
+    result = result,
+    request_args = list(
+      namespace = namespace,
+      identifier = identifier,
+      domain = domain,
+      operation = "synonyms"
+    ),
+    success = logical(),
+    error = NULL
+  )
+
+  structure(
+    Synonyms_List,
+    class = c("PubChemInstance_Synonyms")
+  )
 }
 
