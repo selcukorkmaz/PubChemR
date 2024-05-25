@@ -56,7 +56,12 @@ retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
   returnInvisible <- FALSE
 
   if (!object$success){
-    return(stop("'object' encountered an error. Nothing to return. \n See error details in 'object'."))
+    warning("'object' encountered an error. Nothing to return. \n See error details in 'object'.")
+    return(NULL)
+  }
+
+  if (is.null(.slot)){
+    .slot <- ""
   }
 
   # Gather all the elements from selected slot. ----
@@ -64,6 +69,8 @@ retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
     object$result[[1]][[1]][[.slot]]
   } else if ("PC_Assay" %in% class(object)){
     object$result$PC_AssayContainer[[1]]$assay$descr[[.slot]]
+  } else if ("PC_Properties" %in% class(object)){
+    object$result[[1]][[1]][[1]]
   }
 
   # Walk through next layer of slotContents list, if it is, until the last layer.
@@ -176,23 +183,63 @@ retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
   }
 }
 
+#' @importFrom dplyr bind_rows
+#' @importFrom tibble tibble
 #' @export
 retrieve.PubChemInstanceList <- function(object, .which = NULL, .slot = NULL, .to.data.frame = TRUE,
                                          .combine.all = FALSE, ...){
-  if (is.null(.which)){
-    idx <- 1
-  } else {
-    if (!(.which %in% request_args(object, "identifier"))){
-      stop("Unknown instance identifier. Run 'request_args(object, \"identifier\")' to see all the requested instance identifiers.")
-    }
-    idx <- which(request_args(object, "identifier") == .which)
-  }
 
   dots <- list(...)
-  args <- c(list(object = object$result[[idx]], .slot = .slot, .to.data.frame = .to.data.frame, .combine.all = .combine.all), dots)
+  args <- c(list(.slot = .slot, .to.data.frame = .to.data.frame,
+                 .combine.all = .combine.all), dots)
 
-  do.call("retrieve", args)
-  # extract(object = object$result[[idx]], .slot = .slot, .to.data.frame = .to.data.frame, .combine.all = .combine.all, ...)
+  if (!.combine.all){
+    if (is.null(.which)){
+      idx <- 1
+    } else {
+      if (length(.which) > 1){
+        .which <- .which[1]
+        warning("Multiple instances is not allowed in '.which'. Only the first instance is returned.")
+      }
+
+      if (!(.which %in% request_args(object, "identifier"))){
+        stop("Unknown instance identifier. Run 'request_args(object, \"identifier\")' to see all the requested instance identifiers.")
+      }
+      idx <- which(request_args(object, "identifier") == .which)
+    }
+
+    args$object <- object$result[[idx]]
+    res <- do.call("retrieve", args)
+
+  } else {
+    res <- suppressMessages({
+      lapply(request_args(object, "identifier"), function(x){
+        tmp <- instance(object, .which = x)
+        args$object <- tmp
+        success <- try({
+          tmp2 <- do.call("retrieve", args)
+        })
+
+        if (inherits(success, "try-error")){
+          return(NULL)
+        } else {
+          if (args$.to.data.frame){
+            tmp2 <- bind_cols(tibble(Identifier = x), tmp2)
+          } else {
+            tmp2 <- c(list(Identifier = x), tmp2)
+          }
+        }
+
+        return(tmp2)
+      })
+    })
+
+    if (.to.data.frame){
+      res <- bind_rows(res)
+    }
+  }
+
+  return(res)
 }
 
 # PubChemInstance_AIDs ----
@@ -291,63 +338,6 @@ SIDs.PubChemInstance_SIDs <- function(object, .to.data.frame = TRUE, ...){
 SIDs <- function(object, ...){
   UseMethod("SIDs")
 }
-
-
-# get_properties(...) ----
-#' @export
-instanceProperties <- function(object, ...){
-  UseMethod("instanceProperties")
-}
-
-#' @importFrom dplyr bind_rows bind_cols
-#'
-#' @export
-instanceProperties.PubChemInstance <- function(object, ..., .to.data.frame = TRUE){
-  res <- NULL
-
-  if ("PC_Properties" %in% class(object) & object$success){
-    tmp <- object$result[[1]][[1]][[1]]
-
-    if (.to.data.frame){
-      res <- bind_rows(bind_cols(tmp))
-    } else {
-      res <- tmp
-    }
-  }
-
-  return(res)
-}
-
-#' @importFrom magrittr "%>%"
-#' @importFrom dplyr bind_rows
-#'
-#' @export
-instanceProperties.PubChemInstanceList <- function(object, ..., .to.data.frame = TRUE, .which = NULL, .combine.all = FALSE){
-  if (!.combine.all){
-    if (is.null(.which)){
-      idx <- 1
-    } else {
-      if (!(.which %in% request_args(object, "identifier"))){
-        stop("Unknown instance identifier. Run 'request_args(object, \"identifier\")' to see all the requested instance identifiers.")
-      }
-      idx <- which(request_args(object, "identifier") == .which)
-    }
-
-    res <- instanceProperties(object$result[[idx]], .to.data.frame = .to.data.frame)
-  } else {
-    .to.data.frame <- TRUE
-
-    res <- lapply(request_args(object, "identifier"), function(x){
-      tmp <- instance(object, .which = x)
-      instanceProperties(tmp, .to.data.frame = .to.data.frame)
-    }) %>%
-      bind_rows()
-  }
-
-  return(res)
-}
-
-
 
 
 

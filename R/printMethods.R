@@ -182,17 +182,11 @@ print.PubChemInstance <- function(x, ...){
       cat("\n")
       if ("PC_Properties" %in% class(x)){
 
-        cat(" NOTE: Run getter function 'instanceProperties(...)' to extract properties from requested elements. \n")
-        cat("       See ?instanceProperties for details.", sep = "", "\n")
+        cat(" NOTE: Run getter function 'retrieve(...)' to extract properties from requested elements. \n")
+        cat("       See ?retrieve for details.", sep = "", "\n")
       } else {
-        # getterFuncText <- if (length(instanceNames) > 2){
-        #   paste0(paste0(instanceNames[1:2], "(...)"), collapse = ", ")
-        # } else {
-        #   paste0(instanceNames[1], "(...)")
-        # }
-
-        cat(" NOTE: Run getter function 'extract()' with element name above to extract data from corresponding list.", "\n")
-        cat("       See ?extract for details. ", sep = "", "\n")
+        cat(" NOTE: Run getter function 'retrieve()' with element name above to extract data from corresponding list.", "\n")
+        cat("       See ?retrieve for details. ", sep = "", "\n")
       }
     }
   }
