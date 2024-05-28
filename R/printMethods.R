@@ -341,14 +341,14 @@ print.PubChemInstance_Synonyms <- function(x, ...){
 
 ## PubChemInstance_Substances ----
 #' @export
-print.PubChemInstance_Substances <- function(x, ...){
+print.PC_Substance <- function(x, ...){
   cat("\n")
-  cat(" Substances from PubChem Database", sep = "", "\n\n")
+  cat(" Substance Data from PubChem Database", "\n\n")
   cat(" Request Details: ", "\n")
-  cat("  - Domain: ", domain_text(x$request_args$domain), sep = "", "\n")
-  cat("  - Namespace: ", namespace_text(x$request_args$namespace), sep = "", "\n")
+  cat("  - Domain: ", domain_text(request_args(x, "domain")), sep = "", "\n")
+  cat("  - Namespace: ", namespace_text(request_args(x, "namespace")), sep = "", "\n")
 
-  identifiers <- x$request_args$identifier
+  identifiers <- request_args(x, "identifier")
   nIdentifiers <- length(identifiers)
   suffix_identifiers <- ""
   if (length(identifiers) > 2){
@@ -357,20 +357,65 @@ print.PubChemInstance_Substances <- function(x, ...){
   }
 
   cat("  - Identifier: ", paste0(identifiers, collapse = ", "), suffix_identifiers, sep = "", "\n\n")
-  success <- unlist(lapply(x$result, "[[", "success"))
+  #cat(" Details:", "\n\n", sep = "")
 
-  if (!all(success)){
-    if (any(success)){
-      cat(" WARNING: Substances cannot be retrieved succecfully for some instances.", "\n")
-      cat("          Results were returned for elements which are successfully retrieved.", "\n\n")
+  if (!x$success){
+    cat(" Stopped with an ERROR. Details are below:", "\n\n")
+    for (i in names(x$error)){
+      cat("  - ", i, ": ", x$error[[i]], sep = "", "\n")
     }
-
-    if (all(!success)){
-      cat(" Stopped with an ERROR. No results are returned.", "\n")
-    }
+    cat("\n\n")
   }
 
-  if (any(success)){
-    cat(" NOTE: run 'substances(...)' to extract substances data. See ?substances for help.", "\n\n")
+  if (x$success){
+    instance_results <- find_last_layer(x$result)
+
+    cat(" Number of substances retrieved: ", length(instance_results), sep = "", "\n\n")
+    cat(" Substances contain data within following slots;", "\n")
+
+    substanceNamesList <- lapply(instance_results, names)
+    substanceNames <- unique(unlist(lapply(instance_results, names)))
+
+    indexData <- data.frame(slot = substanceNames, idx = NA_integer_)
+
+    for (i in 1:length(substanceNames)){
+      continue <- TRUE
+      j <- 1
+      while (continue){
+        found <- substanceNames[i] %in% substanceNamesList[[j]]
+        if (found){
+          indexData[i, "idx"] <- j
+          continue <- FALSE
+        }
+        j <- j + 1
+
+        if (j > length(substanceNames)){
+          break
+        }
+      }
+    }
+
+    for (i in 1:nrow(indexData)){
+      substance.i <- instance_results[[indexData[i, "idx"]]]
+      itemClass <- class(substance.i[[indexData[i, "slot"]]])[1]
+      itemNames <- names(substance.i[[indexData[i, "slot"]]])
+
+      if (!is.null(itemNames) & length(itemNames) > 4){
+        itemNames <- c(itemNames[1:4], "...")
+        named_unnamed <- "named"
+      }
+
+      named_unnamed <- ifelse(is.null(itemNames), "unnamed", "named")
+
+      cat("  - ", indexData[i, "slot"], " (", length(instance_results[[indexData[i, "idx"]]][[indexData[i, "slot"]]]), ")", ": ",
+          "[<", named_unnamed, " ", itemClass, ">] ", paste(itemNames, collapse = ", "), sep = "", "\n")
+    }
+
+    # print notes for getter functions.
+    if (!is.null(substanceNames)){
+      cat("\n")
+      cat(" NOTE: Run getter function 'retrieve()' with element name above to extract data from corresponding list.", "\n")
+      cat("       See ?retrieve for details. ", sep = "", "\n")
+    }
   }
 }

@@ -25,7 +25,7 @@ get_substances <- function(identifier, namespace = 'sid', operation = NULL, sear
 
   result <- lapply(identifier, function(x){
     tmp <- get_json(identifier = x, namespace, "substance", operation, searchtype, options)
-    class(tmp) <- NULL
+    class(tmp) <- c("PC_Substance", class(tmp))
     return(tmp)
   })
 
@@ -42,7 +42,7 @@ get_substances <- function(identifier, namespace = 'sid', operation = NULL, sear
 
   structure(
     Substances_List,
-    class = c("PubChemInstance_Substances")
+    class = c("PubChemInstanceList")
   )
 }
 

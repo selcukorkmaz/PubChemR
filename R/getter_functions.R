@@ -234,13 +234,121 @@ retrieve.PubChemInstanceList <- function(object, .which = NULL, .slot = NULL, .t
       })
     })
 
-    if (.to.data.frame){
+    if (args$.to.data.frame){
       res <- bind_rows(res)
     }
   }
 
   return(res)
 }
+
+#' @importFrom tibble as_tibble_row as_tibble_col tibble
+#' @importFrom dplyr mutate_all bind_rows bind_cols
+#'
+#' @export
+retrieve.PC_Substance <- function(object, .slot = NULL, .idx = 1, .to.data.frame = TRUE, .verbose = FALSE, ...){
+
+  returnInvisible <- FALSE
+
+  if (!object$success){
+    warning("'object' encountered an error. Nothing to return. \n See error details in 'object'.")
+    return(NULL)
+  }
+
+  .slot <- ifelse(is.null(.slot), "", .slot)
+  .idx <- ifelse(is.null(.idx), 1, .idx)
+
+  # Gather all the elements from selected slot. ----
+  slotContents <- if ("PC_Substance" %in% class(object)){
+    object$result$PC_Substances[[.idx]][[.slot]]
+  }
+
+  # Walk through next layer of slotContents list, if it is, until the last layer.
+  slotContents <- find_last_layer(slotContents)
+
+  if (is.null(slotContents)){
+    return(NULL)
+  }
+
+  # If the structure of "slotContents" is a "vector"
+  vectorSlot <- !any(is.list(slotContents), is.matrix(slotContents),
+                     is.data.frame(slotContents), is.array(slotContents))
+
+  # Convert into data.frame if possible. ----
+  successDF <- TRUE
+  if (.to.data.frame){
+    successDF <- try({
+      if (!vectorSlot){
+        if (.slot == "xref"){
+          resDF <- suppressMessages({
+            lapply(slotContents, function(x){
+              tibble(source = names(x), value = x) %>%
+                mutate_all(as.character)
+            }) %>%
+              bind_rows
+          })
+
+        } else {
+          resDF <- bind_cols(slotContents)
+        }
+      } else {
+        slotNames <- names(slotContents)
+
+        # If vector slot has names, it will be structured as two column tibble_df, with names in
+        # the first column and values in the second column. Otherwise, a column tibbled_df will be
+        # returned with values only.
+        resDF <- if (is.null(slotNames)){
+          as_tibble_col(slotContents)
+        } else {
+          as_tibble_row(slotContents)
+        }
+      }
+
+      TRUE
+    })
+  }
+
+  if (!.to.data.frame | inherits(successDF, "try-error")){
+    resDF <- slotContents
+  }
+
+  # Some slots may have long texts including the protocol, description,
+  # references, etc. about the PubChem instances. Such information will be
+  # printed to R console if '.verbose = TRUE'.
+
+  if (.verbose){
+    cat("\n")
+    if (.slot %in% c("comment")){
+      cat(" PubChem Substance Details (", .slot, ")", "\n\n", sep = "")
+
+      for (i in 1:length(slotContents)){
+        cat(" ", ifelse(is.null(names(slotContents[1])), "", paste0(" - ", names(slotContents[i]), ": ", sep = "")), slotContents[i], sep = "", "\n")
+      }
+      returnInvisible <- TRUE
+    }
+
+    if (.slot == "xref"){
+      cat(" PubChem Substance Details (", .slot, ")", "\n\n", sep = "")
+      for (i in 1:length(slotContents)){
+        slotName <- names(slotContents[[i]])
+
+        cat(" > Source: ", slotName, sep = "", "\n")
+        cat("    Value: ", slotContents[[i]], sep = "", "\n")
+        cat("\n")
+      }
+      returnInvisible <- TRUE
+    }
+
+    cat("\n")
+  }
+
+  if (returnInvisible){
+    invisible(resDF)
+  } else {
+    return(resDF)
+  }
+}
+
 
 # PubChemInstance_AIDs ----
 #' @export
@@ -369,44 +477,3 @@ synonyms.PubChemInstance_Synonyms <- function(object, .to.data.frame = TRUE, ...
 synonyms <- function(object, ...){
   UseMethod("synonyms")
 }
-
-
-# PubChemInstance_Substances ----
-#' @importFrom dplyr bind_rows
-#' @importFrom tidyr as_tibble
-#' @export
-synonyms.PubChemInstance_Substances <- function(object, .to.data.frame = TRUE, ...){
-  tmp <- object$result
-
-  if (.to.data.frame){
-    res <- lapply(tmp, function(x){
-      xx <- suppressMessages({
-
-        lapply(x$result$InformationList$Information, function(y){
-          bind_cols(y) %>%
-            mutate_all(as.character)
-        }) %>%
-          bind_rows
-
-
-        list(x$request_args$identifier, Synonyms = x$result$InformationList$Information[[1]]$Synonym) %>%
-          bind_cols()
-      })
-
-      names(xx)[1] <- namespace_text(x$request_args$namespace)
-      return(xx)
-    }) %>%
-      bind_rows(.) %>%
-      as_tibble(.)
-  } else {
-    res <- lapply(tmp, "[[", "result")
-  }
-
-  return(res)
-}
-
-#' @export
-synonyms <- function(object, ...){
-  UseMethod("synonyms")
-}
-
