@@ -352,22 +352,36 @@ retrieve.PC_Substance <- function(object, .slot = NULL, .idx = 1, .to.data.frame
 
 # PubChemInstance_AIDs ----
 #' @export
-AIDs.PubChemInstance_AIDs <- function(object, .to.data.frame = TRUE, ...){
+AIDs.PubChemInstance_AIDs <- function(object, .to.data.frame = TRUE, ...) {
   tmp <- object$result
+  nms = toupper(request_args(x, "namespace"))
 
-  if (.to.data.frame){
-    res <- lapply(tmp, function(x){
-      if (!x$success){
+  if (.to.data.frame) {
+    res <- lapply(tmp, function(x) {
+      if (!x$success) {
         return(NULL)
       }
 
-      tmp2 <- bind_cols(x$result$InformationList$Information)
+      if (nms == "FORMULA") {
+        tmp2 <- tibble(CID = integer(), AID = integer())
 
-      if (request_args(x, "namespace") != "cid"){
+        for (info in x$result$InformationList$Information) {
+          if (is.list(info) && !is.null(info$AID)) {
+            for (aid in info$AID) {
+              tmp2 <- add_row(result_tibble,
+                              CID = info$CID,
+                              AID = aid)
+            }
+          }
+        }
+      } else {
+        tmp2 <- bind_cols(x$result$InformationList$Information)
+      }
+
+      if (colnames(tmp2)[1] != nms) {
         tbl <- tibble(request_args(x, .which = "identifier"))
-        names(tbl) <- stringr::str_to_title(request_args(x, .which = "namespace"))
-        tmp2 <- bind_cols(tbl, tmp2) %>%
-          select(-CID)
+        names(tbl) <- toupper(stringr::str_to_title(request_args(x, .which = "namespace")))
+        tmp2 <- bind_cols(tbl, tmp2)
       }
 
       return(tmp2)
