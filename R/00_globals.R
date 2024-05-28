@@ -153,8 +153,9 @@ property_map <- function(x, type = c("match", "contain", "start", "end", "all"),
 namespace_text <- function(x){
   txt <- case_when(
     .default = "Domain-Specific",
-    x == "aid" ~ "Assay ID",
     x == "name" ~ "Name",
+    x == "aid" ~ "Assay ID",
+    x == "sid" ~ "Substance ID",
     x == "cid" ~ "Compound ID",
     x == "smiles" ~ "SMILES",
     x == "inchi" ~ "INCHI",
@@ -181,7 +182,8 @@ namespace_text <- function(x){
 #' @importFrom dplyr case_when
 domain_text <- function(x){
   txt <- case_when(
-    .default = "Substance",
+    .default = "Domain-Specific",
+    x == "substance" ~ "Substance",
     x == "compound" ~ "Compound",
     x == "assay" ~ "Assay",
     x == "gene" ~ "Gene",
