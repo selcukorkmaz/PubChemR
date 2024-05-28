@@ -354,7 +354,7 @@ retrieve.PC_Substance <- function(object, .slot = NULL, .idx = 1, .to.data.frame
 #' @export
 AIDs.PubChemInstance_AIDs <- function(object, .to.data.frame = TRUE, ...) {
   tmp <- object$result
-  nms = toupper(request_args(x, "namespace"))
+  nms = toupper(request_args(object, "namespace"))
 
   if (.to.data.frame) {
     res <- lapply(tmp, function(x) {
