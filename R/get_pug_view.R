@@ -32,7 +32,6 @@
 #' @importFrom xml2 as_list read_xml
 
 #' @export
-
 get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compound',
                          output = 'JSON', heading = NULL, headingType = NULL, page = NULL,
                          qrSize = "short", save = FALSE) {
@@ -48,7 +47,8 @@ get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compoun
 
   # PUG-View does not support multiple identifiers in a single request
   if (length(identifier) > 1) {
-    stop("Only one identifier is allowed per request")
+    warning("Only one identifier is allowed per request. Only the first element in 'identifier' is requested.")
+    identifier <- identifier[1]
   }
 
   if (domain == "key") {
