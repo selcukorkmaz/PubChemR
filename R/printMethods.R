@@ -307,7 +307,7 @@ print.PubChemInstance_SIDs <- function(x, ...){
 #' @export
 print.PubChemInstance_Synonyms <- function(x, ...){
   cat("\n")
-  cat(" Substance Synonyms from PubChem Database", sep = "", "\n\n")
+  cat(" Synonyms from PubChem Database", sep = "", "\n\n")
   cat(" Request Details: ", "\n")
   cat("  - Domain: ", domain_text(x$request_args$domain), sep = "", "\n")
   cat("  - Namespace: ", namespace_text(x$request_args$namespace), sep = "", "\n")
@@ -336,5 +336,41 @@ print.PubChemInstance_Synonyms <- function(x, ...){
 
   if (any(success)){
     cat(" NOTE: run 'synonyms(...)' to extract synonyms data. See ?synonyms for help.", "\n\n")
+  }
+}
+
+## PubChemInstance_Substances ----
+#' @export
+print.PubChemInstance_Substances <- function(x, ...){
+  cat("\n")
+  cat(" Substances from PubChem Database", sep = "", "\n\n")
+  cat(" Request Details: ", "\n")
+  cat("  - Domain: ", domain_text(x$request_args$domain), sep = "", "\n")
+  cat("  - Namespace: ", namespace_text(x$request_args$namespace), sep = "", "\n")
+
+  identifiers <- x$request_args$identifier
+  nIdentifiers <- length(identifiers)
+  suffix_identifiers <- ""
+  if (length(identifiers) > 2){
+    identifiers <- identifiers[1:2]
+    suffix_identifiers <- paste0(", ... and ", nIdentifiers - 2, " more.")
+  }
+
+  cat("  - Identifier: ", paste0(identifiers, collapse = ", "), suffix_identifiers, sep = "", "\n\n")
+  success <- unlist(lapply(x$result, "[[", "success"))
+
+  if (!all(success)){
+    if (any(success)){
+      cat(" WARNING: Substances cannot be retrieved succecfully for some instances.", "\n")
+      cat("          Results were returned for elements which are successfully retrieved.", "\n\n")
+    }
+
+    if (all(!success)){
+      cat(" Stopped with an ERROR. No results are returned.", "\n")
+    }
+  }
+
+  if (any(success)){
+    cat(" NOTE: run 'substances(...)' to extract substances data. See ?substances for help.", "\n\n")
   }
 }

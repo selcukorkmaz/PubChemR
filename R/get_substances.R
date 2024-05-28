@@ -15,32 +15,35 @@
 #'
 #' @importFrom RJSONIO fromJSON
 #' @export
+#'
+#' @examples
+#' get_substances(
+#'   identifier = c("aspirin"),
+#'   namespace = "name"
+#' )
 get_substances <- function(identifier, namespace = 'sid', operation = NULL, searchtype = NULL, options = NULL) {
 
-  substances <- list()
+  result <- lapply(identifier, function(x){
+    tmp <- get_json(identifier = x, namespace, "substance", operation, searchtype, options)
+    class(tmp) <- NULL
+    return(tmp)
+  })
 
-  for (i in 1:length(identifier)) {
-    # Retrieve the JSON data
-    results <- get_json(identifier[i], namespace, 'substance', operation = operation, searchtype = searchtype, options = options)
+  Substances_List <- list(
+    result = result,
+    request_args = list(
+      namespace = namespace,
+      identifier = identifier,
+      domain = "substance"
+    ),
+    success = logical(),
+    error = NULL
+  )
 
-    # Check if results are not empty
-    if (!is.null(results)) {
-      # Create a list of substances (here, you might want to define what an 'substance' contains)
-
-      if (!is.null(results$PC_Substances)) {
-        substances[[i]] <- results$PC_Substances
-      } else {
-        substances[[i]] <- results
-      }
-    }
-  }
-
-  if(length(substances) >= 1){
-  names(substances) <- paste0("Substance_", identifier)
-  results <- substances
-
-  return(results)
-  }
+  structure(
+    Substances_List,
+    class = c("PubChemInstance_Substances")
+  )
 }
 
 

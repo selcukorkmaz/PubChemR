@@ -370,3 +370,43 @@ synonyms <- function(object, ...){
   UseMethod("synonyms")
 }
 
+
+# PubChemInstance_Substances ----
+#' @importFrom dplyr bind_rows
+#' @importFrom tidyr as_tibble
+#' @export
+synonyms.PubChemInstance_Substances <- function(object, .to.data.frame = TRUE, ...){
+  tmp <- object$result
+
+  if (.to.data.frame){
+    res <- lapply(tmp, function(x){
+      xx <- suppressMessages({
+
+        lapply(x$result$InformationList$Information, function(y){
+          bind_cols(y) %>%
+            mutate_all(as.character)
+        }) %>%
+          bind_rows
+
+
+        list(x$request_args$identifier, Synonyms = x$result$InformationList$Information[[1]]$Synonym) %>%
+          bind_cols()
+      })
+
+      names(xx)[1] <- namespace_text(x$request_args$namespace)
+      return(xx)
+    }) %>%
+      bind_rows(.) %>%
+      as_tibble(.)
+  } else {
+    res <- lapply(tmp, "[[", "result")
+  }
+
+  return(res)
+}
+
+#' @export
+synonyms <- function(object, ...){
+  UseMethod("synonyms")
+}
+
