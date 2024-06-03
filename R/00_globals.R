@@ -239,3 +239,4 @@ printSlotDetails <- function(object, ...){
         paste(itemNames, collapse = ", "), sep = "", "\n")
   }
 }
+

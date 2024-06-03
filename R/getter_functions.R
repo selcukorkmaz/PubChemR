@@ -258,7 +258,6 @@ retrieve.PC_Substance <- function(object, .slot = NULL, .idx = 1, .to.data.frame
   .slot <- ifelse(is.null(.slot), "", .slot)
   .idx <- ifelse(is.null(.idx), 1, .idx)
 
-  # Gather all the elements from selected slot. ----
   slotContents <- if ("PC_Substance" %in% class(object)){
     object$result$PC_Substances[[.idx]][[.slot]]
   }
@@ -274,7 +273,6 @@ retrieve.PC_Substance <- function(object, .slot = NULL, .idx = 1, .to.data.frame
   vectorSlot <- !any(is.list(slotContents), is.matrix(slotContents),
                      is.data.frame(slotContents), is.array(slotContents))
 
-  # Convert into data.frame if possible. ----
   successDF <- TRUE
   if (.to.data.frame){
     successDF <- try({
@@ -366,7 +364,6 @@ retrieve.PugViewInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
     .slot <- ""
   }
 
-  # Gather all the elements from selected slot. ----
   slotContents <- if (request_args(object, "annotation") == "data"){
     object$result[[1]][[.slot]]
   }
@@ -405,7 +402,6 @@ retrieve.PugViewInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
   vectorSlot <- !any(is.list(slotContents), is.matrix(slotContents),
                      is.data.frame(slotContents), is.array(slotContents))
 
-  # Convert into data.frame if possible. ----
   successDF <- TRUE
   if (.to.data.frame){
     successDF <- try({
@@ -449,7 +445,6 @@ retrieve.PugViewSection <- function(object, .slot = NULL, .verbose = FALSE, .to.
     return(NULL)
   }
 
-  # Gather all the elements from selected slot. ----
   slotContents <- object$result[[.slot]]
 
   # Walk through next layer of slotContents list, if it is, until the last layer.
@@ -463,7 +458,6 @@ retrieve.PugViewSection <- function(object, .slot = NULL, .verbose = FALSE, .to.
   vectorSlot <- !any(is.list(slotContents), is.matrix(slotContents),
                      is.data.frame(slotContents), is.array(slotContents))
 
-  # Convert into data.frame if possible. ----
   successDF <- TRUE
   if (.to.data.frame){
     successDF <- try({

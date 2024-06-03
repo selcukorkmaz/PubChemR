@@ -454,6 +454,8 @@ print.PugViewInstance <- function(x, ...){
     cat(" Pug View Details:", "\n")
 
     instance_results <- find_last_layer(x$result)
+    instanceNames <- names(instance_results)
+
     printSlotDetails(instance_results)
 
     # print notes for getter functions.
@@ -516,8 +518,10 @@ print.PugViewSectionList <- function(x, ...){
 ## PugViewSection ----
 #' @export
 print.PugViewSection <- function(x, ...){
+  sectionList <- x$result
+
   cat("\n")
-  cat(" PUG View Data Sections", "\n\n")
+  cat(" PUG View Data Sections", ifelse(is.null(sectionList$TOCHeading), "", paste0("(", sectionList$TOCHeading, ")")), "\n\n")
 
   if (!x$success){
     cat(" Stopped with an ERROR. Details are below:", "\n\n")
@@ -540,7 +544,6 @@ print.PugViewSection <- function(x, ...){
     }
 
     if (!is.null(x$result)){
-      sectionList <- x$result
       cat(" Section Details:", "\n")
       printSlotDetails(sectionList)
 
