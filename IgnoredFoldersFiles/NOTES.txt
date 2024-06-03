@@ -1,1 +1,4 @@
 # 1. get_pug_view, get_assays fonksiyonlarında çok kapsamlı bilgiler geliyor. Bunlar için kapsamlı bir print methodu gerekecek. Yazmadan önce üzerinde detaylıca düşünmemiz gerekiyor.
+
+# TODO:
+# get_pug_view'da annotation NULL olunc ahata döndürmek yerine bunu default bir değer ile eşleştirebiliriz.

@@ -221,3 +221,21 @@ find_last_layer <- function(x, ...) {
   return(x)
 }
 
+printSlotDetails <- function(object, ...){
+  instanceNames <- names(object)
+
+  for (item in instanceNames){
+    itemClass <- class(object[[item]])[1]
+    itemNames <- names(object[[item]])
+
+    if (!is.null(itemNames) & length(itemNames) > 4){
+      itemNames <- c(itemNames[1:4], "...")
+      named_unnamed <- "named"
+    }
+
+    named_unnamed <- ifelse(is.null(itemNames), "unnamed", "named")
+
+    cat("  - ", item, " (", length(object[[item]]), ")", ": ", "[<", named_unnamed, " ", itemClass, ">] ",
+        paste(itemNames, collapse = ", "), sep = "", "\n")
+  }
+}

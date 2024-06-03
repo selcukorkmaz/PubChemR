@@ -1,9 +1,10 @@
 ---
 title: "Enhancing Chemical Data Access with PubChemR: A Guide to Utilizing PUG View Service"
-author: "Selcuk Korkmaz, Bilge Eren Korkmaz, Dincer Goksuluk"
+author: "Selcuk Korkmaz, Bilge Eren Yamasan, Dincer Goksuluk"
 date: "`r Sys.Date()`"
 output: 
   html_document:
+    theme: cerulean
     toc: true
     toc_float:
       collapsed: true

@@ -349,6 +349,152 @@ retrieve.PC_Substance <- function(object, .slot = NULL, .idx = 1, .to.data.frame
   }
 }
 
+#' @importFrom dplyr bind_cols bind_rows full_join mutate_all
+#' @importFrom tibble as_tibble as_tibble_col tibble
+#'
+#' @export
+retrieve.PugViewInstance <- function(object, .slot = NULL, .to.data.frame = TRUE, ...){
+
+  dots <- list(...)
+
+  if (!object$success){
+    warning("'object' encountered an error. Nothing to return. \n See error details in 'object'.")
+    return(NULL)
+  }
+
+  if (is.null(.slot)){
+    .slot <- ""
+  }
+
+  # Gather all the elements from selected slot. ----
+  slotContents <- if (request_args(object, "annotation") == "data"){
+    object$result[[1]][[.slot]]
+  }
+
+  # Walk through next layer of slotContents list, if it is, until the last layer.
+  slotContents <- find_last_layer(slotContents)
+
+  if (is.null(slotContents)){
+    return(NULL)
+  }
+
+  if (.slot %in% c("Section", "Reference")){
+    tmpList <- structure(
+      list(
+        result = slotContents,
+        recordInformation = list(
+          RecordType = object$result[[1]][["RecordType"]],
+          RecordNumber = object$result[[1]][["RecordNumber"]],
+          RecordTitle = object$result[[1]][["RecordTitle"]]
+        ),
+        success = TRUE,
+        error = NULL
+      )
+    )
+
+    if (.slot == "Section"){
+      class(tmpList) <- c("PugViewSectionList")
+    } else if (.slot == "Reference"){
+      class(tmpList) <- c("PugViewReferenceList")
+    }
+
+    return(tmpList)
+  }
+
+  # If the structure of "slotContents" is a "vector"
+  vectorSlot <- !any(is.list(slotContents), is.matrix(slotContents),
+                     is.data.frame(slotContents), is.array(slotContents))
+
+  # Convert into data.frame if possible. ----
+  successDF <- TRUE
+  if (.to.data.frame){
+    successDF <- try({
+      if (!vectorSlot){
+
+
+      } else {
+        slotNames <- names(slotContents)
+
+        # If vector slot has names, it will be structured as two column tibble_df, with names in
+        # the first column and values in the second column. Otherwise, a column tibbled_df will be
+        # returned with values only.
+        resDF <- if (is.null(slotNames)){
+          as_tibble_col(slotContents)
+        } else {
+          tibble(Name = slotNames, Value = slotContents)
+        }
+      }
+
+      TRUE
+    })
+  }
+
+  if (!.to.data.frame | inherits(successDF, "try-error")){
+    resDF <- slotContents
+  }
+
+  return(resDF)
+}
+
+
+retrieve.PugViewSection <- function(object, .slot = NULL, .verbose = FALSE, .to.data.frame = TRUE, ...){
+  dots <- list(...)
+
+  if (!object$success){
+    warning("'object' encountered an error. Nothing to return. \n See error details in 'object'.")
+    return(NULL)
+  }
+
+  if (is.null(.slot)){
+    return(NULL)
+  }
+
+  # Gather all the elements from selected slot. ----
+  slotContents <- object$result[[.slot]]
+
+  # Walk through next layer of slotContents list, if it is, until the last layer.
+  slotContents <- find_last_layer(slotContents)
+
+  if (is.null(slotContents)){
+    return(NULL)
+  }
+
+  # If the structure of "slotContents" is a "vector"
+  vectorSlot <- !any(is.list(slotContents), is.matrix(slotContents),
+                     is.data.frame(slotContents), is.array(slotContents))
+
+  # Convert into data.frame if possible. ----
+  successDF <- TRUE
+  if (.to.data.frame){
+    successDF <- try({
+      if (!vectorSlot){
+
+
+      } else {
+        slotNames <- names(slotContents)
+
+        # If vector slot has names, it will be structured as two column tibble_df, with names in
+        # the first column and values in the second column. Otherwise, a column tibbled_df will be
+        # returned with values only.
+        resDF <- if (is.null(slotNames)){
+          as_tibble_col(slotContents)
+        } else {
+          tibble(Name = slotNames, Value = slotContents)
+        }
+      }
+
+      TRUE
+    })
+  }
+
+  if (!.to.data.frame | inherits(successDF, "try-error")){
+    resDF <- slotContents
+  }
+
+  return(resDF)
+}
+
+
 
 # PubChemInstance_AIDs ----
 #' @export
@@ -491,3 +637,82 @@ synonyms.PubChemInstance_Synonyms <- function(object, .to.data.frame = TRUE, ...
 synonyms <- function(object, ...){
   UseMethod("synonyms")
 }
+
+
+
+
+#' @export
+section <- function(object, ...){
+  UseMethod("section")
+}
+
+#' @export
+section.PugViewSectionList <- function(object, .id = "S1", .verbose = FALSE, ...){
+  if (!object$success){
+    warning("'object' encountered an error. Nothing to return. \n See error details in 'object'.")
+    return(NULL)
+  }
+
+  if (is.null(.id)){
+    .id <- "S1"
+  }
+
+  sectionInfo <- sectionList(object)
+  idx <- which(sectionInfo[["SectionID"]] == .id)
+
+  tmpList <- structure(
+    list(
+      result = object$result[[idx]],
+      recordInformation = object$recordInformation,
+      success = TRUE,
+      error = NULL
+    ),
+    class = "PugViewSection"
+  )
+
+  return(tmpList)
+}
+
+
+#' @export
+sectionList <- function(object, ...){
+  UseMethod("sectionList")
+}
+
+#' @importFrom tibble tibble
+
+#' @export
+sectionList.PugViewSectionList <- function(object, ...){
+  sectionList <- object$result
+
+  if (is.null(sectionList) | length(sectionList) == 0){
+    warning("No section data available. Returning NULL.")
+    return(NULL)
+  }
+
+  sectionHeadings <- unlist(lapply(sectionList, "[[", "TOCHeading"))
+  if (length(sectionHeadings) > 0){
+    resDF <- tibble(SectionID = paste0("S", 1:length(sectionHeadings)), Headings = sectionHeadings)
+  }
+
+  return(resDF)
+}
+
+
+#' @export
+sectionList.PugViewSection <- function(object, ...){
+  sectionList <- object$result
+
+  if (is.null(sectionList) | length(sectionList) == 0){
+    warning("No section data available. Returning NULL.")
+    return(NULL)
+  }
+
+  sectionHeadings <- unlist(lapply(sectionList, "[[", "TOCHeading"))
+  if (length(sectionHeadings) > 0){
+    resDF <- tibble(SectionID = paste0("S", 1:length(sectionHeadings)), Headings = sectionHeadings)
+  }
+
+  return(resDF)
+}
+

@@ -419,3 +419,139 @@ print.PC_Substance <- function(x, ...){
     }
   }
 }
+
+
+## PugViewInstance ----
+#' @export
+print.PugViewInstance <- function(x, ...){
+  cat("\n")
+  cat(" PUG View Data from PubChem Database", "\n\n")
+
+  if (!x$success){
+    cat(" Stopped with an ERROR. Details are below:", "\n\n")
+    for (i in names(x$error)){
+      cat("  - ", i, ": ", x$error[[i]], sep = "", "\n")
+    }
+    cat("\n\n")
+  }
+
+  if (x$success){
+    cat(" Request Details: ", "\n")
+    cat("  - Domain: ", domain_text(request_args(x, "domain")), sep = "", "\n")
+    cat("  - Annotation: ", request_args(x, "annotation"), sep = "", "\n")
+
+    identifiers <- request_args(x, "identifier")
+    nIdentifiers <- length(identifiers)
+    suffix_identifiers <- ""
+    if (length(identifiers) > 2){
+      identifiers <- identifiers[1:2]
+      suffix_identifiers <- paste0(", ... and ", nIdentifiers - 2, " more.")
+    }
+
+    cat("  - Identifier: ", paste0(identifiers, collapse = ", "), suffix_identifiers, sep = "", "\n\n")
+    #cat(" Details:", "\n\n", sep = "")
+    #
+    cat(" Pug View Details:", "\n")
+
+    instance_results <- find_last_layer(x$result)
+    printSlotDetails(instance_results)
+
+    # print notes for getter functions.
+    if (!is.null(instanceNames)){
+      cat("\n")
+      cat(" NOTE: Run getter function 'retrieve()' with element name above to extract data from corresponding list.", "\n")
+      cat("       See ?retrieve for details. ", sep = "", "\n")
+    }
+  }
+}
+
+## PugViewSectionList ----
+#' @export
+print.PugViewSectionList <- function(x, ...){
+  cat("\n")
+  cat(" PUG View Data Sections", "\n\n")
+
+  if (!x$success){
+    cat(" Stopped with an ERROR. Details are below:", "\n\n")
+    for (i in names(x$error)){
+      cat("  - ", i, ": ", x$error[[i]], sep = "", "\n")
+    }
+    cat("\n\n")
+  }
+
+  if (x$success){
+    if (!is.null(x$recordInformation)){
+      cat(" Request Details:", "\n")
+
+      recordInformation <- x$recordInformation
+      for (item in names(recordInformation)){
+        cat("  - ", gsub("([a-z])([A-Z])", "\\1 \\2", item), ": ", recordInformation[[item]], sep = "", "\n")
+      }
+
+      cat("\n")
+    }
+
+    if (!is.null(x$result)){
+      sectionList <- x$result
+      cat(" Section Details:", "\n")
+      cat("  - Number of available sections: ", length(sectionList), "\n", sep = "")
+
+      sectionHeadings <- unlist(lapply(sectionList, "[[", "TOCHeading"))
+      sectionHeadingsText <- if (length(sectionHeadings) > 2){
+        paste0(paste0(sectionHeadings[1:2], collapse = ", "), ", ...", " and ", length(sectionHeadings) - 2, " more.", sep = "")
+      } else {
+        paste0(sectionHeadings[1:2], collapse = ", ")
+      }
+
+      cat("  - Section headings: ", sectionHeadingsText, sep = "", "\n")
+
+      # print notes for getter functions.
+      cat("\n")
+      cat(" NOTE: Run getter function 'section()' with element name above to extract section data from corresponding list.", "\n")
+      cat("       See ?section for details. ", sep = "", "\n")
+    }
+  }
+}
+
+## PugViewSection ----
+#' @export
+print.PugViewSection <- function(x, ...){
+  cat("\n")
+  cat(" PUG View Data Sections", "\n\n")
+
+  if (!x$success){
+    cat(" Stopped with an ERROR. Details are below:", "\n\n")
+    for (i in names(x$error)){
+      cat("  - ", i, ": ", x$error[[i]], sep = "", "\n")
+    }
+    cat("\n\n")
+  }
+
+  if (x$success){
+    if (!is.null(x$recordInformation)){
+      cat(" Request Details:", "\n")
+
+      recordInformation <- x$recordInformation
+      for (item in names(recordInformation)){
+        cat("  - ", gsub("([a-z])([A-Z])", "\\1 \\2", item), ": ", recordInformation[[item]], sep = "", "\n")
+      }
+
+      cat("\n")
+    }
+
+    if (!is.null(x$result)){
+      sectionList <- x$result
+      cat(" Section Details:", "\n")
+      printSlotDetails(sectionList)
+
+      # print notes for getter functions.
+      if (!is.null(names(sectionList))){
+        cat("\n")
+        cat(" NOTE: Run getter function 'retrieve()' with element name above to extract data from corresponding list.", "\n")
+        cat("       See ?retrieve for details. ", sep = "", "\n")
+      }
+    }
+  }
+}
+
+## PugViewReferenceList ----

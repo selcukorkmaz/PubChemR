@@ -20,7 +20,7 @@
 #'         For QR codes, it returns an image object or saves a PNG file.
 #'
 #' @examples
-#'   get_pug_view(identifier = "2244", annotation = "linkout", domain = "compound")
+#' get_pug_view(identifier = "2244", annotation = "linkout", domain = "compound")
 #'
 #' @importFrom RJSONIO fromJSON
 #' @importFrom httr GET status_code
@@ -30,15 +30,55 @@
 #' @importFrom png readPNG
 #' @importFrom httr content
 #' @importFrom xml2 as_list read_xml
-
+#'
 #' @export
+
+annotation = "data"
+identifier = "1234"
+domain = "compound"
+output = "JSON"
+heading = NULL
+headingType = NULL
+page = NULL
+qrSize = "short"
+save = FALSE
+
+
 get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compound',
                          output = 'JSON', heading = NULL, headingType = NULL, page = NULL,
                          qrSize = "short", save = FALSE) {
 
+  # Create empty Pug View structure to be used when error returns.
+  createPugViewObject <- function(error = FALSE, result = list(), request_args = list(), subclass = NULL, ...){
+    dots <- list(...)
+
+    tmp <- list(
+      result = result,
+      request_args = request_args,
+      success = !error,
+      error = NULL
+    )
+
+    if (length(dots) > 0){
+      tmp <- c(tmp, dots)
+    }
+
+    structure(
+      tmp,
+      class = c("PugViewInstance", subclass)
+    )
+  }
+
   # Check for missing annotation
   if (is.null(annotation)) {
-    stop("annotation cannot be NULL")
+    warning("annotation cannot be NULL. It is set 'data' by default.")
+    annotation <- "data"
+  }
+
+  if (is.null(identifier)){
+    results <- createPugViewObject(error = TRUE)
+    results$error <- list(Message = "'identifier' cannot be NULL. ")
+    return(results)
   }
 
   if (is.numeric(identifier)) {
@@ -47,7 +87,7 @@ get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compoun
 
   # PUG-View does not support multiple identifiers in a single request
   if (length(identifier) > 1) {
-    warning("Only one identifier is allowed per request. Only the first element in 'identifier' is requested.")
+    warning("One identifier is allowed per request. Only the first element in 'identifier' is used.")
     identifier <- identifier[1]
   }
 
@@ -68,22 +108,21 @@ get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compoun
   # Building the URL components
   comps <- Filter(Negate(is.null), list(api_base, annotation, domain, identifier, output))
 
-  if (!is.null(heading)) {
-    apiurl <- paste0(paste(comps, collapse = '/'), "?heading=", URLencode(sub(" ", "+", heading)))
+  apiurl <- if (!is.null(heading)) {
+    paste0(paste(comps, collapse = '/'), "?heading=", URLencode(sub(" ", "+", heading)))
   } else if (!is.null(headingType)) {
-    apiurl <- paste0(paste(comps, collapse = '/'), "?heading_type=", URLencode(sub(" ", "+", headingType)))
+    paste0(paste(comps, collapse = '/'), "?heading_type=", URLencode(sub(" ", "+", headingType)))
   } else if (!is.null(page)) {
-    apiurl <- paste0(paste(comps, collapse = '/'), "?page=", URLencode(sub(" ", "+", page)))
+    paste0(paste(comps, collapse = '/'), "?page=", URLencode(sub(" ", "+", page)))
   } else if (annotation == "qr") {
     if (qrSize == "short"){
       comps <- Filter(Negate(is.null), list(api_base, annotation, "short", domain, identifier, output))
     } else if(qrSize == "long"){
       comps <- Filter(Negate(is.null), list(api_base, annotation, "long", domain, identifier, output))
     }
-
-    apiurl <- paste(comps, collapse = '/')
+    paste(comps, collapse = '/')
   } else {
-    apiurl <- paste(comps, collapse = '/')
+    paste(comps, collapse = '/')
   }
 
   # Simple Rate Limiting (5 requests per second)
@@ -94,13 +133,14 @@ get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compoun
 
   # Check for successful response
   if (status_code(response) != 200) {
-    stop("Error in API request: ", status_code(response))
+    results <- createPugViewObject(error = TRUE)
+    results$error <- list(Message = "Error in API request",
+                          Code = paste0("HTTP Error ", status_code(response)))
+    return(results)
   }
 
   # Handling response based on output format
-
   if (!is.null(output) && output %in% c('JSON')) {
-
     savedContent <- content(response, "text", encoding = "UTF-8")
     content <- fromJSON(savedContent)
 
@@ -121,17 +161,21 @@ get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compoun
     content <- content(response, "text", encoding = "UTF-8")
   }
 
-  # else if(output == "XML"){
-  #   responseContent <- rawToChar(response$content)
-  #   content <- read_xml(responseContent)
-  #   # content <-  xml2::as_list(xml_file)
-  #
-  #   if(save){
-  #
-  #     write_xml(content, file = paste0(domain, "_", identifier, ".", output))
-  #
-  #   }
-  # }
-
-  return(content)
+  createPugViewObject(
+    result = content,
+    request_args = list(
+      annotation = annotation,
+      identifier = identifier,
+      domain = domain,
+      output = output,
+      heading = heading,
+      headingType = headingType,
+      page = page,
+      qrSize = qrSize,
+      save = save
+    )
+  )
 }
+
+pview <- get_pug_view(identifier = "2244", annotation = "data", domain = "compound")
+
