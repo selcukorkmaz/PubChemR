@@ -125,6 +125,25 @@ pview <- get_pug_view(identifier = "2244", annotation = "linkout", domain = "com
 pview <- get_pug_view(identifier = "2244", annotation = "data", domain = "compound")
 pview2 <- get_pug_view(identifier = "2244", annotation = "linkout", domain = "compoundsad")
 
+pview <- get_pug_view(identifier = "2244", annotation = "data", domain = "compound")
+pview2 <- get_pug_view(identifier = "2244", annotation = "data", domain = "compoundasd")
+
+# PugViewSectionList class
+sect <- retrieve(pview, .slot = "Section", .to.data.frame = TRUE)
+class(sect)
+sectionList(sect)
+
+# PugViewSection class
+sect2 <- section(sect, .id = "S3", .verbose = FALSE)
+retrieve(sect2, .slot = "Description")
+sect2
+
+sectionList(sect2)
+section(sect2, .id = "S3", .verbose = FALSE)
+retrieve(section(sect2, .id = "S3", .verbose = FALSE), .slot = "Description")
+retrieve(section(sect2, .id = "S3", .verbose = FALSE), .slot = "URL")
+sectionList(section(sect2, .id = "S1", .verbose = FALSE))
+
 
 
 

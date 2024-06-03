@@ -406,8 +406,7 @@ retrieve.PugViewInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
   if (.to.data.frame){
     successDF <- try({
       if (!vectorSlot){
-
-
+        resDF <- bind_cols(slotContents)
       } else {
         slotNames <- names(slotContents)
 
@@ -433,7 +432,11 @@ retrieve.PugViewInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
 }
 
 
-retrieve.PugViewSection <- function(object, .slot = NULL, .verbose = FALSE, .to.data.frame = TRUE, ...){
+#' @importFrom dplyr bind_cols
+#' @importFrom tibble as_tibble_col tibble
+#'
+#' @export
+retrieve.PugViewSection <- function(object, .slot = NULL, .verbose = FALSE, .to.data.frame = FALSE, ...){
   dots <- list(...)
 
   if (!object$success){
@@ -462,8 +465,7 @@ retrieve.PugViewSection <- function(object, .slot = NULL, .verbose = FALSE, .to.
   if (.to.data.frame){
     successDF <- try({
       if (!vectorSlot){
-
-
+        resDF <- bind_cols(slotContents)
       } else {
         slotNames <- names(slotContents)
 
@@ -667,6 +669,40 @@ section.PugViewSectionList <- function(object, .id = "S1", .verbose = FALSE, ...
   return(tmpList)
 }
 
+#' @export
+section.PugViewSection <- function(object, .id = "S1", .verbose = FALSE, ...){
+  if (!object$success){
+    warning("'object' encountered an error. Nothing to return. \n See error details in 'object'.")
+    return(NULL)
+  }
+
+  if (is.null(.id)){
+    .id <- "S1"
+  }
+
+  sectionInfo <- sectionList(object)
+
+  if (is.null(sectionInfo)){
+    warning("There is no section data within 'object'. Returning NULL.")
+    return(NULL)
+  }
+
+  idx <- which(sectionInfo[["SectionID"]] == .id)
+
+  tmpList <- structure(
+    list(
+      result = object$result$Section[[idx]],
+      recordInformation = object$recordInformation,
+      success = TRUE,
+      error = NULL
+    ),
+    class = "PugViewSection"
+  )
+
+  return(tmpList)
+}
+
+
 
 #' @export
 sectionList <- function(object, ...){
@@ -674,7 +710,6 @@ sectionList <- function(object, ...){
 }
 
 #' @importFrom tibble tibble
-
 #' @export
 sectionList.PugViewSectionList <- function(object, ...){
   sectionList <- object$result
@@ -702,7 +737,12 @@ sectionList.PugViewSection <- function(object, ...){
     return(NULL)
   }
 
-  sectionHeadings <- unlist(lapply(sectionList, "[[", "TOCHeading"))
+  if (!("Section" %in% names(sectionList))){
+    warning("There is no section data within 'object'. Returning NULL.")
+    return(NULL)
+  }
+
+  sectionHeadings <- unlist(lapply(sectionList$Section, "[[", "TOCHeading"))
   if (length(sectionHeadings) > 0){
     resDF <- tibble(SectionID = paste0("S", 1:length(sectionHeadings)), Headings = sectionHeadings)
   }

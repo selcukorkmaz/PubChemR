@@ -32,25 +32,6 @@
 #' @importFrom xml2 as_list read_xml
 #'
 #' @export
-
-annotation = "data"
-identifier = "1234"
-domain = "compound"
-output = "JSON"
-heading = NULL
-headingType = NULL
-page = NULL
-qrSize = "short"
-save = FALSE
-
-pview <- get_pug_view(identifier = "2244", annotation = "data", domain = "compound")
-pview2 <- get_pug_view(identifier = "2244", annotation = "data", domain = "compoundasd")
-
-sect <- retrieve(pview, .slot = "Section", .to.data.frame = TRUE)
-sectionList(sect)
-
-section(sect, .id = "S10", .verbose = FALSE)
-
 get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compound',
                          output = 'JSON', heading = NULL, headingType = NULL, page = NULL,
                          qrSize = "short", save = FALSE) {
@@ -183,4 +164,3 @@ get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compoun
     )
   )
 }
-

@@ -47,6 +47,6 @@ for a given identifier. It supports fetching annotations, QR codes, and more, wi
 for different output formats including JSON and SVG.
 }
 \examples{
-  get_pug_view(identifier = "2244", annotation = "linkout", domain = "compound")
+get_pug_view(identifier = "2244", annotation = "linkout", domain = "compound")
 
 }

@@ -456,7 +456,7 @@ print.PugViewInstance <- function(x, ...){
     instance_results <- find_last_layer(x$result)
     instanceNames <- names(instance_results)
 
-    printSlotDetails(instance_results)
+    printSlotDetails(instance_results, pugViewSection = TRUE)
 
     # print notes for getter functions.
     if (!is.null(instanceNames)){
@@ -509,8 +509,8 @@ print.PugViewSectionList <- function(x, ...){
 
       # print notes for getter functions.
       cat("\n")
-      cat(" NOTE: Run getter function 'section()' with element name above to extract section data from corresponding list.", "\n")
-      cat("       See ?section for details. ", sep = "", "\n")
+      cat(" NOTE: Run getter function 'section()' to extract section data. To list available sections, run 'sectionList()'.", "\n")
+      cat("       See ?section and ?sectionList for details. ", sep = "", "\n")
     }
   }
 }
@@ -545,13 +545,20 @@ print.PugViewSection <- function(x, ...){
 
     if (!is.null(x$result)){
       cat(" Section Details:", "\n")
-      printSlotDetails(sectionList)
+      printSlotDetails(sectionList, pugViewSection = TRUE)
 
       # print notes for getter functions.
       if (!is.null(names(sectionList))){
         cat("\n")
         cat(" NOTE: Run getter function 'retrieve()' with element name above to extract data from corresponding list.", "\n")
         cat("       See ?retrieve for details. ", sep = "", "\n")
+
+        if ("Section" %in% names(sectionList)){
+          # print notes for getter functions.
+          cat("\n")
+          cat(" NOTE: Run getter function 'section()' to extract section data. To list available sections, run 'sectionList()'.", "\n")
+          cat("       See ?section and ?sectionList for details. ", sep = "", "\n")
+        }
       }
     }
   }

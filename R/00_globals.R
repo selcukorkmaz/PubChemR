@@ -222,6 +222,7 @@ find_last_layer <- function(x, ...) {
 }
 
 printSlotDetails <- function(object, ...){
+  dots <- list(...)
   instanceNames <- names(object)
 
   for (item in instanceNames){
@@ -233,10 +234,25 @@ printSlotDetails <- function(object, ...){
       named_unnamed <- "named"
     }
 
+    itemNamesText <- paste0(itemNames, collapse = ", ")
     named_unnamed <- ifelse(is.null(itemNames), "unnamed", "named")
 
+    if (item == "Section"){
+      if (length(dots$pugViewSection) == 0){
+        dots$pugViewSection <- FALSE
+      }
+      if (dots$pugViewSection){
+        sectionHeadings <- unlist(lapply(object[[item]], "[[", "TOCHeading"))
+        itemNamesText <- if (length(sectionHeadings) > 2){
+          paste0(paste0(sectionHeadings[1:2], collapse = ", "), ", ...", " and ", length(sectionHeadings) - 2, " more.", sep = "")
+        } else {
+          paste0(sectionHeadings[1:2], collapse = ", ")
+        }
+      }
+    }
+
     cat("  - ", item, " (", length(object[[item]]), ")", ": ", "[<", named_unnamed, " ", itemClass, ">] ",
-        paste(itemNames, collapse = ", "), sep = "", "\n")
+        itemNamesText, sep = "", "\n")
   }
 }
 
