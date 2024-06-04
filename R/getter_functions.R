@@ -364,6 +364,8 @@ retrieve.PugViewInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
 
   slotContents <- if (request_args(object, "annotation") == "data"){
     object$result[[1]][[.slot]]
+  } else {
+    object$result[[1]][[.slot]]
   }
 
   # Walk through next layer of slotContents list, if it is, until the last layer.
@@ -371,6 +373,12 @@ retrieve.PugViewInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
 
   if (is.null(slotContents)){
     return(NULL)
+  }
+
+  # If there is one section in the slotCotents, we move it into a 1-element list to be compatible with the
+  # structure of PugViewSectionList class.
+  if ("TOCHeading" %in% names(slotContents)){
+    slotContents <- list(slotContents)
   }
 
   if (.slot %in% c("Section", "Reference")){
@@ -641,6 +649,13 @@ section <- function(object, ...){
 }
 
 #' @export
+section.PugViewInstance <- function(object, .id = "S1", .verbose = FALSE, ...){
+  dots <- list(...)
+  call_args <- c(list(object = retrieve(object, .slot = "Section"), .id = .id, .verbose = .verbose), dots)
+  do.call("section", call_args)
+}
+
+#' @export
 section.PugViewSectionList <- function(object, .id = "S1", .verbose = FALSE, ...){
   if (!object$success){
     warning("'object' encountered an error. Nothing to return. \n See error details in 'object'.")
@@ -653,10 +668,11 @@ section.PugViewSectionList <- function(object, .id = "S1", .verbose = FALSE, ...
 
   sectionInfo <- sectionList(object)
   idx <- which(sectionInfo[["SectionID"]] == .id)
+  sectionContents <- object$result[[idx]]
 
   tmpList <- structure(
     list(
-      result = object$result[[idx]],
+      result = sectionContents,
       recordInformation = object$recordInformation,
       success = TRUE,
       error = NULL
@@ -664,7 +680,12 @@ section.PugViewSectionList <- function(object, .id = "S1", .verbose = FALSE, ...
     class = "PugViewSection"
   )
 
-  return(tmpList)
+  if (.verbose){
+    printSectionDetails(sectionContents)
+    invisible(tmpList)
+  } else {
+    return(tmpList)
+  }
 }
 
 #' @export
@@ -686,10 +707,11 @@ section.PugViewSection <- function(object, .id = "S1", .verbose = FALSE, ...){
   }
 
   idx <- which(sectionInfo[["SectionID"]] == .id)
+  sectionContents <- object$result$Section[[idx]]
 
   tmpList <- structure(
     list(
-      result = object$result$Section[[idx]],
+      result = sectionContents,
       recordInformation = object$recordInformation,
       success = TRUE,
       error = NULL
@@ -697,14 +719,25 @@ section.PugViewSection <- function(object, .id = "S1", .verbose = FALSE, ...){
     class = "PugViewSection"
   )
 
-  return(tmpList)
+  if (.verbose){
+    printSectionDetails(sectionContents)
+    invisible(tmpList)
+  } else {
+    return(tmpList)
+  }
 }
-
 
 
 #' @export
 sectionList <- function(object, ...){
   UseMethod("sectionList")
+}
+
+#' @export
+sectionList.PugViewInstance <- function(object, ...){
+  dots <- list(...)
+  call_args <- c(list(object = retrieve(object, .slot = "Section")), dots)
+  do.call("sectionList", call_args)
 }
 
 #' @importFrom tibble tibble
@@ -732,16 +765,16 @@ sectionList.PugViewSectionList <- function(object, .pattern = NULL, .match_type 
       stop("Match pattern (.pattern) should be 'character' type.")
     }
 
-    filteredSections <- sapply(.pattern, function(xx){
+    filteredSections <- sapply(.pattern, function(x){
       idx <- if (.match_type == "start"){
-        starts_with(match = xx, vars = sectionHeadings, ignore.case = TRUE)
+        starts_with(match = x, vars = sectionHeadings, ignore.case = TRUE)
       } else if (.match_type == "end"){
-        ends_with(match = xx, vars = sectionHeadings, ignore.case = TRUE)
+        ends_with(match = x, vars = sectionHeadings, ignore.case = TRUE)
       } else if (.match_type == "match"){
-        x <- tolower(xx)
-        which(xx == tolower(sectionHeadings))
+        x <- tolower(x)
+        which(x == tolower(sectionHeadings))
       } else {
-        contains(match = xx, vars = sectionHeadings, ignore.case = TRUE)
+        contains(match = x, vars = sectionHeadings, ignore.case = TRUE)
       }
 
       if (length(idx) == 0){
@@ -793,16 +826,16 @@ sectionList.PugViewSection <- function(object, .pattern = NULL, .match_type = c(
       stop("Match pattern (.pattern) should be 'character' type.")
     }
 
-    filteredSections <- sapply(.pattern, function(xx){
+    filteredSections <- sapply(.pattern, function(x){
       idx <- if (.match_type == "start"){
-        starts_with(match = xx, vars = sectionHeadings, ignore.case = TRUE)
+        starts_with(match = x, vars = sectionHeadings, ignore.case = TRUE)
       } else if (.match_type == "end"){
-        ends_with(match = xx, vars = sectionHeadings, ignore.case = TRUE)
+        ends_with(match = x, vars = sectionHeadings, ignore.case = TRUE)
       } else if (.match_type == "match"){
-        x <- tolower(xx)
-        which(xx == tolower(sectionHeadings))
+        x <- tolower(x)
+        which(x == tolower(sectionHeadings))
       } else {
-        contains(match = xx, vars = sectionHeadings, ignore.case = TRUE)
+        contains(match = x, vars = sectionHeadings, ignore.case = TRUE)
       }
 
       if (length(idx) == 0){

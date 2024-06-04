@@ -63,11 +63,11 @@ get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compoun
     annotation <- "data"
   }
 
-  if (is.null(identifier)){
-    results <- createPugViewObject(error = TRUE)
-    results$error <- list(Message = "'identifier' cannot be NULL. ")
-    return(results)
-  }
+  # if (is.null(identifier)){
+  #   results <- createPugViewObject(error = TRUE)
+  #   results$error <- list(Message = "'identifier' cannot be NULL. ")
+  #   return(results)
+  # }
 
   if (is.numeric(identifier)) {
     identifier <- as.character(identifier)
@@ -75,7 +75,7 @@ get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compoun
 
   # PUG-View does not support multiple identifiers in a single request
   if (length(identifier) > 1) {
-    warning("One identifier is allowed per request. Only the first element in 'identifier' is used.")
+    warning(paste0("One identifier is allowed per request. Only the first element in 'identifier' (i.e., ", identifier[1], ") is used."))
     identifier <- identifier[1]
   }
 

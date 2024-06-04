@@ -125,7 +125,7 @@ pview <- get_pug_view(identifier = "2244", annotation = "linkout", domain = "com
 pview <- get_pug_view(identifier = "2244", annotation = "data", domain = "compound")
 pview2 <- get_pug_view(identifier = "2244", annotation = "linkout", domain = "compoundsad")
 
-pview <- get_pug_view(identifier = "2244", annotation = "data", domain = "compound")
+pview <- get_pug_view(identifier = c("1234", "2244"), annotation = "data", domain = "compound")
 pview2 <- get_pug_view(identifier = "2244", annotation = "data", domain = "compoundasd")
 
 # PugViewSectionList class
@@ -138,6 +138,8 @@ sectionList(sect, .pattern = 2, .match_type = "match")
 
 # PugViewSection class
 sect2 <- section(sect, .id = "S4", .verbose = FALSE)
+section(sect, .id = "S4", .verbose = FALSE)
+section(sect, .id = "S20", .verbose = TRUE)
 retrieve(sect2, .slot = "Description")
 sect2
 
@@ -148,6 +150,8 @@ retrieve(section(sect2, .id = "S3", .verbose = FALSE), .slot = "Description")
 retrieve(section(sect2, .id = "S3", .verbose = FALSE), .slot = "URL")
 sectionList(section(sect2, .id = "S1", .verbose = FALSE))
 
-
-
+# Verbose samples.
+# Print section and subsection details at once using nested functions.
+pview <- get_pug_view(identifier = "2244", annotation = "data", domain = "compound")
+section(section(section(pview, "S13", .verbose = TRUE), "S1", .verbose = TRUE), "S5", .verbose = TRUE)
 

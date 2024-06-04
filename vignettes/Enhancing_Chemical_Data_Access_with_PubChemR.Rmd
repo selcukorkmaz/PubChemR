@@ -118,7 +118,7 @@ result
 **Access by Heading:** Retrieve specific types of information across PubChem's databases. For example, to get all experimental viscosity measurements:
 
 ```{r}
-result <- get_pug_view(annotation = "annotations", identifier = "Viscosity",   domain = "heading", output = "JSON")
+result <- get_pug_view(annotation = "annotations", identifier = "Viscosity", domain = "heading", output = "JSON")
 ```
 
 ```{r}
@@ -128,7 +128,7 @@ result
 Or equivalently (useful if the heading contains special characters not compatible with URL syntax):
 
 ```{r}
-result <- get_pug_view(annotation = "annotations", identifier = NULL,   domain = "heading", output = "JSON", heading = "Viscosity")
+result <- get_pug_view(annotation = "annotations", identifier = NULL, domain = "heading", output = "JSON", heading = "Viscosity")
 ```
 
 ```{r}
@@ -149,7 +149,7 @@ result
 **Pagination:** Access different pages of data if the total exceeds one page. For example, the 10th page of CAS annotations:
 
 ```{r}
-result <- get_pug_view(annotation = "annotations", identifier = "CAS",domain = "heading", output = "JSON", page = "10")
+result <- get_pug_view(annotation = "annotations", identifier = "CAS", domain = "heading", output = "JSON", page = "10")
 ```
 
 ```{r}
@@ -237,7 +237,8 @@ result
 **Specialized Retrieval:** Access attachments like spectral images associated with records:
 
 ```{r, eval=FALSE}
-get_pug_view(annotation = "data", identifier = "236678_1", domain = "key")
+result <- get_pug_view(annotation = "data", identifier = "236678_1", domain = "key")
+bitmap <- result$result[[1]]
 ```
 
 

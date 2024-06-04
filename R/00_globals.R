@@ -243,10 +243,10 @@ printSlotDetails <- function(x, ...){
       }
       if (dots$pugViewSection){
         sectionHeadings <- unlist(lapply(x[[item]], "[[", "TOCHeading"))
-        itemNamesText <- if (length(sectionHeadings) > 2){
+        itemNamesText <- if (length(sectionHeadings) >= 2){
           paste0(paste0(sectionHeadings[1:2], collapse = ", "), ", ...", " and ", length(sectionHeadings) - 2, " more.", sep = "")
         } else {
-          paste0(sectionHeadings[1:2], collapse = ", ")
+          paste0(sectionHeadings, collapse = ", ")
         }
       }
     }
@@ -258,5 +258,23 @@ printSlotDetails <- function(x, ...){
 
 
 printSectionDetails <- function(x, ...){
+  itemNames <- names(x)
 
+  cat("\n")
+  cat(" Details on Pug View Section (", x[["TOCHeading"]], ")", sep = "", "\n\n")
+
+  for (item in itemNames){
+    itemContent <- find_last_layer(x[[item]])
+
+    if (item != "Section"){
+      if (length(itemContent) == 1){
+        cat(" > ", item, ": ", itemContent, sep = "", "\n\n")
+      } else {
+        cat(" > ", item, ": ", "[<", class(x[[item]]), ">]; include nested elements (", length(itemContent), ").", sep = "", "\n\n")
+      }
+    } else {
+      cat(" > ", item, ": ", "[<a ", class(x[[item]]), ">]; includes nested subsections (", length(itemContent), "). ", sep = "")
+      cat("Run 'sectionList()' to see available subsections and 'section()' to go through available subsections. See ?section and ?sectionList for help.", sep = "", "\n\n")
+    }
+  }
 }

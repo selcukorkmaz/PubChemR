@@ -502,7 +502,7 @@ print.PugViewSectionList <- function(x, ...){
       sectionHeadingsText <- if (length(sectionHeadings) > 2){
         paste0(paste0(sectionHeadings[1:2], collapse = ", "), ", ...", " and ", length(sectionHeadings) - 2, " more.", sep = "")
       } else {
-        paste0(sectionHeadings[1:2], collapse = ", ")
+        paste0(sectionHeadings, collapse = ", ")
       }
 
       cat("  - Section headings: ", sectionHeadingsText, sep = "", "\n")
