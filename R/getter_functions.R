@@ -434,7 +434,7 @@ retrieve.PugViewInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
 #' @importFrom tibble as_tibble_col tibble
 #'
 #' @export
-retrieve.PugViewSection <- function(object, .slot = NULL, .verbose = FALSE, .to.data.frame = FALSE, ...){
+retrieve.PugViewSection <- function(object, .slot = NULL, .to.data.frame = FALSE, ...){
   dots <- list(...)
 
   if (!object$success){
