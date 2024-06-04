@@ -132,14 +132,18 @@ pview2 <- get_pug_view(identifier = "2244", annotation = "data", domain = "compo
 sect <- retrieve(pview, .slot = "Section", .to.data.frame = TRUE)
 class(sect)
 sectionList(sect)
+sectionList(sect, .pattern = c("chemical", "safety"), .match_type = "contain")
+sectionList(sect, .pattern = "dncr", .match_type = "start")
+sectionList(sect, .pattern = 2, .match_type = "match")
 
 # PugViewSection class
-sect2 <- section(sect, .id = "S3", .verbose = FALSE)
+sect2 <- section(sect, .id = "S4", .verbose = FALSE)
 retrieve(sect2, .slot = "Description")
 sect2
 
 sectionList(sect2)
-section(sect2, .id = "S3", .verbose = FALSE)
+sectionList(sect2, .pattern = "properties", .match_type = "contain")
+section(sect2, .id = "S5", .verbose = FALSE)
 retrieve(section(sect2, .id = "S3", .verbose = FALSE), .slot = "Description")
 retrieve(section(sect2, .id = "S3", .verbose = FALSE), .slot = "URL")
 sectionList(section(sect2, .id = "S1", .verbose = FALSE))

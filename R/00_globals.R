@@ -99,7 +99,7 @@ names(ELEMENTS) <- 1:118
 #' Property Map
 #'
 #' @description Map of properties to their respective names.
-
+#' @importFrom tidyr ends_with starts_with contains
 property_map <- function(x, type = c("match", "contain", "start", "end", "all"), .ignore.case = TRUE, ...){
   properties_list <- c(
     'MolecularFormula', 'MolecularWeight', 'CanonicalSMILES', 'IsomericSMILES', 'InChI', 'InChIKey', 'IUPACName', 'XLogP',
@@ -221,13 +221,13 @@ find_last_layer <- function(x, ...) {
   return(x)
 }
 
-printSlotDetails <- function(object, ...){
+printSlotDetails <- function(x, ...){
   dots <- list(...)
-  instanceNames <- names(object)
+  instanceNames <- names(x)
 
   for (item in instanceNames){
-    itemClass <- class(object[[item]])[1]
-    itemNames <- names(object[[item]])
+    itemClass <- class(x[[item]])[1]
+    itemNames <- names(x[[item]])
 
     if (!is.null(itemNames) & length(itemNames) > 4){
       itemNames <- c(itemNames[1:4], "...")
@@ -242,7 +242,7 @@ printSlotDetails <- function(object, ...){
         dots$pugViewSection <- FALSE
       }
       if (dots$pugViewSection){
-        sectionHeadings <- unlist(lapply(object[[item]], "[[", "TOCHeading"))
+        sectionHeadings <- unlist(lapply(x[[item]], "[[", "TOCHeading"))
         itemNamesText <- if (length(sectionHeadings) > 2){
           paste0(paste0(sectionHeadings[1:2], collapse = ", "), ", ...", " and ", length(sectionHeadings) - 2, " more.", sep = "")
         } else {
@@ -251,8 +251,12 @@ printSlotDetails <- function(object, ...){
       }
     }
 
-    cat("  - ", item, " (", length(object[[item]]), ")", ": ", "[<", named_unnamed, " ", itemClass, ">] ",
+    cat("  - ", item, " (", length(x[[item]]), ")", ": ", "[<", named_unnamed, " ", itemClass, ">] ",
         itemNamesText, sep = "", "\n")
   }
 }
 
+
+printSectionDetails <- function(x, ...){
+
+}

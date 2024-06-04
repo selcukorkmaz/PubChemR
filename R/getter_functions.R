@@ -51,7 +51,6 @@ retrieve <- function(object, ...){
 #'
 #' @export
 retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE, .verbose = FALSE, ...){
-
   dots <- list(...)
   returnInvisible <- FALSE
 
@@ -144,7 +143,6 @@ retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
   # Some slots may have long texts including the protocol, description,
   # references, etc. about the PubChem instances. Such information will be
   # printed to R console if '.verbose = TRUE'.
-
   if (.verbose){
     if ("PC_Assay" %in% class(object)){
       cat("\n")
@@ -710,8 +708,11 @@ sectionList <- function(object, ...){
 }
 
 #' @importFrom tibble tibble
+#' @importFrom tidyr ends_with starts_with contains
 #' @export
-sectionList.PugViewSectionList <- function(object, ...){
+sectionList.PugViewSectionList <- function(object, .pattern = NULL, .match_type = c("contain", "match", "start", "end"), ...){
+
+  .match_type <- match.arg(.match_type)
   sectionList <- object$result
 
   if (is.null(sectionList) | length(sectionList) == 0){
@@ -724,12 +725,50 @@ sectionList.PugViewSectionList <- function(object, ...){
     resDF <- tibble(SectionID = paste0("S", 1:length(sectionHeadings)), Headings = sectionHeadings)
   }
 
+  # Filter sections using ".pattern" and ".match_type"
+  filteredSections <- NULL
+  if (!is.null(.pattern)){
+    if (!is.character(.pattern)){
+      stop("Match pattern (.pattern) should be 'character' type.")
+    }
+
+    filteredSections <- sapply(.pattern, function(xx){
+      idx <- if (.match_type == "start"){
+        starts_with(match = xx, vars = sectionHeadings, ignore.case = TRUE)
+      } else if (.match_type == "end"){
+        ends_with(match = xx, vars = sectionHeadings, ignore.case = TRUE)
+      } else if (.match_type == "match"){
+        x <- tolower(xx)
+        which(xx == tolower(sectionHeadings))
+      } else {
+        contains(match = xx, vars = sectionHeadings, ignore.case = TRUE)
+      }
+
+      if (length(idx) == 0){
+        return(NULL)
+      }
+
+      return(idx)
+    }, simplify = FALSE)
+
+    filteredSections <- sort(unique(unlist(filteredSections)))
+
+    if (!is.null(filteredSections)){
+      return(resDF[filteredSections, ])
+    } else {
+      warning("No section with given criteria has been found. Returning NULL.")
+      return(NULL)
+    }
+  }
+
   return(resDF)
 }
 
 
 #' @export
-sectionList.PugViewSection <- function(object, ...){
+sectionList.PugViewSection <- function(object, .pattern = NULL, .match_type = c("contain", "match", "start", "end"), ...){
+
+  .match_type <- match.arg(.match_type)
   sectionList <- object$result
 
   if (is.null(sectionList) | length(sectionList) == 0){
@@ -745,6 +784,42 @@ sectionList.PugViewSection <- function(object, ...){
   sectionHeadings <- unlist(lapply(sectionList$Section, "[[", "TOCHeading"))
   if (length(sectionHeadings) > 0){
     resDF <- tibble(SectionID = paste0("S", 1:length(sectionHeadings)), Headings = sectionHeadings)
+  }
+
+  # Filter sections using ".pattern" and ".match_type"
+  filteredSections <- NULL
+  if (!is.null(.pattern)){
+    if (!is.character(.pattern)){
+      stop("Match pattern (.pattern) should be 'character' type.")
+    }
+
+    filteredSections <- sapply(.pattern, function(xx){
+      idx <- if (.match_type == "start"){
+        starts_with(match = xx, vars = sectionHeadings, ignore.case = TRUE)
+      } else if (.match_type == "end"){
+        ends_with(match = xx, vars = sectionHeadings, ignore.case = TRUE)
+      } else if (.match_type == "match"){
+        x <- tolower(xx)
+        which(xx == tolower(sectionHeadings))
+      } else {
+        contains(match = xx, vars = sectionHeadings, ignore.case = TRUE)
+      }
+
+      if (length(idx) == 0){
+        return(NULL)
+      }
+
+      return(idx)
+    }, simplify = FALSE)
+
+    filteredSections <- sort(unique(unlist(filteredSections)))
+
+    if (!is.null(filteredSections)){
+      return(resDF[filteredSections, ])
+    } else {
+      warning("No section with given criteria has been found. Returning NULL.")
+      return(NULL)
+    }
   }
 
   return(resDF)

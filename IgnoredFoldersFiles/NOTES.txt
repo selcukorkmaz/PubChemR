@@ -1,4 +1,5 @@
 # 1. get_pug_view, get_assays fonksiyonlarında çok kapsamlı bilgiler geliyor. Bunlar için kapsamlı bir print methodu gerekecek. Yazmadan önce üzerinde detaylıca düşünmemiz gerekiyor.
 
 # TODO:
-# get_pug_view'da annotation NULL olunc ahata döndürmek yerine bunu default bir değer ile eşleştirebiliriz.
+  1. get_pug_view'da annotation NULL olunca hata döndürmek yerine bunu default bir değer ile eşleştirebiliriz.
+  2. "verbose" özelliğini print method'a almak daha doğru olacak. Getter içerisinde kalınca her seferinde ekrana verbose aktif ederk basmak için objey tekrar tekrar getter ile çekmek zorunda kalıyoruz. BU İŞLEM YAPISAL ANLAMDA MAJOR BİR DÜZENLEME OLACAK, BU YÜZDEN İLERİKİ VERSİYONLAR İÇİN DÜŞÜNÜLEBİLİR.
