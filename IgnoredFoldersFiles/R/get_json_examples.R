@@ -150,7 +150,7 @@ retrieve(section(sect2, .id = "S3", .verbose = FALSE), .slot = "Description")
 retrieve(section(sect2, .id = "S3", .verbose = FALSE), .slot = "URL")
 sectionList(section(sect2, .id = "S1", .verbose = FALSE))
 
-# Verbose samples.
+# How to use ".verbose" in Pug View Request.
 # Print section and subsection details at once using nested functions.
 pview <- get_pug_view(identifier = "2244", annotation = "data", domain = "compound")
 section(section(section(pview, "S13", .verbose = TRUE), "S1", .verbose = TRUE), "S5", .verbose = TRUE)
