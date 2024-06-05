@@ -84,14 +84,18 @@ retrieve(comp, .slot = "props", .which = "1234", .to.data.frame = TRUE, .combine
 
 
 props <- get_properties(
-  properties = c("smile", "mass", "atom"),
-  identifier = c("aspirin", "ibuprofen", "tadalafil", "sildenafil"),
-  namespace = "name",
+  properties = c("MolecularWeight", "MolecularFormula", "HBondDonorCount", "HBondAcceptorCount", "InChIKey", "InChI"),
+  identifier = c(1:5),
+  namespace = "cid",
   propertyMatch = list(
     .ignore.case = TRUE,
     type = "contain"
   )
 )
+
+
+result <- get_pug_rest(identifier = "1,2,3,4,5", namespace = "cid", domain = "compound",
+                       property = c("MolecularWeight", "MolecularFormula", "HBondDonorCount", "HBondAcceptorCount", "InChIKey", "InChI"), output = "CSV")
 
 retrieve(props, .which = c("aspirin", "ibuprofen"), .to.data.frame = TRUE, .combine.all = FALSE)
 retrieve(props, .which = c("aspirin"), .to.data.frame = TRUE)
@@ -139,13 +143,13 @@ sectionList(sect, .pattern = 2, .match_type = "match")
 # PugViewSection class
 sect2 <- section(sect, .id = "S4", .verbose = FALSE)
 section(sect, .id = "S4", .verbose = FALSE)
-section(sect, .id = "S20", .verbose = TRUE)
+section(sect, .id = "S4", .verbose = TRUE)
 retrieve(sect2, .slot = "Description")
 sect2
 
 sectionList(sect2)
 sectionList(sect2, .pattern = "properties", .match_type = "contain")
-section(sect2, .id = "S5", .verbose = FALSE)
+section(sect2, .id = "S4", .verbose = FALSE)
 retrieve(section(sect2, .id = "S3", .verbose = FALSE), .slot = "Description")
 retrieve(section(sect2, .id = "S3", .verbose = FALSE), .slot = "URL")
 sectionList(section(sect2, .id = "S1", .verbose = FALSE))

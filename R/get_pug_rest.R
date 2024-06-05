@@ -30,11 +30,38 @@
 #' @importFrom png readPNG writePNG
 #' @importFrom RCurl getURLContent curlEscape
 #' @importFrom utils read.csv write.csv read.table write.table
+#'
 #' @export
+
+identifier = NULL, namespace = 'cid', domain = 'compound',
+operation = NULL, output = 'JSON', searchtype = NULL, property = NULL, options = NULL,
+saveFile = FALSE, saveImage = FALSE, dpi = 300
+
 
 get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compound',
                          operation = NULL, output = 'JSON', searchtype = NULL, property = NULL, options = NULL,
                          saveFile = FALSE, saveImage = FALSE, dpi = 300) {
+
+  # Create empty Pug View structure to be used when error returns.
+  createPugRestObject <- function(error = FALSE, result = list(), request_args = list(), subclass = NULL, ...){
+    dots <- list(...)
+
+    tmp <- list(
+      result = result,
+      request_args = request_args,
+      success = !error,
+      error = NULL
+    )
+
+    if (length(dots) > 0){
+      tmp <- c(tmp, dots)
+    }
+
+    structure(
+      tmp,
+      class = c("PugViewInstance", subclass)
+    )
+  }
 
   if(!is.null(output)){
     output = toupper(output)
@@ -72,7 +99,7 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
 
   # Add searchtype to the URL if provided
   if (!is.null(property)) {
-    if (length(property)>1){
+    if (length(property) > 1){
       property = paste0(property, collapse = ",")
     }
 
@@ -110,19 +137,12 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
     response <- RETRY("GET", URLencode(apiurl), times = 3, pause_min = 1, pause_base = 2)
 
     if (response$status_code != 400){
-
       if (output == "CSV"){
         content <- read.csv(response$url)
         if (saveFile){
           write.csv(content, file = paste0(domain, "_", identifier, ".", output), row.names = FALSE)
         }
       }
-
-      # if(output == "XML"){
-      #   responseContent <- rawToChar(response$content)
-      #   xml_file <- read_xml(responseContent)
-      #   content <-  xml2::as_list(xml_file)
-      # }
 
       # Check if the response is asking to wait and has a ListKey
       if ('Waiting' %in% names(content) && !is.null(content$Waiting[["ListKey"]])) {
@@ -168,7 +188,6 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
 
       if (saveFile){
         if (output == "TXT"){
-          write.table(content, file = paste0(domain, "_", identifier, ".", output), quote = F, row.names = F)
         } else if(output == "JSON"){
           write(savedContent, file = paste0(domain, "_", identifier, ".", output))
         }

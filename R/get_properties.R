@@ -33,6 +33,11 @@ get_properties <- function(properties, identifier, namespace = 'cid', searchtype
 
   propertyMatch$x <- properties
 
+  # Ignore case is FALSE if "match" pattern is set.
+  if (propertyMatch$type == "match"){
+    propertyMatch$.ignore.case = FALSE
+  }
+
   # Get property names from available properties.
   propertyNames <- do.call("property_map", propertyMatch)
 

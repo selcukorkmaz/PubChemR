@@ -76,7 +76,7 @@ The input part of a PUG REST request specifies the records of interest. There ar
 **1. By Identifier:** Directly specify SIDs or CIDs. For example, to get the names of a substance with SID 10000 in XML format:
 
 ```{r}
-result <- get_pug_rest(identifier = "10000", namespace = "sid", domain = "substance", operation = "synonyms", output = "XML")
+result <- get_pug_rest(identifier = "10000", namespace = "sid", domain = "substance", operation = "synonyms", output = "JSON")
 ```
 
 ```{r}
@@ -116,7 +116,7 @@ result
 **4. By Structure Search:** More sophisticated searches like substructure or similarity searches. These may require asynchronous operations due to the time taken to search the database.
 
 ```{r, eval=FALSE}
-result <- get_pug_rest(identifier = "C1CCCCCC1", namespace = "smiles", domain = "compound",  output = "XML", searchtype = "substructure")
+result <- get_pug_rest(identifier = "C1CCCCCC1", namespace = "smiles", domain = "compound",  output = "JSON", searchtype = "substructure")
 ```
 
 ```{r}
@@ -186,7 +186,7 @@ result
 **4. Synonyms:** To view all synonyms of a compound, such as Vioxx:
 
 ```{r}
-result <- get_pug_rest(identifier = "vioxx", namespace = "name", domain = "compound", operation = "synonyms", output = "XML")
+result <- get_pug_rest(identifier = "vioxx", namespace = "name", domain = "compound", operation = "synonyms", output = "JSON")
 ```
 
 ```{r}
@@ -196,7 +196,7 @@ result
 **5. Cross-References (XRefs):** PUG REST provides access to various cross-references. For example, to retrieve MMDB identifiers for protein structures containing aspirin:
 
 ```{r}
-result <- get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", operation = c("xrefs","MMDBID"), output = "XML")
+result <- get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", operation = c("xrefs","MMDBID"), output = "JSON")
 ```
 
 ```{r}

@@ -60,7 +60,8 @@ retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
   }
 
   if (is.null(.slot)){
-    .slot <- ""
+    warning("Which slot do you want to return? '.slot' is not defined. Returning NULL.")
+    return(NULL)
   }
 
   # Gather all the elements from selected slot. ----
@@ -667,6 +668,19 @@ section.PugViewSectionList <- function(object, .id = "S1", .verbose = FALSE, ...
   }
 
   sectionInfo <- sectionList(object)
+
+  if (is.null(sectionInfo)){
+    warning("There is no section data within 'object'. Returning NULL.")
+    return(NULL)
+  }
+
+  # If requested section ID is not available.
+  if (!is.null(nrow(sectionInfo))){
+    if (!(.id %in% sectionInfo$SectionID)) {
+      stop("Unknown section ID (.id). Please check available sections and use correct section ID.")
+    }
+  }
+
   idx <- which(sectionInfo[["SectionID"]] == .id)
   sectionContents <- object$result[[idx]]
 
@@ -704,6 +718,13 @@ section.PugViewSection <- function(object, .id = "S1", .verbose = FALSE, ...){
   if (is.null(sectionInfo)){
     warning("There is no section data within 'object'. Returning NULL.")
     return(NULL)
+  }
+
+  # If requested section ID is not available.
+  if (!is.null(nrow(sectionInfo))){
+    if (!(.id %in% sectionInfo$SectionID)) {
+      stop("Unknown section ID (.id). Please check available sections and use correct section ID.")
+    }
   }
 
   idx <- which(sectionInfo[["SectionID"]] == .id)
