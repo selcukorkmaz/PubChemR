@@ -1,5 +1,5 @@
 # Examples ----
-comp <- get_compounds(identifier = c("1234", "3452"), namespace = "cid")
+comp <- get_compounds(identifier = c("2244"), namespace = "cid")
 comp
 
 asp <-instance(comp, "1234")
@@ -62,6 +62,8 @@ retrieve(ass1234, .slot = "project_category", .verbose = FALSE, .to.data.frame =
 
 
 (cids <- get_cids(identifier = c("aspirin", "caffein", "dncr", "ibuprofen"), namespace = "name"))
+(res2 <- get_compounds(identifier = "aspirin", namespace = "name"))
+res1 <- get_pug_rest(identifier = "aspirin", namespace = "name", domain = "compound", operation = "props")
 (aids <- get_aids(identifier = c("aspirin", "caffein", "dncr", "ibuprofen"), namespace = "name"))
 (sids <- get_sids(identifier = c("aspirin", "caffein", "dncr", "ibuprofen"), namespace = "name"))
 (syns <- get_synonyms(identifier = c("aspirin", "caffein", "dncr", "ibuprofen"), namespace = "name"))
@@ -95,7 +97,8 @@ props <- get_properties(
 
 
 result <- get_pug_rest(identifier = "1,2,3,4,5", namespace = "cid", domain = "compound",
-                       property = c("MolecularWeight", "MolecularFormula", "HBondDonorCount", "HBondAcceptorCount", "InChIKey", "InChI"), output = "CSV")
+                       property = c("MolecularWeight", "MolecularFormula", "HBondDonorCount", "HBondAcceptorCount", "InChIKey", "InChI"),
+                       output = "JSON")
 
 retrieve(props, .which = c("aspirin", "ibuprofen"), .to.data.frame = TRUE, .combine.all = FALSE)
 retrieve(props, .which = c("aspirin"), .to.data.frame = TRUE)
@@ -158,4 +161,11 @@ sectionList(section(sect2, .id = "S1", .verbose = FALSE))
 # Print section and subsection details at once using nested functions.
 pview <- get_pug_view(identifier = "2244", annotation = "data", domain = "compound")
 section(section(section(pview, "S13", .verbose = TRUE), "S1", .verbose = TRUE), "S5", .verbose = TRUE)
+
+
+
+
+
+result <- get_pug_rest(identifier = "9606,2697049", namespace = "taxid", domain = "taxonomy", operation = "summary",
+                       output = "JSON")
 

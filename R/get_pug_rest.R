@@ -32,12 +32,6 @@
 #' @importFrom utils read.csv write.csv read.table write.table
 #'
 #' @export
-
-identifier = NULL, namespace = 'cid', domain = 'compound',
-operation = NULL, output = 'JSON', searchtype = NULL, property = NULL, options = NULL,
-saveFile = FALSE, saveImage = FALSE, dpi = 300
-
-
 get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compound',
                          operation = NULL, output = 'JSON', searchtype = NULL, property = NULL, options = NULL,
                          saveFile = FALSE, saveImage = FALSE, dpi = 300) {
