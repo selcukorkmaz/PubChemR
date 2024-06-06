@@ -121,11 +121,11 @@ retrieve(instance(subs, "aspirin"), .slot = "comment", .to.data.frame = TRUE, .i
 retrieve(instance(subs, "aspirin"), .slot = "xref", .to.data.frame = TRUE, .idx = 19, .verbose = TRUE)
 retrieve(instance(subs, "aspirin"), .slot = "compound", .to.data.frame = FALSE, .idx = 132)  # Compound slot is complex and returned as a list.
 
-
 retrieve(subs, .which = "aspirin", "sid")
 retrieve(subs, .which = "ibuprofen", .slot = "comment", .idx = 2)  # comment info for substance 2 in ibuprofen list.
 retrieve(subs, .which = "ibuprofen", .slot = "sid", .idx = 1, .combine.all = TRUE)  # combine comment info for substance 1 for aspirin and ibuprofen.
 
+subs <- get_substances(identifier = "10000", namespace = "sid")
 
 # get_pug_view ----
 pview <- get_pug_view(identifier = "2244", annotation = "linkout", domain = "compound")

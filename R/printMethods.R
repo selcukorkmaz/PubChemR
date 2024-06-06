@@ -370,6 +370,9 @@ print.PC_Substance <- function(x, ...){
   if (x$success){
     instance_results <- find_last_layer(x$result)
 
+    if (!is.null(names(instance_results))){
+      instance_results <- list(instance_results)
+    }
     cat(" Number of substances retrieved: ", length(instance_results), sep = "", "\n\n")
     cat(" Substances contain data within following slots;", "\n")
 

@@ -22,7 +22,6 @@
 #'   namespace = "name"
 #' )
 get_substances <- function(identifier, namespace = 'sid', operation = NULL, searchtype = NULL, options = NULL) {
-
   result <- lapply(identifier, function(x){
     tmp <- get_json(identifier = x, namespace, "substance", operation, searchtype, options)
     class(tmp) <- c("PC_Substance", class(tmp))
