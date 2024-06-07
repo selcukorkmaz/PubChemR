@@ -16,7 +16,7 @@
 #' @importFrom utils URLencode
 #' @importFrom stats setNames
 #' @keywords internal
-#'
+#' @noRd
 request <- function(identifier = NULL, namespace = 'cid', domain = 'compound',
                     operation = NULL, output = 'JSON', searchtype = NULL, options = NULL) {
 

@@ -1,32 +1,32 @@
-# Global Variables and/or Functions
-utils::globalVariables(c("data", "CID"))
-
-
-#' Retrieve Compound IDs (CIDs) from PubChem
+#' @title Retrieve Compound IDs (CIDs) from PubChem
 #'
-#' This function sends a request to PubChem to retrieve Compound IDs (CIDs) for a given identifier.
-#' It returns a tibble (data frame) with the provided identifier and the corresponding CIDs.
+#' @description This function sends a request to PubChem to retrieve Compound IDs (CIDs) for given identifier(s).
 #'
-#' @param identifier A vector of positive integers (e.g. cid, sid, aid) or identifier strings (source, inchikey, formula). In some cases, only a single identifier string (name, smiles, xref; inchi, sdf by POST only).
+#' @param identifier A vector of positive integers (e.g., cid, sid, aid) or identifier strings (e.g., source, inchikey, formula). In some cases, only a single identifier string is required (e.g., name, smiles, xref; inchi, sdf by POST only). Multiple elements can be included as a vector. See Notes for details.
 #' @param namespace Specifies the namespace for the query. For the 'compound' domain, possible values include 'cid', 'name', 'smiles', 'inchi', 'sdf', 'inchikey', 'formula', 'substructure', 'superstructure', 'similarity', 'identity', 'xref', 'listkey', 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure', and 'fastformula'. For other domains, the possible namespaces are domain-specific.
 #' @param domain Specifies the domain of the query. Possible values are 'substance', 'compound', 'assay', 'gene', 'protein', 'pathway', 'taxonomy', 'cell', 'sources', 'sourcetable', 'conformers', 'annotations', 'classification', and 'standardize'.
-#' @param searchtype Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.
-#' @param options Additional arguments passed to \code{\link{get_json}}.
+#' @param searchtype Specifies the type of search to be performed. For structure searches, possible values include combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', or 'cid'. For fast searches, possible values include combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.
+#' @param options Additional arguments to be passed to the PubChem Database API.
 #'
-#' @return A tibble (data frame) where each row corresponds to a provided identifier and its CID.
-#'         The tibble has columns 'Compound' and 'CID'.
+#' @return An object of class 'PubChemInstance_CIDs', which is a list containing information retrieved from the PubChem database. Compound IDs can be extracted from the returned object using the \link{CIDs} function.
 #'
-#' @importFrom tibble tibble
-#' @importFrom dplyr mutate row_number select
-#' @importFrom tidyr unnest_wider unnest_longer
-#' @importFrom magrittr %>%
-#' @export
+#' @seealso \link{CIDs}, \link{get_pug_rest}
+#'
+#' @note
+#' To extract compoud IDs from returned object, one may use \link{CIDs} function. See examples.
 #'
 #' @examples
-#' get_cids(
+#' compound <- get_cids(
 #'   identifier = "aspirin",
 #'   namespace = "name"
 #' )
+#'
+#' print(compound)
+#'
+#' # Extract compound IDs.
+#' CIDs(compound)
+#'
+#' @export
 get_cids <- function(identifier, namespace = 'name', domain = 'compound', searchtype = NULL, options = NULL) {
 
   result <- lapply(identifier, function(x){

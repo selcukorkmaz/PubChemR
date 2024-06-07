@@ -1,30 +1,61 @@
-#' Retrieve Compound Properties from PubChem
+#' @title Retrieve Compound Properties from PubChem
 #'
-#' This function sends a request to PubChem to retrieve compound properties based on the specified parameters.
-#' It returns a list or dataframe of properties corresponding to the provided identifiers.
+#' @description This function sends a request to PubChem to retrieve compound properties based on the specified parameters.
 #'
-#' @param properties A character vector specifying the properties to be retrieved.
-#' @param identifier A vector of positive integers (e.g. cid, sid, aid) or identifier strings (source, inchikey, formula). In some cases, only a single identifier string (name, smiles, xref; inchi, sdf by POST only).
+#' @param properties A character vector specifying the properties to be retrieved. It is ignored if all available properties are requested from PubChem. See examples.
+#' @param identifier A vector of positive integers (e.g., CID, SID, AID) or identifier strings (e.g., source, InChIKey, formula). In some cases, only a single identifier string is allowed (e.g., name, SMILES, xref; InChI, SDF by POST only).
 #' @param namespace Specifies the namespace for the query. For the 'compound' domain, possible values include 'cid', 'name', 'smiles', 'inchi', 'sdf', 'inchikey', 'formula', 'substructure', 'superstructure', 'similarity', 'identity', 'xref', 'listkey', 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure', and 'fastformula'. For other domains, the possible namespaces are domain-specific.
 #' @param searchtype Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.
 #' @param options Additional arguments passed to \code{\link{get_json}}.
+#' @param propertyMatch A list containing the arguments passed to the \link{property_map} function. See examples of the \code{property_map()} function.
 #'
-#' @return If `as_dataframe` is FALSE, a named list where each element corresponds to the properties retrieved from PubChem.
-#'         If `as_dataframe` is TRUE, a dataframe where each row corresponds to the properties retrieved from PubChem.
-#'         The names of the list elements or row names of the dataframe are based on the provided identifiers.
+#' @return An object of class "PubChemInstanceList" containing all the properties of the requested compounds.
 #'
-#' @importFrom RJSONIO fromJSON
-#' @importFrom dplyr as_tibble contains
-#' @importFrom magrittr %>%
-#' @export
+#' @rdname get_properties
+#' @order 1
 #'
 #' @examples
-#' get_properties(
+#' # Isomeric SMILES of the compounds
+#' props <- get_properties(
 #'   properties = "IsomericSMILES",
-#'   identifier = "aspirin",
+#'   identifier = c("aspirin", "ibuprofen", "caffeine"),
 #'   namespace = "name"
 #' )
-get_properties <- function(properties, identifier, namespace = 'cid', searchtype = NULL, options = NULL,
+#'
+#' # Properties for a selected compound
+#' instance(props, "aspirin")
+#' retrieve(props, .which = "aspirin", .slot = NULL)
+#' retrieve(instance(props, "aspirin"), .slot = NULL)
+#'
+#' # Combine properties of all compounds into a single data frame (or list)
+#' retrieve(props, .combine.all = TRUE)
+#'
+#' # Return properties for the compounds in a range of CIDs
+#' props <- get_properties(
+#'   properties = c("mass", "molecular"),
+#'   identifier = 2244:2255,
+#'   namespace = "cid",
+#'   propertyMatch = list(
+#'     type = "contain"
+#'   )
+#' )
+#'
+#' retrieve(props, .combine.all = TRUE, .to.data.frame = TRUE)
+#'
+#' # Return all available properties of the requested compounds
+#' props <- get_properties(
+#'   properties = NULL,
+#'   identifier = 2244:2245,
+#'   namespace = "cid",
+#'   propertyMatch = list(
+#'     type = "all"
+#'   )
+#' )
+#'
+#' retrieve(props, .combine.all = TRUE)
+#'
+#' @export
+get_properties <- function(properties = NULL, identifier, namespace = 'cid', searchtype = NULL, options = NULL,
                            propertyMatch = list(.ignore.case = FALSE, type = "contain")) {
   # If properties is a single string, split it into a vector
   # if (is.character(properties) && !grepl(",", properties)) {

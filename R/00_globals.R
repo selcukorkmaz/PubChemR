@@ -1,13 +1,9 @@
-#' PubChem API Base URL
-#'
-#' @description The base URL for the PubChem API.
+# This script includes objects and helper functions.
 
+# The base URL for the PubChem API.
 api_base <- "https://pubchem.ncbi.nlm.nih.gov/rest/pug"
 
-#' Compound ID Types
-#'
-#' @description List of compound ID types.
-
+# List of compound ID types.
 CompoundIdType <- list(
   DEPOSITED = 0,
   STANDARDIZED = 1,
@@ -19,10 +15,7 @@ CompoundIdType <- list(
   UNKNOWN = 255
 )
 
-#' Bond Types
-#'
-#' @description List of bond types.
-
+# List of bond types.
 BondType <- list(
   SINGLE = 1,
   DOUBLE = 2,
@@ -34,10 +27,7 @@ BondType <- list(
   UNKNOWN = 255
 )
 
-#' Coordinate Types
-#'
-#' @description List of coordinate types.
-
+# List of coordinate types.
 CoordinateType <- list(
   TWO_D = 1,
   THREE_D = 2,
@@ -56,10 +46,7 @@ CoordinateType <- list(
   UNITS_UNKNOWN = 255
 )
 
-#' Project Categories
-#'
-#' @description List of project categories.
-
+# List of project categories.
 ProjectCategory <- list(
   MLSCN = 1,
   MPLCN = 2,
@@ -74,10 +61,7 @@ ProjectCategory <- list(
   OTHER = 255
 )
 
-#' Elements
-#'
-#' @description Vector of chemical elements.
-
+# Vector of chemical elements.
 ELEMENTS <- c(
   'H', 'He', 'Li', 'Be', 'B', 'C', 'N', 'O', 'F', 'Ne',
   'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca',
@@ -96,10 +80,40 @@ ELEMENTS <- c(
 # Set the names of the vector elements based on their atomic numbers
 names(ELEMENTS) <- 1:118
 
-#' Property Map
+
+#' @param x A character vector of compound properties. The \link{property_map} function will search for each property provided here within the available properties. The search can be customized using the \code{type} argument. This argument is ignored if \code{type = "all"}.
+#' @param type Defines how to search within the available properties. The default is "match". See Notes for details.
+#' @param .ignore.case A logical value. If TRUE, the pattern match ignores case letters. This argument is ignored if \code{type = "all"}. The default is TRUE.
+#' @param ... Other arguments. Currently, these have no effect on the function's return.
 #'
-#' @description Map of properties to their respective names.
+#' @note
+#' \subsection{Property Map:}{
+#'   \code{property_map()} is not used to request properties directly from the PubChem database. This function is intended to list the available compound properties that can be requested from PubChem. It has flexible options to search properties from the available property list of the PubChem database. The output of \link{property_map} is used as the \code{property} input in the \link{get_properties} function. This function may be practically used to request specific properties across a range of compounds. See examples for usage.
+#' }
+#'
 #' @importFrom tidyr ends_with starts_with contains
+#' @rdname get_properties
+#' @order 2
+#'
+#' @examples
+#' #### EXAMPLES FOR property_map() ####
+#' # List all available properties:
+#' property_map(type = "all")
+#'
+#' # Exact match:
+#' property_map("InChI", type = "match")
+#' property_map("InChi", type = "match",
+#'   .ignore.case = TRUE) # Returns no match. Ignores '.ignore.case'
+#'
+#' # Match at the start/end:
+#' property_map("molecular", type = "start", .ignore.case = TRUE)
+#' property_map("mass", type = "end", .ignore.case = TRUE)
+#'
+#' # Partial match with multiple search patterns:
+#' property_map(c("molecular", "mass", "inchi"),
+#'   type = "contain", .ignore.case = TRUE)
+#'
+#' @export
 property_map <- function(x, type = c("match", "contain", "start", "end", "all"), .ignore.case = TRUE, ...){
   properties_list <- c(
     'MolecularFormula', 'MolecularWeight', 'CanonicalSMILES', 'IsomericSMILES', 'InChI', 'InChIKey', 'IUPACName', 'XLogP',
@@ -147,7 +161,6 @@ property_map <- function(x, type = c("match", "contain", "start", "end", "all"),
 
   return(properties_list[res])
 }
-
 
 #' @importFrom dplyr case_when
 namespace_text <- function(x){
@@ -204,7 +217,6 @@ domain_text <- function(x){
 primaryClass <- function(x){
   class(x)[1]
 }
-
 
 find_last_layer <- function(x, ...) {
   # Base case: if the current list has multiple elements, return it

@@ -1,29 +1,25 @@
-#' Retrieve Substance IDs (SIDs) from PubChem
+#' @title Retrieve Substance IDs (SIDs) from PubChem
 #'
-#' This function sends a request to PubChem to retrieve Substance IDs (SIDs) for a given identifier.
-#' It returns a tibble (data frame) with the provided identifier and the corresponding SIDs.
+#' @description This function sends a request to PubChem to retrieve Substance IDs (SIDs) for a given identifier.
 #'
 #' @param identifier A numeric or character vector specifying the identifiers for the request.
 #' @param namespace A character string specifying the namespace for the request. Default is 'cid'.
 #' @param domain A character string specifying the domain for the request. Default is 'compound'.
 #' @param searchtype A character string specifying the search type. Default is NULL.
-#' @param options Additional arguments passed to \code{\link{get_json}}.
+#' @param options Additional arguments passed to the PubChem request.
 #'
-#' @return A tibble (data frame) where each row corresponds to a provided identifier and its SID.
-#'         The tibble has columns 'CID' and 'SID'.
-#'
-#' @importFrom RJSONIO fromJSON
-#' @importFrom dplyr bind_rows
-#' @importFrom tidyr as_tibble
-#' @importFrom stringr str_to_title
-#' @importFrom magrittr %>%
-#' @export
+#' @return An object of class 'PubChemInstance_SIDs', which is a list containing information retrieved from the PubChem database. Substance IDs can be extracted from the returned object using the \link{SIDs} function.
 #'
 #' @examples
-#' get_sids(
-#'   identifier = "aspirin",
+#' compound <- get_sids(
+#'   identifier = c("aspirin", "caffeine"),
 #'   namespace = "name"
 #' )
+#'
+#' # Extract substance IDs of all compounds
+#' SIDs(compound)
+#'
+#' @export
 get_sids <- function(identifier, namespace = 'cid', domain = 'compound', searchtype = NULL, options = NULL) {
 
   # Try to get the response and parse JSON

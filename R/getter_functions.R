@@ -59,9 +59,13 @@ retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
     return(NULL)
   }
 
-  if (is.null(.slot)){
-    warning("Which slot do you want to return? '.slot' is not defined. Returning NULL.")
-    return(NULL)
+  if ("PC_Properties" %in% class(object)){
+    .slot <- ""
+  } else {
+    if (is.null(.slot)){
+      warning("Which slot do you want to return? '.slot' is not defined. Returning NULL.")
+      return(NULL)
+    }
   }
 
   # Gather all the elements from selected slot. ----

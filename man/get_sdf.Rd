@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_sdf.R
 \name{get_sdf}
 \alias{get_sdf}
-\title{Retrieve SDF Data from PubChem and Save as File}
+\title{Retrieve/Save SDF Data from PubChem}
 \usage{
 get_sdf(
   identifier,
@@ -28,9 +28,9 @@ get_sdf(
 
 \item{path}{A string indicating the path to the folder where the SDF files will be saved. Default is NULL (i.e., saves the file into a temporary folder).}
 
-\item{file_name}{A string. File name for downloaded SDF file. If NULL, "file" is used as the file name. Default is NULL.}
+\item{file_name}{A string. File name for the downloaded SDF file. If NULL, "file" is used as the file name. Default is NULL.}
 
-\item{options}{Additional parameters to be passed to the \code{\link{request}}.}
+\item{options}{Additional parameters to be passed to the request.}
 }
 \value{
 NULL. The function saves the retrieved data as an SDF file in the current working directory and prints a
@@ -38,7 +38,7 @@ message indicating the file's location.
 }
 \description{
 This function sends a request to PubChem to retrieve data in SDF format based on the specified parameters.
-It then saves the retrieved data as an SDF file in the current working directory.
+It then saves the retrieved data as an SDF file in the current working directory (or into the system-specific temporary folder).
 }
 \examples{
 get_sdf(
@@ -46,4 +46,5 @@ get_sdf(
   namespace = "name",
   path = NULL
 )
+
 }
