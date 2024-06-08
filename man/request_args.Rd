@@ -2,22 +2,29 @@
 % Please edit documentation in R/getter_functions.R
 \name{request_args}
 \alias{request_args}
-\title{Call Function Parameters}
+\title{Retrieve Function Input(s)}
 \usage{
 request_args(object, .which = NULL, ...)
 }
 \arguments{
-\item{object}{an object of class}
+\item{object}{An object returned from the related request functions of the PubChem database.}
 
-\item{...}{<details here>}
+\item{.which}{A string specifying which argument's content to retrieve from \code{object}. If NULL, all
+function inputs will be returned.}
+
+\item{...}{Additional arguments. These have no effect on the returned outputs and are included for
+compatibility with S3 methods in the PubChemR package.}
 }
 \value{
-a list
+A list or string vector containing the options used in the function call.
 }
 \description{
-Call Function Parameters
+Retrieve Function Input(s)
 }
 \examples{
-1L
+request <- get_cids("aspirin", namespace = "name")
+
+request_args(request, "identifier")
+request_args(request)
 
 }

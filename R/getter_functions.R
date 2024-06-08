@@ -1,14 +1,20 @@
 # Getter Functions ----
 
-#' Call Function Parameters
+#' @title Retrieve Function Input(s)
 #'
-#' @param object an object of class
-#' @param ... <details here>
+#' @param object An object returned from the related request functions of the PubChem database.
+#' @param .which A string specifying which argument's content to retrieve from \code{object}. If NULL, all
+#' function inputs will be returned.
+#' @param ... Additional arguments. These have no effect on the returned outputs and are included for
+#' compatibility with S3 methods in the PubChemR package.
 #'
-#' @return a list
+#' @return A list or string vector containing the options used in the function call.
 #'
 #' @examples
-#' 1L
+#' request <- get_cids("aspirin", namespace = "name")
+#'
+#' request_args(request, "identifier")
+#' request_args(request)
 #'
 #' @export
 request_args <- function(object, .which = NULL, ...){
@@ -19,6 +25,13 @@ request_args <- function(object, .which = NULL, ...){
   }
 }
 
+#' @param .which A string specifying which instance's results to return. If NULL, the results of the first instance in
+#' the \code{object} are returned. The default is NULL.
+#'
+#' @rdname instance
+#' @name instance
+#' @order 2
+#'
 #' @export
 instance.PubChemInstanceList <- function(object, .which = NULL, ....){
   if (is.null(.which)){
@@ -33,6 +46,28 @@ instance.PubChemInstanceList <- function(object, .which = NULL, ....){
   return(object[[1]][[idx]])
 }
 
+#' @title Retrieve Information for Requested Instances
+#'
+#' @description
+#' This function extracts the results of a PubChem instance from an \code{object}. It is useful for extracting
+#' information about a compound from a complete list where multiple elements (assay, compound, etc.) are requested.
+#'
+#' @param object An object of class \code{'PubChemInstanceList'} returned from a PubChem request.
+#' @param ... Additional arguments passed to other methods. Currently, these have no effect.
+#'
+#' @rdname instance
+#' @name instance
+#' @order 1
+#'
+#' @examples
+#' compounds <- get_compounds(
+#'   identifier = c("aspirin", "ibuprofen"),
+#'   namespace = "name"
+#' )
+#'
+#' instance(compounds)  # returns the results for "aspirin"
+#' instance(compounds, "ibuprofen")
+#'
 #' @export
 instance <- function(object, ...){
   UseMethod("instance")
@@ -41,13 +76,62 @@ instance <- function(object, ...){
 
 ## Global function for extracting elements. ----
 
+#' @title Retrieve Information from PubChem Instances
+#'
+#' @description
+#' This generic function extracts a specific slot from a PubChem instance.
+#'
+#' @param object An object returned from a PubChem request.
+#' @param ... Additional arguments passed to other methods. Currently, these have no effect.
+#'
+#' @rdname retrieve
+#' @name retrieve
+#' @order 1
+#'
 #' @export
 retrieve <- function(object, ...){
   UseMethod("retrieve")
 }
 
+#' @param .slot A string specifying which slot to return. Should not be NULL with some exceptions. See notes for details.
+#' @param .to.data.frame a logical. If TRUE, returned object will be forced to be converted into a data.frame (or tibble).
+#' If failed to convert into a data.frame, a list will be returned with a warning. Be careful for complicated lists
+#' (i.e., many elements nested within each other) since it may be time consuming to convert such lists into a data frame.
+#' Furthermore, \code{.to.data.frame} is ignored for specific scenarios.
+#' @param .verbose a logical. Should the resulting object printed into R Console? If TRUE the object is returned invisibly
+#' and the output is nicely printed to R Console. This option may not be available for some slots (or classes).
+#' See Notes/Details.
+#'
+#' @rdname retrieve
+#' @order 2
+#'
+#' @note
+#' If object is from \code{'PC_Properties'} class, \code{.slot} definition will be omitted and all the requested
+#' properties will be retrieved from \code{object}.
+#'
+#' \subsection{Use of \code{'.verbose'} argument}
+#' \code{retrieve} returns output silently (invisible) when \code{.verbose = TRUE}. However, the function treats differently
+#' under following scenarios:
+#' \itemize{
+#'   \item{\code{.verbose} is ignored if \code{.combine.all = TRUE}. Output is returned silently.}
+#'   \item{\code{.verbose} is ignored if requested slot is not printable to R Console because it is too complicated to print.}
+#' }
+#'
 #' @importFrom dplyr bind_cols bind_rows full_join mutate_all
 #' @importFrom tibble as_tibble as_tibble_col tibble
+#'
+#' @examples
+#' compounds <- get_compounds(identifier = c(
+#'   "aspirin", "ibuprofen", "rstudio"),
+#'   namespace = "name"
+#'  )
+#'
+#' # Extract information for "aspirin"
+#' aspirin <- instance(compounds, "aspirin")
+#' # print(aspirin)
+#'
+#' # Extract a specific slot from "aspirin" compound.
+#' retrieve(aspirin, "props", .to.data.frame = TRUE)
 #'
 #' @export
 retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE, .verbose = FALSE, ...){
@@ -186,8 +270,35 @@ retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
   }
 }
 
+#' @param .combine.all a logical. If TRUE, properties of all requested instances are combined into single
+#' data frame (or list if \code{.to.data.frame = FALSE}).
+#'
+#' @rdname retrieve
+#' @order 3
+#'
+#' @examples
+#' # EXAMPLES (PubChemInstanceList)
+#' retrieve(compounds, "aspirin", "props", .to.data.frame = TRUE)
+#'
+#' # Verbose Assay References to R Console
+#' assays <- get_assays(identifier = c(1234, 7815), namespace = "aid")
+#'
+#' instance(assays, "7815")
+#' retrieve(assays, "7815", "xref", .verbose = TRUE)
+#'
+#' # Print assay protocol to R Console (if available)
+#' # Note that it may be too long to print for some assays.
+#' # retrieve(assays, "1234", "protocol", .verbose = TRUE)
+#'
+#' # No protocol is available for assay "1234".
+#' # retrieve(assays, "7815", "protocol", .verbose = TRUE)
+#'
+#' # Ignores ".verbose" and ".which" if ".combine.all = TRUE".
+#' retrieve(assays, .slot = "xref", .verbose = TRUE, .combine.all = TRUE)
+#'
 #' @importFrom dplyr bind_rows
 #' @importFrom tibble tibble
+#'
 #' @export
 retrieve.PubChemInstanceList <- function(object, .which = NULL, .slot = NULL, .to.data.frame = TRUE,
                                          .combine.all = FALSE, ...){
@@ -213,8 +324,8 @@ retrieve.PubChemInstanceList <- function(object, .which = NULL, .slot = NULL, .t
 
     args$object <- object$result[[idx]]
     res <- do.call("retrieve", args)
-
   } else {
+    args[[".verbose"]] <- FALSE
     res <- suppressMessages({
       lapply(request_args(object, "identifier"), function(x){
         tmp <- instance(object, .which = x)
@@ -242,9 +353,16 @@ retrieve.PubChemInstanceList <- function(object, .which = NULL, .slot = NULL, .t
     }
   }
 
-  return(res)
+  if (args[[".verbose"]]){
+    invisible(res)
+  } else {
+    return(res)
+  }
 }
 
+#' @rdname retrieve
+#' @order 4
+#'
 #' @importFrom tibble as_tibble_row as_tibble_col tibble
 #' @importFrom dplyr mutate_all bind_rows bind_cols
 #'
