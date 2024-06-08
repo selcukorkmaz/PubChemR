@@ -2,14 +2,14 @@
 % Please edit documentation in R/getter_functions.R
 \name{request_args}
 \alias{request_args}
-\title{Retrieve Function Input(s)}
+\title{Retrieve Function Inputs}
 \usage{
 request_args(object, .which = NULL, ...)
 }
 \arguments{
-\item{object}{An object returned from the related request functions of the PubChem database.}
+\item{object}{An object returned from related request functions of the PubChem database.}
 
-\item{.which}{A string specifying which argument's content to retrieve from \code{object}. If NULL, all
+\item{.which}{A string specifying which argument's content to retrieve from \code{object}. If \code{NULL}, all
 function inputs will be returned.}
 
 \item{...}{Additional arguments. These have no effect on the returned outputs and are included for
@@ -19,7 +19,7 @@ compatibility with S3 methods in the PubChemR package.}
 A list or string vector containing the options used in the function call.
 }
 \description{
-Retrieve Function Input(s)
+This function retrieves the input arguments from a specified PubChem database request object.
 }
 \examples{
 request <- get_cids("aspirin", namespace = "name")

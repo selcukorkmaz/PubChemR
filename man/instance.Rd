@@ -15,11 +15,11 @@ instance(object, ...)
 \item{...}{Additional arguments passed to other methods. Currently, these have no effect.}
 
 \item{.which}{A string specifying which instance's results to return. If NULL, the results of the first instance in
-the \code{object} are returned. The default is NULL.}
+the \code{object} are returned. The default value is NULL.}
 }
 \description{
-This function extracts the results of a PubChem instance from an \code{object}. It is useful for extracting
-information about a compound from a complete list where multiple elements (assay, compound, etc.) are requested.
+This function extracts the results of a PubChem instance from an \code{object}. It is designed to retrieve
+information about a compound from a comprehensive list where multiple elements (such as assay, compound, etc.) are requested.
 }
 \examples{
 compounds <- get_compounds(
@@ -27,7 +27,7 @@ compounds <- get_compounds(
   namespace = "name"
 )
 
-instance(compounds)  # returns the results for "aspirin"
+instance(compounds)  # Returns the results for "aspirin"
 instance(compounds, "ibuprofen")
 
 }

@@ -40,47 +40,46 @@ retrieve(object, ...)
 
 \item{...}{Additional arguments passed to other methods. Currently, these have no effect.}
 
-\item{.slot}{A string specifying which slot to return. Should not be NULL with some exceptions. See notes for details.}
+\item{.slot}{A string specifying which slot to return. Should not be NULL with some exceptions. See the notes for details.}
 
-\item{.to.data.frame}{a logical. If TRUE, returned object will be forced to be converted into a data.frame (or tibble).
-If failed to convert into a data.frame, a list will be returned with a warning. Be careful for complicated lists
-(i.e., many elements nested within each other) since it may be time consuming to convert such lists into a data frame.
-Furthermore, \code{.to.data.frame} is ignored for specific scenarios.}
+\item{.to.data.frame}{A logical value. If TRUE, the returned object will be converted into a data.frame (or tibble).
+If conversion to a data.frame fails, a list will be returned with a warning. Be cautious with complex lists
+(i.e., many elements nested within each other) as it may be time-consuming to convert such lists into a data frame.
+Additionally, \code{.to.data.frame} is ignored in specific scenarios.}
 
-\item{.verbose}{a logical. Should the resulting object printed into R Console? If TRUE the object is returned invisibly
-and the output is nicely printed to R Console. This option may not be available for some slots (or classes).
+\item{.verbose}{A logical value. Should the resulting object be printed to the R console? If TRUE, the object is returned invisibly
+and the output is printed nicely to the R console. This option may not be available for some slots (or classes).
 See Notes/Details.}
 
-\item{.combine.all}{a logical. If TRUE, properties of all requested instances are combined into single
-data frame (or list if \code{.to.data.frame = FALSE}).}
+\item{.combine.all}{A logical value. If TRUE, the properties of all requested instances are combined into a single data frame (or a list if \code{.to.data.frame = FALSE}).}
 
-\item{.idx}{an integer. Which substance results should be returned? PubChem request may return multiple
-substances in the output. \code{.idx} is the index of returned substance to be extracted from complete list.}
+\item{.idx}{An integer indicating which substance result should be returned. A PubChem request may return multiple
+substances in the output. \code{.idx} specifies the index of the substance to be extracted from the complete list.}
 }
 \description{
 This generic function extracts a specific slot from a PubChem instance.
 }
 \note{
-If object is from \code{'PC_Properties'} class, \code{.slot} definition will be omitted and all the requested
-properties will be retrieved from \code{object}.
+If the object is from the \code{'PC_Properties'} class, the \code{.slot} definition will be omitted and all the requested properties will be retrieved from the \code{object}.
 
-\subsection{Use of \code{'.verbose'} argument}
 
-\code{retrieve} returns output silently (invisible) when \code{.verbose = TRUE}. However, the function treats differently
-under following scenarios:
+\subsection{Use of the \code{'.verbose'} argument}{
+\code{retrieve} returns output silently (invisibly) when \code{.verbose = TRUE}. However, the function behaves differently
+under the following scenarios:
 \itemize{
-  \item{\code{.verbose} is ignored if \code{.combine.all = TRUE}. Output is returned silently.}
-  \item{\code{.verbose} is ignored if requested slot is not printable to R Console because it is too complicated to print.}
+  \item{\code{.verbose} is ignored if \code{.combine.all = TRUE}. The output is returned silently.}
+  \item{\code{.verbose} is ignored if the requested slot is not printable to the R console because it is too complicated to print.}
+}
 }
 }
 \section{Details on \code{'PugViewInstance'} and \code{'PugViewSection'}}{
 
-Pug View API returns a detailed list about PubChem request. The 'Section' slot in this list is structured into
-a sub-class \code{'PugViewSection'}. This object contains information through several sections (or sub-sections),
+The PugView API returns a detailed list related to PubChem requests. The 'Section' slot in this list is structured into
+a sub-class called \code{'PugViewSection'}. This object contains information organized through several sections (or sub-sections),
 which can be retrieved using \emph{section-specific} functions such as \link{section} and \link{sectionList}.
 
-The function argument \code{.to.data.frame} is ignored if "Section" slot is being extracted from complete list.
-For other slots, \code{.to.data.frame} is considered as usual. See examples.
+The function argument \code{.to.data.frame} is ignored if the "Section" slot is being extracted from the complete list.
+For other slots, \code{.to.data.frame} is considered as usual. See examples for usage.
 }
 
 \examples{
@@ -93,10 +92,10 @@ compounds <- get_compounds(identifier = c(
 aspirin <- instance(compounds, "aspirin")
 # print(aspirin)
 
-# Extract a specific slot from "aspirin" compound.
+# Extract a specific slot from the "aspirin" compound.
 retrieve(aspirin, "props", .to.data.frame = TRUE)
 
-# EXAMPLES (PubChemInstanceList)
+# Examples (PubChemInstanceList)
 retrieve(compounds, "aspirin", "props", .to.data.frame = TRUE)
 
 # Verbose Assay References to R Console
@@ -105,7 +104,7 @@ assays <- get_assays(identifier = c(1234, 7815), namespace = "aid")
 instance(assays, "7815")
 retrieve(assays, "7815", "xref", .verbose = TRUE)
 
-# Print assay protocol to R Console (if available)
+# Print assay protocol to R console (if available)
 # Note that it may be too long to print for some assays.
 # retrieve(assays, "1234", "protocol", .verbose = TRUE)
 
@@ -115,11 +114,11 @@ retrieve(assays, "7815", "xref", .verbose = TRUE)
 # Ignores ".verbose" and ".which" if ".combine.all = TRUE".
 retrieve(assays, .slot = "xref", .verbose = TRUE, .combine.all = TRUE)
 
-### PUG VIEW EXAMPLES ####
+### PUG VIEW EXAMPLES ###
 pview <- get_pug_view(identifier = "2244", annotation = "data", domain = "compound")
 
 # PugViewSectionList object.
-# This object contains all the section information about the PubChem request.
+# This object contains all the section information related to the PubChem request.
 sect <- retrieve(pview, .slot = "Section")
 print(sect)
 

@@ -3,14 +3,14 @@
 \name{synonyms}
 \alias{synonyms}
 \alias{synonyms.PubChemInstance_Synonyms}
-\title{Getter function of 'Synonyms'}
+\title{Getter function for 'Synonyms'}
 \usage{
 synonyms(object, ...)
 
 \method{synonyms}{PubChemInstance_Synonyms}(object, .to.data.frame = TRUE, ...)
 }
 \arguments{
-\item{object}{an object of class \code{'PubChemInstance_Synonyms'}.}
+\item{object}{An object of class \code{'PubChemInstance_Synonyms'}.}
 
 \item{...}{Additional arguments passed to other methods. Currently, these have no effect.}
 
@@ -19,13 +19,13 @@ If failed to convert into a data.frame, a list will be returned with a warning. 
 (i.e., many elements nested within each other) since it may be time consuming to convert such lists into a data frame.}
 }
 \value{
-a data.frame (or list) object containing the synonym data.
+A \code{data.frame} (or \code{list}) object containing the synonym data.
 }
 \description{
-Extract synonyms data from PubChem request using the function \link{get_synonyms}.
+Extracts synonym data from a PubChem request using the function \link{get_synonyms}.
 }
 \examples{
-syns <- get_synonyms(identifier = c("aspirin", "caffein"), namespace = "name")
+syns <- get_synonyms(identifier = c("aspirin", "caffeine"), namespace = "name")
 synonyms(syns)
 
 }
