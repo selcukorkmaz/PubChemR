@@ -21,19 +21,21 @@ get_synonyms(
 
 \item{searchtype}{A character string specifying the search type. Default is NULL.}
 
-\item{options}{Additional arguments passed to \code{\link{get_json}}.}
+\item{options}{Additional arguments passed to PubChem request.}
 }
 \value{
-A list where each element corresponds to the synonyms retrieved from PubChem for the provided identifier.
-        The names of the list elements are based on the provided identifier.
+An object of class 'PubChemInstance_Synonyms', which is a list containing information retrieved from the PubChem database. Synonyms data can be extracted from the returned object using the \link{synonyms} function.
 }
 \description{
 This function sends a request to PubChem to retrieve synonyms for a given identifier.
 It returns a list of synonyms corresponding to the provided identifier.
 }
 \examples{
-get_synonyms(
+syns <- get_synonyms(
   identifier = "aspirin",
   namespace = "name"
 )
+
+synonyms(syns)
+
 }

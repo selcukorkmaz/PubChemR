@@ -1,5 +1,5 @@
 # Examples ----
-comp <- get_compounds(identifier = c("2244"), namespace = "cid")
+comp <- get_compounds(identifier = c("2244", "1234"), namespace = "cid")
 comp
 
 asp <-instance(comp, "1234")

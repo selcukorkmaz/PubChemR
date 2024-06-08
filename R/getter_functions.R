@@ -2,7 +2,7 @@
 
 #' Call Function Parameters
 #'
-#' @param object <details here>
+#' @param object an object of class
 #' @param ... <details here>
 #'
 #' @return a list

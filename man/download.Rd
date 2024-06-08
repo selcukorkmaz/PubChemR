@@ -62,8 +62,6 @@ download(
   identifier = "aspirin",
   namespace = "name",
   domain = "compound",
-  operation = NULL,
-  searchtype = NULL,
   overwrite = TRUE
 )
 

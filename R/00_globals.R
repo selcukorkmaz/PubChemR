@@ -268,7 +268,6 @@ printSlotDetails <- function(x, ...){
   }
 }
 
-
 printSectionDetails <- function(x, ...){
   itemNames <- names(x)
 

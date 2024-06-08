@@ -7,7 +7,7 @@
 request_args(object, .which = NULL, ...)
 }
 \arguments{
-\item{object}{<details here>}
+\item{object}{an object of class}
 
 \item{...}{<details here>}
 }

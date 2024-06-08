@@ -12,9 +12,10 @@
 #'
 #' @return Returns the response content from the PubChem API based on the constructed URL.
 #'
-#' @importFrom httr GET http_status
+#' @noRd
+#'
+#' @importFrom httr GET http_status content
 #' @importFrom RJSONIO fromJSON
-#' @export
 #'
 #' @examples
 #' get_pubchem(
