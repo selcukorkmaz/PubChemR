@@ -165,7 +165,6 @@ section(section(section(pview, "S13", .verbose = TRUE), "S1", .verbose = TRUE), 
 
 
 
-
-result <- get_pug_rest(identifier = "9606,2697049", namespace = "taxid", domain = "taxonomy", operation = "summary",
-                       output = "JSON")
+result <- get_pug_rest(identifier = "9606,2697049", namespace = "taxid", domain = "taxonomy",
+                       operation = "summary", output = "JSON")
 
