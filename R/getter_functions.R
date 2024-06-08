@@ -808,8 +808,15 @@ SIDs <- function(object, ...){
 }
 
 # PubChemInstance_Synonyms ----
+#' @param .to.data.frame a logical. If TRUE, returned object will be forced to be converted into a data.frame (or tibble).
+#' If failed to convert into a data.frame, a list will be returned with a warning. Be careful for complicated lists
+#' (i.e., many elements nested within each other) since it may be time consuming to convert such lists into a data frame.
+#'
+#' @rdname synonyms
+#'
 #' @importFrom dplyr bind_rows
 #' @importFrom tidyr as_tibble
+#'
 #' @export
 synonyms.PubChemInstance_Synonyms <- function(object, .to.data.frame = TRUE, ...){
   tmp <- object$result
@@ -833,6 +840,24 @@ synonyms.PubChemInstance_Synonyms <- function(object, .to.data.frame = TRUE, ...
   return(res)
 }
 
+#' @title Getter function of 'Synonyms'
+#'
+#' @description
+#' Extract synonyms data from PubChem request using the function \link{get_synonyms}.
+#'
+#' @param object an object of class \code{'PubChemInstance_Synonyms'}.
+#' @param ... Additional arguments passed to other methods. Currently, these have no effect.
+#'
+#' @rdname synonyms
+#' @name synonyms
+#' @order 1
+#'
+#' @return a data.frame (or list) object containing the synonym data.
+#'
+#' @examples
+#' syns <- get_synonyms(identifier = c("aspirin", "caffein"), namespace = "name")
+#' synonyms(syns)
+#'
 #' @export
 synonyms <- function(object, ...){
   UseMethod("synonyms")
