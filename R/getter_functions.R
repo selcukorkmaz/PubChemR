@@ -110,6 +110,7 @@ retrieve <- function(object, ...){
 #' properties will be retrieved from \code{object}.
 #'
 #' \subsection{Use of \code{'.verbose'} argument}
+#'
 #' \code{retrieve} returns output silently (invisible) when \code{.verbose = TRUE}. However, the function treats differently
 #' under following scenarios:
 #' \itemize{
@@ -143,13 +144,9 @@ retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
     return(NULL)
   }
 
-  if ("PC_Properties" %in% class(object)){
-    .slot <- ""
-  } else {
-    if (is.null(.slot)){
-      warning("Which slot do you want to return? '.slot' is not defined. Returning NULL.")
-      return(NULL)
-    }
+  if (!("PC_Properties" %in% class(object)) & is.null(.slot)){
+    warning("Which slot do you want to return? '.slot' is not defined. Returning NULL.")
+    return(NULL)
   }
 
   # Gather all the elements from selected slot. ----
@@ -360,6 +357,9 @@ retrieve.PubChemInstanceList <- function(object, .which = NULL, .slot = NULL, .t
   }
 }
 
+#' @param .idx an integer. Which substance results should be returned? PubChem request may return multiple
+#' substances in the output. \code{.idx} is the index of returned substance to be extracted from complete list.
+#'
 #' @rdname retrieve
 #' @order 4
 #'
@@ -376,7 +376,11 @@ retrieve.PC_Substance <- function(object, .slot = NULL, .idx = 1, .to.data.frame
     return(NULL)
   }
 
-  .slot <- ifelse(is.null(.slot), "", .slot)
+  if (!("PC_Substance" %in% class(object)) & is.null(.slot)){
+    warning("Which slot do you want to return? '.slot' is not defined. Returning NULL.")
+    return(NULL)
+  }
+
   .idx <- ifelse(is.null(.idx), 1, .idx)
 
   slotContents <- if ("PC_Substance" %in% class(object)){
@@ -434,7 +438,6 @@ retrieve.PC_Substance <- function(object, .slot = NULL, .idx = 1, .to.data.frame
   # Some slots may have long texts including the protocol, description,
   # references, etc. about the PubChem instances. Such information will be
   # printed to R console if '.verbose = TRUE'.
-
   if (.verbose){
     cat("\n")
     if (.slot %in% c("comment")){
@@ -468,6 +471,28 @@ retrieve.PC_Substance <- function(object, .slot = NULL, .idx = 1, .to.data.frame
   }
 }
 
+#' @rdname retrieve
+#' @order 5
+#'
+#' @section Details on \code{'PugViewInstance'} and \code{'PugViewSection'}:
+#' Pug View API returns a detailed list about PubChem request. The 'Section' slot in this list is structured into
+#' a sub-class \code{'PugViewSection'}. This object contains information through several sections (or sub-sections),
+#' which can be retrieved using \emph{section-specific} functions such as \link{section} and \link{sectionList}.
+#'
+#' The function argument \code{.to.data.frame} is ignored if "Section" slot is being extracted from complete list.
+#' For other slots, \code{.to.data.frame} is considered as usual. See examples.
+#'
+#' @examples
+#' ### PUG VIEW EXAMPLES ####
+#' pview <- get_pug_view(identifier = "2244", annotation = "data", domain = "compound")
+#'
+#' # PugViewSectionList object.
+#' # This object contains all the section information about the PubChem request.
+#' sect <- retrieve(pview, .slot = "Section")
+#' print(sect)
+#'
+#' retrieve(pview, .slot = "RecordType", .to.data.frame = TRUE)
+#'
 #' @importFrom dplyr bind_cols bind_rows full_join mutate_all
 #' @importFrom tibble as_tibble as_tibble_col tibble
 #'
@@ -482,7 +507,8 @@ retrieve.PugViewInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
   }
 
   if (is.null(.slot)){
-    .slot <- ""
+    warning("Which slot do you want to return? '.slot' is not defined. Returning NULL.")
+    return(NULL)
   }
 
   slotContents <- if (request_args(object, "annotation") == "data"){
@@ -561,6 +587,9 @@ retrieve.PugViewInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
 }
 
 
+#' @rdname retrieve
+#' @order 6
+#'
 #' @importFrom dplyr bind_cols
 #' @importFrom tibble as_tibble_col tibble
 #'
@@ -574,6 +603,7 @@ retrieve.PugViewSection <- function(object, .slot = NULL, .to.data.frame = FALSE
   }
 
   if (is.null(.slot)){
+    warning("Which slot do you want to return? '.slot' is not defined. Returning NULL.")
     return(NULL)
   }
 
@@ -622,6 +652,12 @@ retrieve.PugViewSection <- function(object, .slot = NULL, .to.data.frame = FALSE
 
 
 # PubChemInstance_AIDs ----
+#' @param .to.data.frame a logical. If TRUE, returned object will be forced to be converted into a data.frame (or tibble).
+#' If failed to convert into a data.frame, a list will be returned with a warning. Be careful for complicated lists
+#' (i.e., many elements nested within each other) since it may be time consuming to convert such lists into a data frame.
+#'
+#' @rdname AIDs-SIDs-CIDs
+#'
 #' @export
 AIDs.PubChemInstance_AIDs <- function(object, .to.data.frame = TRUE, ...) {
   tmp <- object$result
@@ -666,12 +702,32 @@ AIDs.PubChemInstance_AIDs <- function(object, .to.data.frame = TRUE, ...) {
   return(res)
 }
 
+#' @title Assay, Compound, and Substance IDs
+#'
+#' @description
+#' These functions are used to get ID information of assays, substances, and compounds.
+#'
+#' @param object An object returned from a PubChem request, mainly from functions \link{get_cids}, \link{get_aids},
+#' and \link{get_sids}.
+#' @param ... Additional arguments passed to other methods. Currently, these have no effect.
+#'
+#' @rdname AIDs-SIDs-CIDs
+#' @name AIDs-SIDs-CIDs
+#' @order 1
+#'
+#' @examples
+#' # Assay IDs
+#' aids <- get_aids(identifier = c("aspirin", "caffein"), namespace = "name")
+#' AIDs(aids)
+#'
 #' @export
 AIDs <- function(object, ...){
   UseMethod("AIDs")
 }
 
 # PubChemInstance_CIDs ----
+#' @rdname AIDs-SIDs-CIDs
+#'
 #' @export
 CIDs.PubChemInstance_CIDs <- function(object, .to.data.frame = TRUE, ...){
   tmp <- object$result
@@ -695,6 +751,14 @@ CIDs.PubChemInstance_CIDs <- function(object, .to.data.frame = TRUE, ...){
   return(res)
 }
 
+#' @rdname AIDs-SIDs-CIDs
+#' @order 2
+#'
+#' @examples
+#' # Compound IDs
+#' cids <- get_cids(identifier = c("aspirin", "caffein"), namespace = "name")
+#' CIDs(cids)
+#'
 #' @export
 CIDs <- function(object, ...){
   UseMethod("CIDs")
@@ -702,8 +766,11 @@ CIDs <- function(object, ...){
 
 
 # PubChemInstance_SIDs ----
+#' @rdname AIDs-SIDs-CIDs
+#'
 #' @importFrom dplyr bind_rows
 #' @importFrom tidyr as_tibble
+#'
 #' @export
 SIDs.PubChemInstance_SIDs <- function(object, .to.data.frame = TRUE, ...){
   tmp <- object$result
@@ -727,6 +794,14 @@ SIDs.PubChemInstance_SIDs <- function(object, .to.data.frame = TRUE, ...){
   return(res)
 }
 
+#' @rdname AIDs-SIDs-CIDs
+#' @order 3
+#'
+#' @examples
+#' # Substance IDs
+#' sids <- get_sids(identifier = c("aspirin", "caffein"), namespace = "name")
+#' SIDs(sids)
+#'
 #' @export
 SIDs <- function(object, ...){
   UseMethod("SIDs")
@@ -765,7 +840,7 @@ synonyms <- function(object, ...){
 
 
 
-
+# Sections ----
 #' @export
 section <- function(object, ...){
   UseMethod("section")

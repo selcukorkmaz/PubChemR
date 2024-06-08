@@ -136,7 +136,7 @@ pview <- get_pug_view(identifier = c("1234", "2244"), annotation = "data", domai
 pview2 <- get_pug_view(identifier = "2244", annotation = "data", domain = "compoundasd")
 
 # PugViewSectionList class
-sect <- retrieve(pview, .slot = "Section", .to.data.frame = TRUE)
+sect <- retrieve(pview, .slot = "Section", .to.data.frame = FALSE)
 class(sect)
 sectionList(sect)
 sectionList(sect, .pattern = c("chemical", "safety"), .match_type = "contain")

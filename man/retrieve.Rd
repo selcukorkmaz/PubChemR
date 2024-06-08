@@ -5,6 +5,8 @@
 \alias{retrieve.PubChemInstance}
 \alias{retrieve.PubChemInstanceList}
 \alias{retrieve.PC_Substance}
+\alias{retrieve.PugViewInstance}
+\alias{retrieve.PugViewSection}
 \title{Retrieve Information from PubChem Instances}
 \usage{
 retrieve(object, ...)
@@ -28,6 +30,10 @@ retrieve(object, ...)
   .verbose = FALSE,
   ...
 )
+
+\method{retrieve}{PugViewInstance}(object, .slot = NULL, .to.data.frame = TRUE, ...)
+
+\method{retrieve}{PugViewSection}(object, .slot = NULL, .to.data.frame = FALSE, ...)
 }
 \arguments{
 \item{object}{An object returned from a PubChem request.}
@@ -47,6 +53,9 @@ See Notes/Details.}
 
 \item{.combine.all}{a logical. If TRUE, properties of all requested instances are combined into single
 data frame (or list if \code{.to.data.frame = FALSE}).}
+
+\item{.idx}{an integer. Which substance results should be returned? PubChem request may return multiple
+substances in the output. \code{.idx} is the index of returned substance to be extracted from complete list.}
 }
 \description{
 This generic function extracts a specific slot from a PubChem instance.
@@ -56,6 +65,7 @@ If object is from \code{'PC_Properties'} class, \code{.slot} definition will be 
 properties will be retrieved from \code{object}.
 
 \subsection{Use of \code{'.verbose'} argument}
+
 \code{retrieve} returns output silently (invisible) when \code{.verbose = TRUE}. However, the function treats differently
 under following scenarios:
 \itemize{
@@ -63,6 +73,16 @@ under following scenarios:
   \item{\code{.verbose} is ignored if requested slot is not printable to R Console because it is too complicated to print.}
 }
 }
+\section{Details on \code{'PugViewInstance'} and \code{'PugViewSection'}}{
+
+Pug View API returns a detailed list about PubChem request. The 'Section' slot in this list is structured into
+a sub-class \code{'PugViewSection'}. This object contains information through several sections (or sub-sections),
+which can be retrieved using \emph{section-specific} functions such as \link{section} and \link{sectionList}.
+
+The function argument \code{.to.data.frame} is ignored if "Section" slot is being extracted from complete list.
+For other slots, \code{.to.data.frame} is considered as usual. See examples.
+}
+
 \examples{
 compounds <- get_compounds(identifier = c(
   "aspirin", "ibuprofen", "rstudio"),
@@ -94,5 +114,15 @@ retrieve(assays, "7815", "xref", .verbose = TRUE)
 
 # Ignores ".verbose" and ".which" if ".combine.all = TRUE".
 retrieve(assays, .slot = "xref", .verbose = TRUE, .combine.all = TRUE)
+
+### PUG VIEW EXAMPLES ####
+pview <- get_pug_view(identifier = "2244", annotation = "data", domain = "compound")
+
+# PugViewSectionList object.
+# This object contains all the section information about the PubChem request.
+sect <- retrieve(pview, .slot = "Section")
+print(sect)
+
+retrieve(pview, .slot = "RecordType", .to.data.frame = TRUE)
 
 }
