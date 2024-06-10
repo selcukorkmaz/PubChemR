@@ -39,8 +39,8 @@ print(compound)
 
 # Return results for selected compound.
 instance(compound, "aspirin")
-instance(compound, "unknown")
 instance(compound, "rstudio")
+# instance(compound, "unknown"). # returns error.
 
 # Extract compound properties for the compound "aspirin".
 # Use the 'retrieve()' function to extract specific slots from the compound list.

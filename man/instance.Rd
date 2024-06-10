@@ -7,7 +7,7 @@
 \usage{
 instance(object, ...)
 
-\method{instance}{PubChemInstanceList}(object, .which = NULL, ....)
+\method{instance}{PubChemInstanceList}(object, .which = NULL, ...)
 }
 \arguments{
 \item{object}{An object of class \code{'PubChemInstanceList'} returned from a PubChem request.}

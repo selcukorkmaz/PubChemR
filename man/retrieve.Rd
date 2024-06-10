@@ -51,7 +51,9 @@ Additionally, \code{.to.data.frame} is ignored in specific scenarios.}
 and the output is printed nicely to the R console. This option may not be available for some slots (or classes).
 See Notes/Details.}
 
-\item{.combine.all}{A logical value. If TRUE, the properties of all requested instances are combined into a single data frame (or a list if \code{.to.data.frame = FALSE}).}
+\item{.which}{A character value. This is the identifier of the PubChem request that will be extracted from the complete list. It is ignored if \code{.combine.all = TRUE}.}
+
+\item{.combine.all}{a logical value. If TRUE, the properties of all requested instances are combined into a single data frame (or a list if \code{.to.data.frame = FALSE}).}
 
 \item{.idx}{An integer indicating which substance result should be returned. A PubChem request may return multiple
 substances in the output. \code{.idx} specifies the index of the substance to be extracted from the complete list.}

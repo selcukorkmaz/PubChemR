@@ -11,3 +11,6 @@ IgnoredFoldersFiles
 .github
 ^vignettes/cached$
 vignettes/cached
+
+tests/
+vignettes/

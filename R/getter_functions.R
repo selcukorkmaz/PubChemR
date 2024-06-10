@@ -32,11 +32,10 @@ request_args <- function(object, .which = NULL, ...){
 #' the \code{object} are returned. The default value is NULL.
 #'
 #' @rdname instance
-#' @name instance
 #' @order 2
 #'
 #' @export
-instance.PubChemInstanceList <- function(object, .which = NULL, ....){
+instance.PubChemInstanceList <- function(object, .which = NULL, ...){
   if (is.null(.which)){
     idx <- 1
   } else {
@@ -270,7 +269,8 @@ retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
   }
 }
 
-#' @param .combine.all A logical value. If TRUE, the properties of all requested instances are combined into a single data frame (or a list if \code{.to.data.frame = FALSE}).
+#' @param .which A character value. This is the identifier of the PubChem request that will be extracted from the complete list. It is ignored if \code{.combine.all = TRUE}.
+#' @param .combine.all a logical value. If TRUE, the properties of all requested instances are combined into a single data frame (or a list if \code{.to.data.frame = FALSE}).
 #'
 #' @rdname retrieve
 #' @order 3
@@ -666,6 +666,12 @@ retrieve.PugViewSection <- function(object, .slot = NULL, .to.data.frame = FALSE
 #'
 #' @rdname AIDs-SIDs-CIDs
 #'
+#' @importFrom magrittr '%>%'
+#' @importFrom tibble add_row tibble
+#' @importFrom dplyr bind_cols bind_rows
+#' @importFrom tidyr as_tibble
+#' @importFrom stringr str_to_title
+#'
 #' @export
 AIDs.PubChemInstance_AIDs <- function(object, .to.data.frame = TRUE, ...) {
   tmp <- object$result
@@ -683,7 +689,7 @@ AIDs.PubChemInstance_AIDs <- function(object, .to.data.frame = TRUE, ...) {
         for (info in x$result$InformationList$Information) {
           if (is.list(info) && !is.null(info$AID)) {
             for (aid in info$AID) {
-              tmp2 <- add_row(result_tibble,
+              tmp2 <- add_row(tmp2,
                               CID = info$CID,
                               AID = aid)
             }
@@ -701,8 +707,8 @@ AIDs.PubChemInstance_AIDs <- function(object, .to.data.frame = TRUE, ...) {
 
       return(tmp2)
     }) %>%
-      bind_rows(.) %>%
-      as_tibble(.)
+      bind_rows %>%
+      as_tibble
   } else {
     res <- lapply(tmp, "[[", "result")
   }
@@ -736,6 +742,9 @@ AIDs <- function(object, ...){
 # PubChemInstance_CIDs ----
 #' @rdname AIDs-SIDs-CIDs
 #'
+#' @importFrom dplyr bind_rows bind_cols
+#' @importFrom tidyr as_tibble
+#'
 #' @export
 CIDs.PubChemInstance_CIDs <- function(object, .to.data.frame = TRUE, ...){
   tmp <- object$result
@@ -744,14 +753,14 @@ CIDs.PubChemInstance_CIDs <- function(object, .to.data.frame = TRUE, ...){
     res <- lapply(tmp, function(x){
       xx <- suppressMessages({
         list(x$request_args$identifier, CID = x$result$IdentifierList$CID) %>%
-          bind_cols()
+          bind_cols
       })
 
       names(xx)[1] <- namespace_text(x$request_args$namespace)
       return(xx)
     }) %>%
-      bind_rows(.) %>%
-      as_tibble(.)
+      bind_rows %>%
+      as_tibble
   } else {
     res <- lapply(tmp, "[[", "result")
   }
@@ -776,7 +785,7 @@ CIDs <- function(object, ...){
 # PubChemInstance_SIDs ----
 #' @rdname AIDs-SIDs-CIDs
 #'
-#' @importFrom dplyr bind_rows
+#' @importFrom dplyr bind_rows bind_cols
 #' @importFrom tidyr as_tibble
 #'
 #' @export
@@ -787,14 +796,14 @@ SIDs.PubChemInstance_SIDs <- function(object, .to.data.frame = TRUE, ...){
     res <- lapply(tmp, function(x){
       xx <- suppressMessages({
         list(x$request_args$identifier, SID = x$result$InformationList$Information[[1]]$SID) %>%
-          bind_cols()
+          bind_cols
       })
 
       names(xx)[1] <- namespace_text(x$request_args$namespace)
       return(xx)
     }) %>%
-      bind_rows(.) %>%
-      as_tibble(.)
+      bind_rows %>%
+      as_tibble
   } else {
     res <- lapply(tmp, "[[", "result")
   }
@@ -822,7 +831,7 @@ SIDs <- function(object, ...){
 #'
 #' @rdname synonyms
 #'
-#' @importFrom dplyr bind_rows
+#' @importFrom dplyr bind_rows bind_cols
 #' @importFrom tidyr as_tibble
 #'
 #' @export
@@ -833,14 +842,14 @@ synonyms.PubChemInstance_Synonyms <- function(object, .to.data.frame = TRUE, ...
     res <- lapply(tmp, function(x){
       xx <- suppressMessages({
         list(x$request_args$identifier, Synonyms = x$result$InformationList$Information[[1]]$Synonym) %>%
-          bind_cols()
+          bind_cols
       })
 
       names(xx)[1] <- namespace_text(x$request_args$namespace)
       return(xx)
     }) %>%
-      bind_rows(.) %>%
-      as_tibble(.)
+      bind_rows %>%
+      as_tibble
   } else {
     res <- lapply(tmp, "[[", "result")
   }
@@ -874,11 +883,67 @@ synonyms <- function(object, ...){
 
 
 # Sections ----
+
+#' @title Extract Sections from Pug View Request
+#'
+#' @description
+#' \code{section} returns section details from a Pug View request.
+#'
+#' @param object an object returned from \link{get_pug_view}.
+#' @param ... other arguments. Currently has no effect on the outputs. Can be ignored.
+#'
+#' @rdname section
+#' @name section
+#' @order 1
+#'
 #' @export
 section <- function(object, ...){
   UseMethod("section")
 }
 
+#' @param .id A character value that corresponds to the ID of a specific section. Detailed information about the section with the given section ID will be returned. If NULL, the first section (i.e., "S1") is returned. If there is no section under \code{object}, it returns NULL with a warning. See Note/Details for more information.
+#' @param .verbose A logical value. Should the resulting object be printed to the R console? If TRUE, the object is returned invisibly and the output is printed nicely to the R console. This option may not be available for some slots (or classes). See Notes/Details.
+#'
+#' @rdname section
+#' @order 2
+#'
+#' @note
+#' \subsection{Sections in a Pug View Request}{
+#' A Pug View Request returns a detailed list from the PubChem database. This list may include data under many nested
+#' sections, each corresponding to a different property structured within further nested sections. The
+#' complicated structure of the returned object makes it impossible to print all information to the R console at once.
+#' Therefore, it is recommended to print sections selectively.
+#' Furthermore, one may navigate through the nested sections using the \link{section} function. See Examples.
+#'
+#' Use the \link{sectionList} function to list available sections (or subsections of a section) of a Pug View request and related section IDs.
+#' }
+#'
+#' \subsection{Use of \code{'.verbose'} to Print Section Details}{
+#' It is possible to print section details to the R console. If \code{.verbose = TRUE}, the resulting object is returned invisibly and a summary of section details is printed to the R console. This might be useful to navigate through nested sections and sequentially print multiple sections to the R console. For example, consider following command:
+#'
+#' \code{> section(section(request, "S1", .verbose = TRUE), "S3", .verbose = TRUE)}
+#'
+#' This command will print section "S1" and the subsection "S3" located under "S1" to the R console. One may navigate through sections under other sections, similar to exploring dreams within dreams as depicted in the exceptional movie \bold{Inception}. (\bold{SPOILER WARNING!!}) However, be careful not to get lost or stuck in the dreams!! Also, note that this strategy works only if \code{.verbose = TRUE} for all sections and/or subsections.
+#' }
+#'
+#' @seealso \link{sectionList}
+#'
+#' @examples
+#' # Pug View request for the compound "aspirin (CID = 2244)".
+#' pview <- get_pug_view(identifier = "2244", annotation = "data", domain = "compound")
+#'
+#' section(pview, "S1")
+#' section(pview, "S1", .verbose = TRUE)
+#'
+#' # List all available sections
+#' sectionList(pview)
+#'
+#' # Subsections under the section "S1"
+#' sectionList(section(pview, "S1"))
+#'
+#' # Print multiple sections
+#' # section(section(pview, "S1", .verbose = TRUE), "S3", .verbose = TRUE)
+#'
 #' @export
 section.PugViewInstance <- function(object, .id = "S1", .verbose = FALSE, ...){
   dots <- list(...)
@@ -886,6 +951,9 @@ section.PugViewInstance <- function(object, .id = "S1", .verbose = FALSE, ...){
   do.call("section", call_args)
 }
 
+#' @rdname section
+#' @order 3
+#'
 #' @export
 section.PugViewSectionList <- function(object, .id = "S1", .verbose = FALSE, ...){
   if (!object$success){
@@ -932,6 +1000,9 @@ section.PugViewSectionList <- function(object, .id = "S1", .verbose = FALSE, ...
   }
 }
 
+#' @rdname section
+#' @order 4
+#'
 #' @export
 section.PugViewSection <- function(object, .id = "S1", .verbose = FALSE, ...){
   if (!object$success){
