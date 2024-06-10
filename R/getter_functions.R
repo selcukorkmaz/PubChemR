@@ -122,6 +122,7 @@ retrieve <- function(object, ...){
 #'
 #' @importFrom dplyr bind_cols bind_rows full_join mutate_all
 #' @importFrom tibble as_tibble as_tibble_col tibble
+#' @importFrom magrittr '%>%'
 #'
 #' @examples
 #' compounds <- get_compounds(identifier = c(
@@ -295,7 +296,7 @@ retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
 #' # Ignores ".verbose" and ".which" if ".combine.all = TRUE".
 #' retrieve(assays, .slot = "xref", .verbose = TRUE, .combine.all = TRUE)
 #'
-#' @importFrom dplyr bind_rows
+#' @importFrom dplyr bind_rows bind_cols
 #' @importFrom tibble tibble
 #'
 #' @export
@@ -373,6 +374,7 @@ retrieve.PubChemInstanceList <- function(object, .which = NULL, .slot = NULL, .t
 #'
 #' @importFrom tibble as_tibble_row as_tibble_col tibble
 #' @importFrom dplyr mutate_all bind_rows bind_cols
+#' @importFrom magrittr '%>%'
 #'
 #' @export
 retrieve.PC_Substance <- function(object, .slot = NULL, .idx = 1, .to.data.frame = TRUE, .verbose = FALSE, ...){
@@ -1050,11 +1052,26 @@ section.PugViewSection <- function(object, .id = "S1", .verbose = FALSE, ...){
 }
 
 
+#' @title List Available Section/Subsections
+#'
+#' @description
+#' This function may be used to list available sections (or subsections) of a PubChem request returned from \link{get_pug_view}. It is useful when one wants to extract a specific section (or subsection) from PubChem request. It supports patteern-specific searches within sections. See Detail/Note below for more information.
+#'
+#' @param object an object of PubChem request, generally returned from \link{get_pug_view}.
+#' @param ... other arguments. Currently has no effect on the outputs. Can be ignored.
+#'
+#' @name sectionList
+#' @rdname sectionList
+#'
+#' @seealso \link{section}
+#'
 #' @export
 sectionList <- function(object, ...){
   UseMethod("sectionList")
 }
 
+#' @rdname sectionList
+#'
 #' @export
 sectionList.PugViewInstance <- function(object, ...){
   dots <- list(...)
@@ -1062,8 +1079,35 @@ sectionList.PugViewInstance <- function(object, ...){
   do.call("sectionList", call_args)
 }
 
+#' @param .pattern a character vector. Each text pattern given here will be searched within Pug View sections by using the pattern matching strategy defined with \code{.match_type}. If not specified or NULL, all available sections will be returned.
+#' @param .match_type a string. How should search patterns (i.e., \code{.pattern}) matched with section names? Available options are "contain", "match", "start", and "end" which can be used for partial and/or exact pattern matching. Default is "contain". See Details below for more information.
+#'
+#' @details
+#' Pattern matching is used to filter sections that match user-defined patterns. It is useful when there are more sections than allowed to print R console. In such situations, it may be reasonable to print a subset of all section list to R console that meets search criteria. There are several pattern matching methods as described below
+#' \itemize{
+#'   \item \bold{Partial Matching} ("contain", "start", "end"): Returns the section names that contains or starts/ends by given text patterns.
+#'   \item \bold{Exact Matching} ("match"): Returns the section names that exactly matches given text patterns.
+#' }
+#'
+#' @rdname sectionList
+#'
 #' @importFrom tibble tibble
 #' @importFrom tidyr ends_with starts_with contains
+#'
+#' @examples
+#' pview <- get_pug_view(identifier = "2244", annotation = "data", domain = "compound")
+#'
+#' # List all section names
+#' sectionList(pview)
+#'
+#' # Pattern-matched section names
+#' sectionList(pview, .pattern = c("safety", "chemical"), .match_type = "contain")
+#' sectionList(pview, .pattern = "safety", .match_type = "match")
+#' sectionList(pview, .pattern = "properties", .match_type = "end")
+#'
+#' # Use section IDs to extract section data from Pug View request
+#' section(pview, "S12") # Safety and Hazards
+#'
 #' @export
 sectionList.PugViewSectionList <- function(object, .pattern = NULL, .match_type = c("contain", "match", "start", "end"), ...){
 
@@ -1120,6 +1164,8 @@ sectionList.PugViewSectionList <- function(object, .pattern = NULL, .match_type 
 }
 
 
+#' @rdname sectionList
+#'
 #' @export
 sectionList.PugViewSection <- function(object, .pattern = NULL, .match_type = c("contain", "match", "start", "end"), ...){
 

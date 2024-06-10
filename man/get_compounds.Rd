@@ -21,7 +21,7 @@ get_compounds(
 
 \item{searchtype}{Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.}
 
-\item{options}{Additional parameters passed to \code{\link{get_json}}.}
+\item{options}{Additional parameters passed to \code{get_json}.}
 }
 \value{
 An object of class 'PubChemInstanceList' and 'PC_Compounds' containing compound information from the PubChem database.

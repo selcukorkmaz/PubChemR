@@ -30,7 +30,7 @@ property_map(
 
 \item{searchtype}{Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.}
 
-\item{options}{Additional arguments passed to \code{\link{get_json}}.}
+\item{options}{Additional arguments passed to \code{get_json}.}
 
 \item{propertyMatch}{A list containing the arguments passed to the \link{property_map} function. See examples of the \code{property_map()} function.}
 

@@ -6,7 +6,7 @@
 #' @param identifier A vector of positive integers (e.g., CID, SID, AID) or identifier strings (e.g., source, InChIKey, formula). In some cases, only a single identifier string is allowed (e.g., name, SMILES, xref; InChI, SDF by POST only).
 #' @param namespace Specifies the namespace for the query. For the 'compound' domain, possible values include 'cid', 'name', 'smiles', 'inchi', 'sdf', 'inchikey', 'formula', 'substructure', 'superstructure', 'similarity', 'identity', 'xref', 'listkey', 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure', and 'fastformula'. For other domains, the possible namespaces are domain-specific.
 #' @param searchtype Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.
-#' @param options Additional arguments passed to \code{\link{get_json}}.
+#' @param options Additional arguments passed to \code{get_json}.
 #' @param propertyMatch A list containing the arguments passed to the \link{property_map} function. See examples of the \code{property_map()} function.
 #'
 #' @return An object of class "PubChemInstanceList" containing all the properties of the requested compounds.
