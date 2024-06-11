@@ -12,5 +12,4 @@ IgnoredFoldersFiles
 ^vignettes/cached$
 vignettes/cached
 
-tests/
 vignettes/

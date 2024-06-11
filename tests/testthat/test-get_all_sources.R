@@ -28,4 +28,3 @@ test_that("return error for undefined domain.", {
     )
   })
 })
-

@@ -121,4 +121,3 @@ test_that("create 'path' if it does not exist.", {
   file.remove(sdf_file)
   # file.remove(temp_dir)
 })
-

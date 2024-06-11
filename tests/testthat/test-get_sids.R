@@ -1,68 +1,69 @@
-# test for 'namespace' arg. ----
-test_that("pulling SIDs via 'name' is succesful", {
-  tmp <- try(get_sids(
-    identifier = "aspirin",
+# Helper Functions ----
+allSuccess <- function(object){
+  all(unlist(lapply(object$result, "[[", "success")))
+}
+
+toDataFrame <- function(object, ...){
+  # Returned object is a tibble or data.frame
+  resDF <- SIDs(object, .to.data.frame = TRUE)
+  expect_true({
+    any(inherits(resDF, "tbl"), inherits(resDF, "data.frame"), inherits(resDF, "tbl_df"))
+    all(nrow(resDF) != 0, ncol(resDF) != 0)
+  })
+
+  # Returned object is a list
+  resLIST <- SIDs(object, .to.data.frame = FALSE)
+  expect_true({
+    inherits(resLIST, "list")
+    length(resLIST) > 0
+  })
+}
+
+test1 <- function(object, ...){
+  test_that(paste0("pulling sids via '", request_args(object, "namespace"), "' is succesfull"), {
+    expect_true(allSuccess(object))
+  })
+
+  test_that("SIDs succesfully returns 'data.frame' and 'list'", {
+    toDataFrame(object)
+  })
+}
+
+# Checking requests and AIDs ----
+sids <- try(get_sids(
+  identifier = "aspirin",
+  namespace = "name"
+))
+test1(sids)
+
+sids <- try(get_sids(
+  identifier = "2244",
+  namespace = "cid"
+))
+test1(sids)
+
+sids <- try(get_sids(
+  identifier = "CC(=O)OC1=CC=CC=C1C(=O)O",
+  namespace = "smiles"
+))
+test1(sids)
+
+test_that("pulling sids for multiple identifiers with undefined input.", {
+  sids <- try(get_sids(
+    identifier = c("aspirin", "dncr"),
     namespace = "name"
   ))
 
-  expect_false(inherits(tmp, "try-error"))
-  expect_true(any(inherits(tmp, "tbl"), inherits(tmp, "data.frame"), inherits(tmp, "tbl_df")))
-  expect_true(ncol(tmp) > 0 & nrow(tmp) > 0)
+  expect_true(sids$result[[1]]$success)
+  expect_false(sids$result[[2]]$success)
 })
 
-
-test_that("pulling SIDs via 'smiles' is succesful", {
-  tmp <- try(get_sids(
-    identifier = "CC(=O)OC1=CC=CC=C1C(=O)O",
-    namespace = "smiles"
-  ))
-
-  expect_false(inherits(tmp, "try-error"))
-  expect_true(any(inherits(tmp, "tbl"), inherits(tmp, "data.frame"), inherits(tmp, "tbl_df")))
-  expect_true(ncol(tmp) > 0 & nrow(tmp) > 0)
-})
-
-test_that("pulling SIDs via 'cid' is succesful", {
-  tmp <- try(get_sids(
-    identifier = 2244,
-    namespace = "cid",
-  ))
-
-  expect_false(inherits(tmp, "try-error"))
-  expect_true(any(inherits(tmp, "tbl"), inherits(tmp, "data.frame"), inherits(tmp, "tbl_df")))
-  expect_true(ncol(tmp) > 0 & nrow(tmp) > 0)
-})
-
-test_that("pulling CIDs via multiple 'name' is succesful", {
-  tmp <- try(get_sids(
-    identifier = c("aspirin", "ibuprofen"),
-    namespace = "name"
-  ))
-
-  expect_false(inherits(tmp, "try-error"))
-  expect_true(any(inherits(tmp, "tbl"), inherits(tmp, "data.frame"), inherits(tmp, "tbl_df")))
-  expect_true(ncol(tmp) > 0 & nrow(tmp) > 0)
-  expect_true(all(unique(tmp$Compound) %in% c("aspirin", "ibuprofen")))
-})
-
-test_that("pulling CIDs via multiple 'cid' is succesful", {
-  tmp <- try(get_sids(
-    identifier = c(2244, 3627),
-    namespace = "cid"
-  ))
-
-  expect_false(inherits(tmp, "try-error"))
-  expect_true(any(inherits(tmp, "tbl"), inherits(tmp, "data.frame"), inherits(tmp, "tbl_df")))
-  expect_true(ncol(tmp) > 0 & nrow(tmp) > 0)
-  expect_true(all(unique(tmp$CID) %in% c(2244, 3627)))
-})
-
-test_that("handling unknown/incorrect/undefined 'identifiers'", {
-  tmp <- try(get_sids(
+test_that("undefined/incorrect identifier returns error", {
+  sids <- get_sids(
     identifier = "dncr",
-    namespace = "name",
-  ))
+    namespace = "name"
+  )
 
-  expect_false(inherits(tmp, "try-error"))
+  expect_false(sids$result[[1]]$success)
+  expect_true(!is.null(sids$result[[1]]$error))
 })
-

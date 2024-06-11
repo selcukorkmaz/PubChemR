@@ -1,34 +1,29 @@
-# test for 'namespace' arg. ----
-test_that("pulling assays via 'name' is unsuccessful", {
-  expect_error({get_assays(
-    identifier = "aspirin",
-    namespace = "name"
-   )
+
+allSuccess <- function(object){
+  all(unlist(lapply(object$result, "[[", "success")))
+}
+
+testAssayRequest <- function(object, ...){
+  test_that(paste0("pulling assays via '", request_args(object, "namespace"), "' is succesfull"), {
+    expect_true(allSuccess(object))
   })
+}
+
+assay <- get_assays(
+  identifier = c("1234", "7815"),
+  namespace = "aid"
+)
+testAssayRequest(assay)
+
+test_that("pulling assays via an unknown 'namespace'", {
+  tmp <- get_assays(
+    identifier = c("2244", "1234"),
+    namespace = "cid"
+  )
+  expect_false(allSuccess(tmp))
 })
 
-
-test_that("pulling assays via 'aid' is successful", {
-  tmp <- try(get_assays(
-    identifier = 2244,
-    namespace = "aid",
-  ))
-
-  expect_false(inherits(tmp, "try-error"))
-
-  # Returned object is a tibble or data.frame
-  expect_true(inherits(tmp, "list"))
-  expect_true(length(tmp) == 1)
-  expect_true(names(tmp) == "'2244'")
+# instance() tests.
+test_that("instance() returns an object of class 'PubChemInstance'", {
+  expect_true("PubChemInstance" %in% class(instance(assay)))
 })
-
-
-test_that("return error for unknown/undefined assays", {
-  expect_error({
-    get_assays(
-      identifier = -1,
-      namespace = "aid",
-    )
-  })
-})
-
