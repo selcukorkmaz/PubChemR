@@ -1,5 +1,10 @@
 # This script includes objects and helper functions.
 
+#' Import testthat Package
+#' @noRd
+#' @import testthat
+NULL
+
 # The base URL for the PubChem API.
 api_base <- "https://pubchem.ncbi.nlm.nih.gov/rest/pug"
 
