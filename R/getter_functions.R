@@ -84,7 +84,6 @@ instance <- function(object, ...){
 #' This generic function extracts a specific slot from a PubChem instance.
 #'
 #' @param object An object returned from a PubChem request.
-#' @param ... Additional arguments passed to other methods. Currently, these have no effect.
 #'
 #' @rdname retrieve
 #' @name retrieve
@@ -272,6 +271,7 @@ retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
 
 #' @param .which A character value. This is the identifier of the PubChem request that will be extracted from the complete list. It is ignored if \code{.combine.all = TRUE}.
 #' @param .combine.all a logical value. If TRUE, the properties of all requested instances are combined into a single data frame (or a list if \code{.to.data.frame = FALSE}).
+#' @param ... Additional arguments passed to other methods.
 #'
 #' @rdname retrieve
 #' @order 3
@@ -325,13 +325,20 @@ retrieve.PubChemInstanceList <- function(object, .which = NULL, .slot = NULL, .t
     }
 
     args$object <- object$result[[idx]]
-    res <- do.call("retrieve", args)
-
     if (!is.null(args[[".verbose"]])){
       returnInvisible <- args[[".verbose"]]
     }
+
+    res <- do.call("retrieve", args)
+
   } else {
-    returnInvisible <- TRUE
+    if (!is.null(args[[".verbose"]])){
+      if (args[[".verbose"]]){
+        args[[".verbose"]] <- FALSE
+        returnInvisible <- TRUE
+      }
+    }
+
     res <- suppressMessages({
       lapply(request_args(object, "identifier"), function(x){
         tmp <- instance(object, .which = x)

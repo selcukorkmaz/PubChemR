@@ -38,7 +38,7 @@ retrieve(object, ...)
 \arguments{
 \item{object}{An object returned from a PubChem request.}
 
-\item{...}{Additional arguments passed to other methods. Currently, these have no effect.}
+\item{...}{Additional arguments passed to other methods.}
 
 \item{.slot}{A string specifying which slot to return. Should not be NULL with some exceptions. See the notes for details.}
 
