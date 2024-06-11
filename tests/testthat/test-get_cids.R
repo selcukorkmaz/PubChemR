@@ -1,8 +1,4 @@
 # Helper Functions ----
-allSuccess <- function(object){
-  all(unlist(lapply(object$result, "[[", "success")))
-}
-
 toDataFrame <- function(object, ...){
   # Returned object is a tibble or data.frame
   resDF <- CIDs(object, .to.data.frame = TRUE)

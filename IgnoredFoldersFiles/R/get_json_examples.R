@@ -95,7 +95,6 @@ props <- get_properties(
   )
 )
 
-
 result <- get_pug_rest(identifier = "1,2,3,4,5", namespace = "cid", domain = "compound",
                        property = c("MolecularWeight", "MolecularFormula", "HBondDonorCount", "HBondAcceptorCount", "InChIKey", "InChI"),
                        output = "JSON")

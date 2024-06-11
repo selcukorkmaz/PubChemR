@@ -1,24 +1,8 @@
-
-allSuccess <- function(object){
-  all(unlist(lapply(object$result, "[[", "success")))
-}
-
-testAssayRequest <- function(object, ...){
-  test_that(paste0("pulling assays via '", request_args(object, "namespace"), "' is succesfull"), {
-    expect_true(allSuccess(object))
-  })
-
-  test_that("get_assay() prints output to the R Console", {
-    expect_output(print(object))
-    expect_output(print(object), "An object of class 'PubChemInstanceList'")
-  })
-}
-
 assay <- get_assays(
   identifier = c("1234", "7815"),
   namespace = "aid"
 )
-testAssayRequest(assay)
+testRequest(assay)
 
 test_that("pulling assays via an unknown 'namespace'", {
   tmp <- get_assays(

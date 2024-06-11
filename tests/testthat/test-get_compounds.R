@@ -3,22 +3,8 @@ compounds <- get_compounds(
   namespace = "cid"
 )
 
-allSuccess <- function(object){
-  all(unlist(lapply(object$result, "[[", "success")))
-}
 
-testCompoundRequest <- function(object, ...){
-  test_that(paste0("pulling compounds via '", request_args(object, "namespace"), "' is succesfull"), {
-    expect_true(allSuccess(object))
-  })
-
-  test_that("get_compounds() prints output to the R Console", {
-    expect_output(print(object))
-    expect_output(print(object), "An object of class 'PubChemInstanceList'")
-  })
-}
-
-testCompoundRequest(compounds)
+testRequest(compounds)
 
 test_that("pulling compounds via an unknown 'namespace'", {
   tmp <- get_compounds(
@@ -85,13 +71,13 @@ tmp <- get_compounds(
   identifier = "aspirin",
   namespace = "name"
 )
-testCompoundRequest(tmp)
+testRequest(tmp)
 
 tmp <- get_compounds(
   identifier = "CC(=O)OC1=CC=CC=C1C(=O)O",
   namespace = "smiles"
 )
-testCompoundRequest(tmp)
+testRequest(tmp)
 
 
 test_that("handling undefined/unknown/incorrect compounds. returns error.", {
