@@ -64,6 +64,36 @@ This generic function extracts a specific slot from a PubChem instance.
 \note{
 If the object is from the \code{'PC_Properties'} class, the \code{.slot} can be defined as NULL. If \code{.slot = NULL}, \code{retrieve()} will return all available properties. If \code{'object'} is of class other than \code{'PC_Properties'}, \code{.slot} should be length of 1.
 
+\subsection{Extracting multiple slots.}{
+In some cases, it may be practical to extract multiple slots from \code{'object'}. For example, one may wish to extract properties from the output of \link{get_properties} by running the functions in a loop. See codes below for a practical example:
+
+\preformatted{
+  library(dplyr)
+
+  props <- get_properties(
+    properties = c("MolecularWeight", "MolecularFormula", "HBondDonorCount",
+                   "HBondAcceptorCount", "InChIKey", "InChI"),
+    identifier = 2244,
+    namespace = "cid",
+    propertyMatch = list(
+      .ignore.case = TRUE,
+      type = "contain"
+    )
+  )
+
+  bind_columns <- function(x, ...){
+    part1 <- x[[1]][ ,"Identifier"]
+    part2 <- lapply(x, "[", 2) %>%
+      bind_cols()
+
+    bind_cols(part1, part2)
+  }
+
+  propsToExtract <- c("MolecularWeight", "MolecularFormula", "HBondDonorCount")
+  tmp <- lapply(propsToExtract, retrieve, object = props, .which = "2244")
+  bind_columns(tmp)
+}}
+
 
 \subsection{Use of the \code{'.verbose'} argument}{
 \code{retrieve} returns output silently (invisibly) when \code{.verbose = TRUE}. However, the function behaves differently
@@ -85,8 +115,8 @@ For other slots, \code{.to.data.frame} is considered as usual. See examples for 
 }
 
 \examples{
-compounds <- get_compounds(identifier = c(
-  "aspirin", "ibuprofen", "rstudio"),
+compounds <- get_compounds(
+  identifier = c("aspirin", "ibuprofen", "rstudio"),
   namespace = "name"
  )
 
