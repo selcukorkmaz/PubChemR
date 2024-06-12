@@ -62,7 +62,7 @@ substances in the output. \code{.idx} specifies the index of the substance to be
 This generic function extracts a specific slot from a PubChem instance.
 }
 \note{
-If the object is from the \code{'PC_Properties'} class, the \code{.slot} can be defined as vector of length >1. In this case, the requested slot properties will be returned from \code{'PC_Properties'} object. If \code{.slot = NULL}, \code{retrieve()} will return all available properties. If \code{'object'} is of class other than \code{'PC_Properties'}, \code{.slot} should be length of 1.
+If the object is from the \code{'PC_Properties'} class, the \code{.slot} can be defined as NULL. If \code{.slot = NULL}, \code{retrieve()} will return all available properties. If \code{'object'} is of class other than \code{'PC_Properties'}, \code{.slot} should be length of 1.
 
 
 \subsection{Use of the \code{'.verbose'} argument}{

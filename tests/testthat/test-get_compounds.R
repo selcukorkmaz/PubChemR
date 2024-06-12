@@ -3,7 +3,6 @@ compounds <- get_compounds(
   namespace = "cid"
 )
 
-
 testRequest(compounds)
 
 test_that("pulling compounds via an unknown 'namespace'", {
@@ -63,9 +62,6 @@ test_that("checking the effect of '.verbose' argument in retrieve() function", {
   expect_invisible(retrieve(compounds, .slot = "id", .verbose = TRUE, .combine.all = TRUE))
 })
 
-
-
-
 # test for 'namespace' arg. ----
 tmp <- get_compounds(
   identifier = "aspirin",
@@ -89,3 +85,4 @@ test_that("handling undefined/unknown/incorrect compounds. returns error.", {
   expect_false(tmp$result[[1]]$success)
   expect_true(!is.null(tmp$result[[1]]$error))
 })
+

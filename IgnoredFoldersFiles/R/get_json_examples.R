@@ -2,13 +2,10 @@
 comp <- get_compounds(identifier = c("2244", "1234"), namespace = "cid")
 comp
 
-asp <-instance(comp, "1234")
+asp <-instance(comp, "2244")
 instance(comp, "dncr")  # Results with error.
-
-asp <- instance(comp, "aspirin")
-atoms(asp)
-count(asp)
-charge(asp)
+retrieve(comp, .slot = "id", .which = 2244)
+retrieve(asp, "id")
 
 ass <- get_assays(identifier = c(1234, 7815, 3642, 6214), namespace = "aid")
 ass
@@ -16,7 +13,7 @@ ass
 ass1234 <- instance(ass, 1234)
 ass1234
 
-retrieve(ass, .slot = "aid", .to.data.frame = TRUE, .combine.all = TRUE)
+retrieve(ass, .slot = "aid", .to.data.frame = TRUE, .combine.all = FALSE)
 retrieve(ass1234, .slot = "aid", .verbose = FALSE, .to.data.frame = TRUE)
 retrieve(ass1234, .slot = "aid", .verbose = TRUE, .to.data.frame = FALSE)
 

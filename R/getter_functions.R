@@ -107,7 +107,7 @@ retrieve <- function(object, ...){
 #' @order 2
 #'
 #' @note
-#' If the object is from the \code{'PC_Properties'} class, the \code{.slot} can be defined as vector of length >1. In this case, the requested slot properties will be returned from \code{'PC_Properties'} object. If \code{.slot = NULL}, \code{retrieve()} will return all available properties. If \code{'object'} is of class other than \code{'PC_Properties'}, \code{.slot} should be length of 1.
+#' If the object is from the \code{'PC_Properties'} class, the \code{.slot} can be defined as NULL. If \code{.slot = NULL}, \code{retrieve()} will return all available properties. If \code{'object'} is of class other than \code{'PC_Properties'}, \code{.slot} should be length of 1.
 #'
 #'
 #' \subsection{Use of the \code{'.verbose'} argument}{
@@ -152,12 +152,10 @@ retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
       return(NULL)
     }
   } else {
-    if (!("PC_Properties" %in% class(object))){
-      # .slot should be length of 1 except for "PC_Properties"
-      if (length(.slot) > 1){
-        warning("'.slot' should be length of 1. Only the first element of '.slot' is used.")
-        .slot <- .slot[1]
-      }
+    # .slot should be length of 1 except for "PC_Properties"
+    if (length(.slot) > 1){
+      warning("'.slot' should be length of 1. Only the first element of '.slot' is used.")
+      .slot <- .slot[1]
     }
   }
 
@@ -170,7 +168,7 @@ retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
     if (is.null(.slot)){
       object$result[[1]][[1]][[1]]
     } else {
-      object$result[[1]][[1]][[1]][.slot]
+      object$result[[1]][[1]][[1]][[.slot]]
     }
   }
 
@@ -235,7 +233,8 @@ retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
         # the first column and values in the second column. Otherwise, a column tibbled_df will be
         # returned with values only.
         resDF <- if (is.null(slotNames)){
-          as_tibble_col(slotContents)
+          cName <- ifelse(is.null(.slot), "Value", .slot)
+          as_tibble_col(slotContents, column_name = cName)
         } else {
           tibble(Name = slotNames, Value = slotContents)
         }
