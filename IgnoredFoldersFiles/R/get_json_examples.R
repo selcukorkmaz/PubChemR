@@ -2,7 +2,7 @@
 comp <- get_compounds(identifier = c("2244", "1234"), namespace = "cid")
 comp
 
-asp <-instance(comp, "2244")
+asp <- instance(comp, "2244")
 instance(comp, "dncr")  # Results with error.
 retrieve(comp, .slot = "id", .which = 2244)
 retrieve(asp, "id")

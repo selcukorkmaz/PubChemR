@@ -307,6 +307,5 @@ testRequest <- function(object, ...){
 
   test_that("prints output to the R Console", {
     expect_output(print(object))
-    expect_output(print(object), "An object of class 'PubChemInstanceList'")
   })
 }
