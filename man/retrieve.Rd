@@ -40,7 +40,7 @@ retrieve(object, ...)
 
 \item{...}{Additional arguments passed to other methods.}
 
-\item{.slot}{A string specifying which slot to return. Should not be NULL with some exceptions. See the notes for details.}
+\item{.slot}{A string specifying which slot to return. Should not be NULL or length of >1 with some exceptions. See the notes for details.}
 
 \item{.to.data.frame}{A logical value. If TRUE, the returned object will be converted into a data.frame (or tibble).
 If conversion to a data.frame fails, a list will be returned with a warning. Be cautious with complex lists
@@ -62,7 +62,7 @@ substances in the output. \code{.idx} specifies the index of the substance to be
 This generic function extracts a specific slot from a PubChem instance.
 }
 \note{
-If the object is from the \code{'PC_Properties'} class, the \code{.slot} definition will be omitted and all the requested properties will be retrieved from the \code{object}.
+If the object is from the \code{'PC_Properties'} class, the \code{.slot} can be defined as vector of length >1. In this case, the requested slot properties will be returned from \code{'PC_Properties'} object. If \code{.slot = NULL}, \code{retrieve()} will return all available properties. If \code{'object'} is of class other than \code{'PC_Properties'}, \code{.slot} should be length of 1.
 
 
 \subsection{Use of the \code{'.verbose'} argument}{

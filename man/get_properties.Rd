@@ -56,7 +56,7 @@ This function sends a request to PubChem to retrieve compound properties based o
 \examples{
 # Isomeric SMILES of the compounds
 props <- get_properties(
-  properties = "IsomericSMILES",
+  properties = c("MolecularWeight", "MolecularFormula", "InChI"),
   identifier = c("aspirin", "ibuprofen", "caffeine"),
   namespace = "name"
 )
@@ -68,6 +68,10 @@ retrieve(instance(props, "aspirin"), .slot = NULL)
 
 # Combine properties of all compounds into a single data frame (or list)
 retrieve(props, .combine.all = TRUE)
+
+# Return selected properties
+retrieve(props, .combine.all = TRUE,
+  .slot = c("MolecularWeight", "MolecularFormula"))
 
 # Return properties for the compounds in a range of CIDs
 props <- get_properties(

@@ -94,7 +94,7 @@ retrieve <- function(object, ...){
   UseMethod("retrieve")
 }
 
-#' @param .slot A string specifying which slot to return. Should not be NULL with some exceptions. See the notes for details.
+#' @param .slot A string specifying which slot to return. Should not be NULL or length of >1 with some exceptions. See the notes for details.
 #' @param .to.data.frame A logical value. If TRUE, the returned object will be converted into a data.frame (or tibble).
 #' If conversion to a data.frame fails, a list will be returned with a warning. Be cautious with complex lists
 #' (i.e., many elements nested within each other) as it may be time-consuming to convert such lists into a data frame.
@@ -107,7 +107,7 @@ retrieve <- function(object, ...){
 #' @order 2
 #'
 #' @note
-#' If the object is from the \code{'PC_Properties'} class, the \code{.slot} definition will be omitted and all the requested properties will be retrieved from the \code{object}.
+#' If the object is from the \code{'PC_Properties'} class, the \code{.slot} can be defined as vector of length >1. In this case, the requested slot properties will be returned from \code{'PC_Properties'} object. If \code{.slot = NULL}, \code{retrieve()} will return all available properties. If \code{'object'} is of class other than \code{'PC_Properties'}, \code{.slot} should be length of 1.
 #'
 #'
 #' \subsection{Use of the \code{'.verbose'} argument}{
@@ -146,9 +146,19 @@ retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
     return(NULL)
   }
 
-  if (!("PC_Properties" %in% class(object)) & is.null(.slot)){
-    warning("Which slot do you want to return? '.slot' is not defined. Returning NULL.")
-    return(NULL)
+  if (is.null(.slot)){
+    if (!("PC_Properties" %in% class(object))){
+      warning("Which slot do you want to return? '.slot' is not defined. Returning NULL.")
+      return(NULL)
+    }
+  } else {
+    if (!("PC_Properties" %in% class(object))){
+      # .slot should be length of 1 except for "PC_Properties"
+      if (length(.slot) > 1){
+        warning("'.slot' should be length of 1. Only the first element of '.slot' is used.")
+        .slot <- .slot[1]
+      }
+    }
   }
 
   # Gather all the elements from selected slot. ----
@@ -157,7 +167,11 @@ retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
   } else if ("PC_Assay" %in% class(object)){
     object$result$PC_AssayContainer[[1]]$assay$descr[[.slot]]
   } else if ("PC_Properties" %in% class(object)){
-    object$result[[1]][[1]][[1]]
+    if (is.null(.slot)){
+      object$result[[1]][[1]][[1]]
+    } else {
+      object$result[[1]][[1]][[1]][.slot]
+    }
   }
 
   # Walk through next layer of slotContents list, if it is, until the last layer.
@@ -176,37 +190,44 @@ retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
   if (.to.data.frame){
     successDF <- try({
       if (!vectorSlot){
-        if (.slot == "props" & ("PC_Compounds" %in% class(object))){
-          slotContents <- lapply(slotContents, function(x){
-            as.data.frame(as.matrix(bind_cols(x)))
-          })
+        if ("PC_Compounds" %in% class(object)){
+          if (.slot == "props"){
+            slotContents <- lapply(slotContents, function(x){
+              as.data.frame(as.matrix(bind_cols(x)))
+            })
 
-          resDF <- slotContents[[1]]
-          for (i in 2:length(slotContents)){
-            resDF <- suppressMessages(full_join(resDF, slotContents[[i]])) %>%
-              as_tibble
+            resDF <- slotContents[[1]]
+            for (i in 2:length(slotContents)){
+              resDF <- suppressMessages(full_join(resDF, slotContents[[i]])) %>%
+                as_tibble
+            }
+          } else {
+            resDF <- bind_cols(slotContents)
           }
-        } else if (.slot == "xref" & ("PC_Assay" %in% class(object))){
-          resDF <- suppressMessages({
-            lapply(slotContents, function(x){
-              tibble(source = names(x[[.slot]])) %>%
+        } else if ("PC_Assay" %in% class(object)){
+          if (.slot == "xref"){
+            resDF <- suppressMessages({
+              lapply(slotContents, function(x){
+                tibble(source = names(x[[.slot]])) %>%
+                  bind_cols(x) %>%
+                  mutate_all(as.character)
+              }) %>%
+                bind_rows
+            })
+          } else if (.slot == "results"){
+            resDF <- suppressMessages({
+              lapply(slotContents, function(x){
                 bind_cols(x) %>%
-                mutate_all(as.character)
-            }) %>%
-              bind_rows
-          })
-
-        } else if (.slot == "results" & ("PC_Assay" %in% class(object))){
-          resDF <- suppressMessages({
-            lapply(slotContents, function(x){
-              bind_cols(x) %>%
-                mutate_all(as.character)
-            }) %>% bind_rows
-          })
-
+                  mutate_all(as.character)
+              }) %>% bind_rows
+            })
+          } else {
+            resDF <- bind_cols(slotContents)
+          }
         } else {
           resDF <- bind_cols(slotContents)
         }
+
       } else {
         slotNames <- names(slotContents)
 
@@ -224,8 +245,14 @@ retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
     })
   }
 
-  if (!.to.data.frame | inherits(successDF, "try-error")){
+  # Bind identifier info to returned list or data.frame
+  if (.to.data.frame & !inherits(successDF, "try-error")){
+    resDF <- tibble(Identifier = request_args(object, "identifier")) %>%
+      bind_cols(resDF)
+  } else {
     resDF <- slotContents
+    identifier <- list(Identifier = request_args(object, "identifier"))
+    resDF <- c(identifier, resDF)
   }
 
   # Some slots may have long texts including the protocol, description,
@@ -349,12 +376,6 @@ retrieve.PubChemInstanceList <- function(object, .which = NULL, .slot = NULL, .t
 
         if (inherits(success, "try-error")){
           return(NULL)
-        } else {
-          if (args$.to.data.frame){
-            tmp2 <- bind_cols(tibble(Identifier = x), tmp2)
-          } else {
-            tmp2 <- c(list(Identifier = x), tmp2)
-          }
         }
 
         return(tmp2)
