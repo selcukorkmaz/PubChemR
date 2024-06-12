@@ -11,13 +11,13 @@
 #' @return An object of class 'PubChemInstance_SIDs', which is a list containing information retrieved from the PubChem database. Substance IDs can be extracted from the returned object using the \link{SIDs} function.
 #'
 #' @examples
-#' compound <- get_sids(
-#'   identifier = c("aspirin", "caffeine"),
+#' result <- get_sids(
+#'   identifier = c("aspirin", "ibuprofen"),
 #'   namespace = "name"
 #' )
 #'
 #' # Extract substance IDs of all compounds
-#' SIDs(compound)
+#' SIDs(result)
 #'
 #' @export
 get_sids <- function(identifier, namespace = 'cid', domain = 'compound', searchtype = NULL, options = NULL) {

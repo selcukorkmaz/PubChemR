@@ -30,12 +30,12 @@ An object of class 'PubChemInstance_SIDs', which is a list containing informatio
 This function sends a request to PubChem to retrieve Substance IDs (SIDs) for a given identifier.
 }
 \examples{
-compound <- get_sids(
-  identifier = c("aspirin", "caffeine"),
+result <- get_sids(
+  identifier = c("aspirin", "ibuprofen"),
   namespace = "name"
 )
 
 # Extract substance IDs of all compounds
-SIDs(compound)
+SIDs(result)
 
 }
