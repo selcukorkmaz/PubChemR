@@ -448,7 +448,20 @@ retrieve.PC_Substance <- function(object, .slot = NULL, .idx = 1, .to.data.frame
     return(NULL)
   }
 
-  .idx <- ifelse(is.null(.idx), 1, .idx)
+  # .slot should be length of 1 except for "PC_Properties"
+  if (length(.slot) > 1){
+    warning("'.slot' should be length of 1. Only the first element of '.slot' is used.")
+    .slot <- .slot[1]
+  }
+
+  if (is.null(.idx)){
+    .idx <- 1
+  } else {
+    if (length(.idx) > 1){
+      warning("'.idx' should be length of 1. Only the first element of '.idx' is used.")
+      .idx <- .idx[1]
+    }
+  }
 
   slotContents <- if ("PC_Substance" %in% class(object)){
     object$result$PC_Substances[[.idx]][[.slot]]
@@ -488,18 +501,36 @@ retrieve.PC_Substance <- function(object, .slot = NULL, .idx = 1, .to.data.frame
         # the first column and values in the second column. Otherwise, a column tibbled_df will be
         # returned with values only.
         resDF <- if (is.null(slotNames)){
-          as_tibble_col(slotContents)
+          cName <- ifelse(is.null(.slot), "Value", .slot)
+          as_tibble_col(slotContents, column_name = cName)
         } else {
-          as_tibble_row(slotContents)
+          tibble(Name = slotNames, Value = slotContents)
         }
+
+        # slotNames <- names(slotContents)
+        #
+        # # If vector slot has names, it will be structured as two column tibble_df, with names in
+        # # the first column and values in the second column. Otherwise, a column tibbled_df will be
+        # # returned with values only.
+        # resDF <- if (is.null(slotNames)){
+        #   as_tibble_col(slotContents)
+        # } else {
+        #   as_tibble_row(slotContents)
+        # }
       }
 
       TRUE
     })
   }
 
-  if (!.to.data.frame | inherits(successDF, "try-error")){
+  # Bind identifier info to returned list or data.frame
+  if (.to.data.frame & !inherits(successDF, "try-error")){
+    resDF <- tibble(Identifier = request_args(object, "identifier")) %>%
+      bind_cols(resDF)
+  } else {
     resDF <- slotContents
+    identifier <- list(Identifier = request_args(object, "identifier"))
+    resDF <- c(identifier, resDF)
   }
 
   # Some slots may have long texts including the protocol, description,
