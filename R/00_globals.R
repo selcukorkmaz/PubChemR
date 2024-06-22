@@ -131,6 +131,10 @@ property_map <- function(x, type = c("match", "contain", "start", "end", "all"),
 
   type = match.arg(type)
 
+  if (type == "match"){
+    .ignore.case <- FALSE
+  }
+
   if (type != "all"){
     res <- sapply(x, function(xx){
       idx <- if (type == "start"){
@@ -237,6 +241,7 @@ find_last_layer <- function(x, ...) {
   # If not a list or single element list, return NULL
   return(x)
 }
+
 
 printSlotDetails <- function(x, ...){
   dots <- list(...)
