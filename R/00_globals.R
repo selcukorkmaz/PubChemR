@@ -299,18 +299,3 @@ printSectionDetails <- function(x, ...){
     }
   }
 }
-
-# Functions used globally in package tests (testthat) ----
-allSuccess <- function(object){
-  all(unlist(lapply(object$result, "[[", "success")))
-}
-
-testRequest <- function(object, ...){
-  test_that(paste0("pulling via '", request_args(object, "namespace"), "' is succesfull"), {
-    expect_true(allSuccess(object))
-  })
-
-  test_that("prints output to the R Console", {
-    expect_output(print(object))
-  })
-}

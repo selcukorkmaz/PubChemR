@@ -63,5 +63,19 @@ test_that("find_last_layer() returns the given input if it is not a list or does
 })
 
 
+# printSlotDetails() ----
+test_that("slot details successfully printed", {
+  pview <- get_pug_view(identifier = "1234", annotation = "data", domain = "compound")
+  expect_output(printSlotDetails(find_last_layer(pview$result)))
+  expect_output(printSlotDetails(find_last_layer(pview$result), pugViewSection = TRUE))
+})
 
+# printSectionDetails() ----
+test_that("section details successfully printed", {
+  pview <- get_pug_view(identifier = "1234", annotation = "data", domain = "compound")
+  sect <- section(pview, "S1")
 
+  expect_output(print(section(pview, "S1")))
+  expect_output(printSectionDetails(sect$result))
+  expect_output(printSectionDetails(section(sect)$result))
+})
