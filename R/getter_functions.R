@@ -842,13 +842,16 @@ CIDs.PubChemInstance_CIDs <- function(object, .to.data.frame = TRUE, ...){
   if (.to.data.frame){
     res <- lapply(tmp, function(x){
       xx <- suppressMessages({
-        if (request_args(x, "domain") == "compound"){
-          list(x$request_args$identifier, CID = x$result$IdentifierList$CID) %>%
-            bind_cols
+        CID_List <- if (request_args(x, "domain") == "compound"){
+          list(CID = x$result$IdentifierList$CID)
         } else if (request_args(x, "domain") %in% c("substance", "assay")){
-          list(x$request_args$identifier, CID = x$result$InformationList$Information[[1]]$CID) %>%
-            bind_cols
+          list(CID = x$result$InformationList$Information[[1]]$CID)
+        } else {
+          list(CID = x$result$IdentifierList$CID)
         }
+
+        c(list(x$request_args$identifier), CID_List) %>%
+          bind_cols
       })
       names(xx)[1] <- namespace_text(x$request_args$namespace)
       return(xx)
