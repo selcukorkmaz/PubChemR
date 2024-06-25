@@ -842,10 +842,14 @@ CIDs.PubChemInstance_CIDs <- function(object, .to.data.frame = TRUE, ...){
   if (.to.data.frame){
     res <- lapply(tmp, function(x){
       xx <- suppressMessages({
-        list(x$request_args$identifier, CID = x$result$IdentifierList$CID) %>%
-          bind_cols
+        if (request_args(x, "domain") == "compound"){
+          list(x$request_args$identifier, CID = x$result$IdentifierList$CID) %>%
+            bind_cols
+        } else if (request_args(x, "domain") %in% c("substance", "assay")){
+          list(x$request_args$identifier, CID = x$result$InformationList$Information[[1]]$CID) %>%
+            bind_cols
+        }
       })
-
       names(xx)[1] <- namespace_text(x$request_args$namespace)
       return(xx)
     }) %>%
@@ -857,7 +861,6 @@ CIDs.PubChemInstance_CIDs <- function(object, .to.data.frame = TRUE, ...){
 
   return(res)
 }
-
 #' @rdname AIDs-SIDs-CIDs
 #' @order 2
 #'
