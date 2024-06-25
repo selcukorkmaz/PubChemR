@@ -204,7 +204,7 @@ namespace_text <- function(x){
 #' @importFrom dplyr case_when
 domain_text <- function(x){
   txt <- case_when(
-    .default = "Domain-Specific",
+    .default = "DomainSpecific",
     x == "substance" ~ "Substance",
     x == "compound" ~ "Compound",
     x == "assay" ~ "Assay",
