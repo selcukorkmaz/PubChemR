@@ -891,7 +891,9 @@ SIDs.PubChemInstance_SIDs <- function(object, .to.data.frame = TRUE, ...){
   if (.to.data.frame){
     res <- lapply(tmp, function(x){
       xx <- suppressMessages({
-        list(x$request_args$identifier, SID = x$result$InformationList$Information[[1]]$SID) %>%
+        SID_List <- list(SID = x$result$InformationList$Information[[1]]$SID)
+
+        c(list(x$request_args$identifier), SID_List) %>%
           bind_cols
       })
 
