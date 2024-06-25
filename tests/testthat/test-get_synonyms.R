@@ -5,6 +5,7 @@ syns <- get_synonyms(
 )
 testRequest(syns)
 
+# synonyms() test ----
 test_that("synonyms returns list or data.frame correctly", {
   expect_true({
     tmp <- synonyms(syns, .to.data.frame = TRUE)
@@ -24,6 +25,7 @@ test_that("synonyms returns list or data.frame correctly", {
   })
 })
 
+# instance(), retrieve() tests ----
 test_that("instance()/retrieve() returns error for 'get_synonyms()'", {
   expect_error(instance(syns))
   expect_error(retrieve(syns))

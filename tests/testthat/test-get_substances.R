@@ -5,6 +5,7 @@ subs <- get_substances(
 
 testRequest(subs)
 
+# instance() tests ----
 test_that("instance() is succesfull.", {
   expect_output(print(instance(subs, "aspirin")), "Substance Data from PubChem Database")
   expect_error(instance(subs, .which = "unknown_instance"))
@@ -29,6 +30,7 @@ test_that("incorrect/undefined substance identifier returns error", {
   expect_true(all(!is.null(tmp$result[[1]]$error), is.list(tmp$result[[1]]$error)))
 })
 
+# retrieve() tests ----
 test_that("'.verbose' works as expected", {
   expect_invisible(retrieve(instance(subs, "aspirin"), .slot = "comment", .to.data.frame = TRUE, .verbose = TRUE))
   expect_visible(retrieve(instance(subs, "aspirin"), .slot = "comment", .to.data.frame = TRUE, .verbose = FALSE))
