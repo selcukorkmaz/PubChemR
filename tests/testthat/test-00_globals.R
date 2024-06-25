@@ -26,8 +26,8 @@ test_that("returns NULL when no match found.", {
 # namespace_text() ----
 test_that("namespace_text() returns properly", {
   expect_no_error(namespace_text(x = "aid"))
-  expect_equal(namespace_text(x = "aid"), "Assay ID")
-  expect_equal(namespace_text(x = "some_text"), "Domain-Specific")
+  expect_equal(namespace_text(x = "aid"), "AID")
+  expect_equal(namespace_text(x = "some_text"), "DomainSpecific")
 })
 
 test_that("namespace_text() returns error if 'x' is missing", {
@@ -38,7 +38,7 @@ test_that("namespace_text() returns error if 'x' is missing", {
 test_that("domain_text() returns properly", {
   expect_no_error(domain_text(x = "substance"))
   expect_equal(domain_text(x = "substance"), "Substance")
-  expect_equal(domain_text(x = "some_text"), "Domain-Specific")
+  expect_equal(domain_text(x = "some_text"), "DomainSpecific")
 })
 
 test_that("namespace_text() returns error if 'x' is missing", {
