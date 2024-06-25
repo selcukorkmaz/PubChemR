@@ -182,7 +182,7 @@ retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
       return(NULL)
     }
   } else {
-    # .slot should be length of 1 except for "PC_Properties"
+    # .slot should be length of 1.
     if (length(.slot) > 1){
       warning("'.slot' should be length of 1. Only the first element of '.slot' is used.")
       .slot <- .slot[1]
@@ -443,7 +443,7 @@ retrieve.PC_Substance <- function(object, .slot = NULL, .idx = 1, .to.data.frame
     return(NULL)
   }
 
-  if (!("PC_Substance" %in% class(object)) & is.null(.slot)){
+  if (is.null(.slot)){
     warning("Which slot do you want to return? '.slot' is not defined. Returning NULL.")
     return(NULL)
   }
@@ -864,6 +864,7 @@ CIDs.PubChemInstance_CIDs <- function(object, .to.data.frame = TRUE, ...){
 
   return(res)
 }
+
 #' @rdname AIDs-SIDs-CIDs
 #' @order 2
 #'
