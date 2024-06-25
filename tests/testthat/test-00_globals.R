@@ -1,3 +1,18 @@
+# request_args() ----
+test_that("request_args() works properly", {
+  compound <- get_compounds(
+    identifier = "aspirin",
+    namespace = "name"
+  )
+
+  expect_equal(request_args(compound, .which = "namespace"), "name")
+  expect_true({
+    is.list(request_args(compound))
+  })
+
+  expect_null(request_args(compound, "some_args"))
+})
+
 # property_map() ----
 test_that("returns error if 'x' is missing", {
   expect_error(property_map())
@@ -61,7 +76,6 @@ test_that("find_last_layer() returns the given input if it is not a list or does
   tmp <- list(list(one = 1, two = 2))
   expect_identical(find_last_layer(tmp), tmp[[1]])
 })
-
 
 # printSlotDetails() ----
 test_that("slot details successfully printed", {
