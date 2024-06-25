@@ -891,6 +891,8 @@ SIDs.PubChemInstance_SIDs <- function(object, .to.data.frame = TRUE, ...){
   if (.to.data.frame){
     res <- lapply(tmp, function(x){
       xx <- suppressMessages({
+        # Modify the SID_List extraction if returned list has different structure for
+        # different domains.
         SID_List <- list(SID = x$result$InformationList$Information[[1]]$SID)
 
         c(list(x$request_args$identifier), SID_List) %>%
