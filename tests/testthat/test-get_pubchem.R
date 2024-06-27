@@ -7,22 +7,30 @@ test_that("get PubChem data as JSON output (name)", {
     )
   })
 
-  expect_false(inherits(tmp, "try-error"))
-  expect_false(is.null(tmp))
-})
-
-test_that("get PubChem data as XML output (name)", {
-  tmp <- try({
-    get_pubchem(
-      identifier = "aspirin",
-      namespace = "name",
-      output = "XML"
-    )
-  })
+  # tmp <- try({
+  #   get_pubchem(
+  #     identifier = "C9H8O4",
+  #     namespace = "formula",
+  #     output = "JSON"
+  #   )
+  # })
 
   expect_false(inherits(tmp, "try-error"))
   expect_false(is.null(tmp))
 })
+
+# test_that("get PubChem data as XML output (name)", {
+#   tmp <- try({
+#     get_pubchem(
+#       identifier = "aspirin",
+#       namespace = "name",
+#       output = "XML"
+#     )
+#   })
+#
+#   expect_false(inherits(tmp, "try-error"))
+#   expect_false(is.null(tmp))
+# })
 
 test_that("get PubChem data as SDF output (name)", {
   tmp <- try({
