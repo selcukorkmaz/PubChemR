@@ -73,41 +73,24 @@ The `get_pug_rest` function in the `PubChemR` package provides a versatile inter
 
 The input part of a PUG REST request specifies the records of interest. There are several ways to define this input, with the most common methods detailed below:
 
-**1. By Identifier:** Directly specify SIDs or CIDs. For example, to get the names of a substance with SID 10000 in JSON format:
+**1. By Identifier:** Directly specify SIDs or CIDs. For example, to get the names of a substance with SID 10000 in XML format:
 
 ```{r}
-res1 <- get_pug_rest(identifier = "10000", namespace = "cid", domain = "compound", operation = "synonyms")
-res2 <- get_synonyms(identifier = "10000", namespace = "cid", domain = "compound")
-identical(synonyms(res1), synonyms(res2))
-
+result <- get_pug_rest(identifier = "10000", namespace = "sid", domain = "substance", operation = "synonyms")
 ```
 
 ```{r}
-res1
-
-# Return synonyms data as a "data.frame"
-synonyms(res1)
-```
-
-Multiple identifiers is not allowed. In such cases, only the first element in `identifier` will be considered. Please see `get_properties()` for requesting multiple identifiers form PubChem Database. For example:
-
-```{r}
-result <- get_pug_rest(identifier = c("1", "2"), namespace = "cid", domain = "compound", 
-                       property = c("MolecularFormula","MolecularWeight","CanonicalSMILES"), output = "JSON")
-
 result
 ```
 
-Above example is identical to the output from `get_properties()` as described below:
+For multiple IDs, a comma-separated list can be used. For instance, to retrieve a CSV table of compound properties:
 
 ```{r}
-res2 <- get_properties(
-  properties = c("MolecularFormula","MolecularWeight","CanonicalSMILES"),
-  identifier = "1",
-  namespace = "cid"
-)
+result <- get_pug_rest(identifier = "1,2,3,4,5", namespace = "cid", domain = "compound", property = c("MolecularFormula","MolecularWeight","CanonicalSMILES"), output = "CSV")
+```
 
-identical(retrieve(instance(res2)), retrieve(result))
+```{r}
+result
 ```
 
 **2. By Name:** Referring to a chemical by its common name. Note that a name may refer to multiple records. For example, to get CIDs for "glucose":
