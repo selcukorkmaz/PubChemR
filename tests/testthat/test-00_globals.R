@@ -53,7 +53,7 @@ test_that("namespace_text() returns error if 'x' is missing", {
 test_that("domain_text() returns properly", {
   expect_no_error(domain_text(x = "substance"))
   expect_equal(domain_text(x = "substance"), "Substance")
-  expect_equal(domain_text(x = "some_text"), "DomainSpecific")
+  expect_equal(domain_text(x = "some_text"), "DomainSpecific (some_text)")
 })
 
 test_that("namespace_text() returns error if 'x' is missing", {

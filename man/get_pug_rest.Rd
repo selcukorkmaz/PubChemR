@@ -60,6 +60,6 @@ This function sends a request to the PubChem PUG REST API to retrieve various ty
 for a given identifier. It supports fetching data in different formats and allows saving the output.
 }
 \examples{
-  get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", output = "JSON")
+result <- get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", output = "JSON")
 
 }

@@ -25,7 +25,7 @@
 #'         PNG format returns an image object or saves an image file.
 #'
 #' @examples
-#'   get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", output = "JSON")
+#' result <- get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", output = "JSON")
 #'
 #' @importFrom httr GET RETRY
 #' @importFrom RJSONIO fromJSON
@@ -33,6 +33,7 @@
 #' @importFrom png readPNG writePNG
 #' @importFrom RCurl getURLContent curlEscape
 #' @importFrom utils read.csv write.csv read.table write.table
+#' @importFrom stringr str_split
 #'
 #' @export
 get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compound',
@@ -41,7 +42,7 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
 
   # Create empty Pug View structure to be used when error returns.
   createPugRestObject <- function(success = TRUE, error = NULL, result = list(),
-                                  request_args = list(), subclasses = NULL, ...){
+                                  request_args = list(), ...){
     dots <- list(...)
 
     tmp <- list(
@@ -57,7 +58,7 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
 
     structure(
       tmp,
-      class = c("PugRestInstance", subclasses)
+      class = "PugRestInstance"
     )
   }
 
@@ -221,14 +222,12 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
         }
       }
 
-      PugREST_List <- createPugRestObject(success = TRUE, subclasses = sub_classes,
-                                          request_args = call_args,
+      PugREST_List <- createPugRestObject(success = TRUE, request_args = call_args,
                                           result = content)
 
     } else {
       error_message <- fromJSON(rawToChar(response$content))[["Fault"]]
       PugREST_List <- createPugRestObject(success = FALSE, error = lapply(error_message, "[", 1),
-                                          subclasses = sub_classes,
                                           request_args = call_args)
     }
 
