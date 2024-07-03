@@ -34,7 +34,7 @@ print.PubChemInstance <- function(x, ...){
 
   # Print extra information for 'PugRestInstance' class
   if ("PugRestInstance" %in% class(x)){
-    cat("  - Operation: ", request_args(x, "operation"), sep = "", "\n")
+    cat("  - Operation: ", ifelse(is.null(request_args(x, "operation")), "<NULL>", request_args(x, "operation")), sep = "", "\n")
   }
 
   identifiers <- request_args(x, "identifier")

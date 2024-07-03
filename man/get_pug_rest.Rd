@@ -15,7 +15,9 @@ get_pug_rest(
   options = NULL,
   saveFile = FALSE,
   saveImage = FALSE,
-  dpi = 300
+  dpi = 300,
+  path = NULL,
+  ...
 )
 }
 \arguments{
@@ -27,7 +29,7 @@ get_pug_rest(
 
 \item{operation}{An optional character string specifying the operation for the request.}
 
-\item{output}{A character string specifying the output format. Possible values are 'JSON', 'JSONP', 'CSV', 'TXT', and 'PNG'. Default is 'JSON'.}
+\item{output}{A character string specifying the output format. Possible values are 'SDF', 'JSON', 'JSONP', 'CSV', 'TXT', and 'PNG'. Default is 'JSON'.}
 
 \item{searchtype}{An optional character string specifying the search type.}
 
@@ -40,12 +42,17 @@ get_pug_rest(
 \item{saveImage}{A logical value indicating whether to save the output as an image. Default is FALSE.}
 
 \item{dpi}{An integer specifying the DPI for image output. Default is 300.}
+
+\item{path}{description}
+
+\item{...}{description}
 }
 \value{
 Depending on the output format, this function returns different types of content:
         JSON or JSONP format returns parsed JSON content.
         CSV format returns a data frame.
         TXT format returns a table.
+        SDF returns SDF file of requested identifier.
         PNG format returns an image object or saves an image file.
 }
 \description{

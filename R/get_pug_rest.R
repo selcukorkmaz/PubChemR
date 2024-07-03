@@ -38,18 +38,21 @@
 
 
 
-identifier = "10000"
+identifier = "1"
 namespace = "cid"
 domain = "compound"
-operation = "synonyms"
-output = 'JSON'
+property = c("MolecularFormula","MolecularWeight","CanonicalSMILES")
+# property = NULL
+operation = NULL
+output = 'CSV'
 searchtype = NULL
-property = NULL
 options = NULL
 saveFile = FALSE
 saveImage = FALSE
 dpi = 300
 path = NULL
+
+
 
 
 get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compound',
@@ -78,13 +81,22 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
     )
   }
 
+  # Add identifier to the URL if provided
+  if (!is.null(identifier)) {
+    # PUG-REST does not support multiple identifiers in a single request
+    if (length(identifier) > 1) {
+      warning(paste0("One identifier is allowed per request. Only the first element in 'identifier' (i.e., ", identifier[1], ") is used."))
+      identifier <- identifier[1]
+    }
+  }
+
   # dots <- list(...)
   call_args <- list(identifier = identifier, namespace = namespace, domain = domain,
                     operation = operation, output = output, searchtype = searchtype,
                     property = property, options = options, saveFile = saveFile,
                     saveImage = saveImage, dpi = dpi, path = path)
 
-  if(!is.null(output)){
+  if (!is.null(output)){
     output = toupper(output)
   } else {
     stop("output argument cannot be NULL.")
@@ -106,10 +118,12 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
 
   # Define subclass of the request
   sub_classes <- NULL
-  if (operation == "synonyms"){
-    sub_classes <- c("PubChemInstance_Synonyms")
-  } else {
-
+  if (output == "JSON"){
+    if (!is.null(operation) && operation == "synonyms"){
+      sub_classes <- c("PubChemInstance_Synonyms")
+    } else if (!is.null(property)) {
+      sub_classes <- c("PubChemInstance", "PC_Properties")
+    }
   }
 
   # Construct the base URL for PUG REST
@@ -127,9 +141,9 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
   # Add identifier to the URL if provided
   if (!is.null(identifier)) {
     identifier <- toupper(identifier)
-    if (length(identifier)>1){
-      identifier = paste0(identifier, collapse = ",")
-    }
+    # if (length(identifier) > 1){
+    #   identifier = paste0(identifier, collapse = ",")
+    # }
 
     apiurl <- paste0(apiurl, identifier, "/")
   }
@@ -241,11 +255,11 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
       }
 
       result_list <- if ("PubChemInstance_Synonyms" %in% sub_classes){
-        list(
-          list(result = content, success = TRUE, request_args = call_args, error = NULL)
-        )
+        list(list(result = content, success = TRUE, request_args = call_args, error = NULL))
+      } else if ("PC_Properties" %in% sub_classes) {
+        content
       } else {
-
+        content
       }
 
       PugREST_List <- createPugRestObject(success = TRUE, subclasses = sub_classes,
