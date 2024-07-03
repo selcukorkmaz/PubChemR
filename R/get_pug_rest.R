@@ -7,18 +7,21 @@
 #' @param namespace A character string specifying the namespace for the request. Default is 'cid'.
 #' @param domain A character string specifying the domain for the request. Default is 'compound'.
 #' @param operation An optional character string specifying the operation for the request.
-#' @param output A character string specifying the output format. Possible values are 'JSON', 'JSONP', 'CSV', 'TXT', and 'PNG'. Default is 'JSON'.
+#' @param output A character string specifying the output format. Possible values are 'SDF', 'JSON', 'JSONP', 'CSV', 'TXT', and 'PNG'. Default is 'JSON'.
 #' @param searchtype An optional character string specifying the search type.
 #' @param property An optional character string specifying the property for the request.
 #' @param options A list of additional options for the request.
 #' @param saveFile A logical value indicating whether to save the output as a file. Default is FALSE.
 #' @param saveImage A logical value indicating whether to save the output as an image. Default is FALSE.
 #' @param dpi An integer specifying the DPI for image output. Default is 300.
+#' @param path description
+#' @param ... description
 #'
 #' @return Depending on the output format, this function returns different types of content:
 #'         JSON or JSONP format returns parsed JSON content.
 #'         CSV format returns a data frame.
 #'         TXT format returns a table.
+#'         SDF returns SDF file of requested identifier.
 #'         PNG format returns an image object or saves an image file.
 #'
 #' @examples
@@ -32,19 +35,37 @@
 #' @importFrom utils read.csv write.csv read.table write.table
 #'
 #' @export
+
+
+
+identifier = "10000"
+namespace = "cid"
+domain = "compound"
+operation = "synonyms"
+output = 'JSON'
+searchtype = NULL
+property = NULL
+options = NULL
+saveFile = FALSE
+saveImage = FALSE
+dpi = 300
+path = NULL
+
+
 get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compound',
                          operation = NULL, output = 'JSON', searchtype = NULL, property = NULL, options = NULL,
-                         saveFile = FALSE, saveImage = FALSE, dpi = 300) {
+                         saveFile = FALSE, saveImage = FALSE, dpi = 300, path = NULL, ...) {
 
   # Create empty Pug View structure to be used when error returns.
-  createPugRestObject <- function(error = FALSE, result = list(), request_args = list(), subclass = NULL, ...){
+  createPugRestObject <- function(success = TRUE, error = NULL, result = list(),
+                                  request_args = list(), subclasses = NULL, ...){
     dots <- list(...)
 
     tmp <- list(
       result = result,
       request_args = request_args,
-      success = !error,
-      error = NULL
+      success = success,
+      error = error
     )
 
     if (length(dots) > 0){
@@ -53,14 +74,42 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
 
     structure(
       tmp,
-      class = c("PugViewInstance", subclass)
+      class = c("PugRestInstance", subclasses)
     )
   }
+
+  # dots <- list(...)
+  call_args <- list(identifier = identifier, namespace = namespace, domain = domain,
+                    operation = operation, output = output, searchtype = searchtype,
+                    property = property, options = options, saveFile = saveFile,
+                    saveImage = saveImage, dpi = dpi, path = path)
 
   if(!is.null(output)){
     output = toupper(output)
   } else {
     stop("output argument cannot be NULL.")
+  }
+
+  if (is.null(path)){
+    path <- tempdir(check = TRUE)
+  } else {
+    # Check if given path exists or successfully created
+    if (!dir.exists(path)){
+      try(dir.create(path, recursive = TRUE, showWarnings = FALSE))
+
+      if (!dir.exists(path)){
+        path <- tempdir(check = TRUE)
+        warning(paste0("Cannot create given 'path'. Saving into temporary path '", path, "'"))
+      }
+    }
+  }
+
+  # Define subclass of the request
+  sub_classes <- NULL
+  if (operation == "synonyms"){
+    sub_classes <- c("PubChemInstance_Synonyms")
+  } else {
+
   }
 
   # Construct the base URL for PUG REST
@@ -118,12 +167,12 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
 
   if (output == "SDF"){
     if (url.exists(apiurl)) {
-      # Write the content to a file in SDF format in the current working directory
-      path = paste0(domain, "_", identifier, ".", output)
-      download.file(apiurl, path)
-      message("  SDF file to save --> '", path, "'", sep = "", "\n")
+      # Write the content to a file in SDF format in the given 'path'
+      file_name = paste0(domain, "_", identifier, ".", output)
+      download.file(apiurl, file.path(path, file_name))
+      message("  SDF file saved to --> '", path, "'", sep = "", "\n")
     } else {
-      message("Received no content to write to the SDF file.")
+      message("Received no content to write SDF file.")
     }
   } else {
     # Make the HTTP GET request and return the response
@@ -134,7 +183,7 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
       if (output == "CSV"){
         content <- read.csv(response$url)
         if (saveFile){
-          write.csv(content, file = paste0(domain, "_", identifier, ".", output), row.names = FALSE)
+          write.csv(content, file = file.path(path, paste0(domain, "_", identifier, ".", output)), row.names = FALSE)
         }
       }
 
@@ -166,11 +215,13 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
         content <- fromJSON(savedContent)
       }
 
+      # Fetch PNG image from PubChem
       if (!is.null(output) && output == "PNG"){
         str = readPNG(getURLContent(apiurl))
 
         if (saveImage){
-          writePNG(str, target = paste0(identifier, ".", output), dpi = dpi)
+          writePNG(str, target = file.path(path, paste0(identifier, ".", output)), dpi = dpi)
+          message('File has been saved to ', file.path(path, paste0(identifier, ".png")))
         }
 
         print(image_read(str))
@@ -182,18 +233,32 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
 
       if (saveFile){
         if (output == "TXT"){
-        } else if(output == "JSON"){
+          write.table(content, file = file.path(path, paste0(domain, "_", identifier, ".txt")),
+                      sep = "\t", quote = FALSE, row.names = FALSE, fileEncoding = "UTF-8")
+        } else if (output == "JSON"){
           write(savedContent, file = paste0(domain, "_", identifier, ".", output))
         }
       }
 
-      if (output == "PNG"){
-        message('File has been saved as ', paste0(identifier, ".png"))
+      result_list <- if ("PubChemInstance_Synonyms" %in% sub_classes){
+        list(
+          list(result = content, success = TRUE, request_args = call_args, error = NULL)
+        )
       } else {
-        invisible(content)
+
       }
+
+      PugREST_List <- createPugRestObject(success = TRUE, subclasses = sub_classes,
+                                          request_args = call_args,
+                                          result = result_list)
+
     } else {
-      stop(content(response, "text", encoding = "UTF-8"))
+      error_message <- fromJSON(rawToChar(response$content))[["Fault"]]
+      PugREST_List <- createPugRestObject(success = FALSE, error = lapply(error_message, "[", 1),
+                                          subclasses = sub_classes,
+                                          request_args = call_args)
     }
+
+    return(PugREST_List)
   }
 }

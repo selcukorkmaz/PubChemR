@@ -73,7 +73,7 @@ The `get_pug_rest` function in the `PubChemR` package provides a versatile inter
 
 The input part of a PUG REST request specifies the records of interest. There are several ways to define this input, with the most common methods detailed below:
 
-**1. By Identifier:** Directly specify SIDs or CIDs. For example, to get the names of a substance with SID 10000 in XML format:
+**1. By Identifier:** Directly specify SIDs or CIDs. For example, to get the names of a substance with SID 10000 in JSON format:
 
 ```{r}
 result <- get_pug_rest(identifier = "10000", namespace = "sid", domain = "substance", operation = "synonyms")

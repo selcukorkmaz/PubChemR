@@ -32,6 +32,11 @@ print.PubChemInstance <- function(x, ...){
   cat("  - Domain: ", domain_text(request_args(x, "domain")), sep = "", "\n")
   cat("  - Namespace: ", namespace_text(request_args(x, "namespace")), sep = "", "\n")
 
+  # Print extra information for 'PugRestInstance' class
+  if ("PugRestInstance" %in% class(x)){
+    cat("  - Operation: ", request_args(x, "operation"), sep = "", "\n")
+  }
+
   identifiers <- request_args(x, "identifier")
   nIdentifiers <- length(identifiers)
   suffix_identifiers <- ""
@@ -214,6 +219,11 @@ print.PubChemInstance_Synonyms <- function(x, ...){
   cat(" Request Details: ", "\n")
   cat("  - Domain: ", domain_text(x$request_args$domain), sep = "", "\n")
   cat("  - Namespace: ", namespace_text(x$request_args$namespace), sep = "", "\n")
+
+  # Print extra information for 'PugRestInstance' class
+  if ("PugRestInstance" %in% class(x)){
+    cat("  - Operation: ", request_args(x, "operation"), sep = "", "\n")
+  }
 
   identifiers <- x$request_args$identifier
   nIdentifiers <- length(identifiers)
