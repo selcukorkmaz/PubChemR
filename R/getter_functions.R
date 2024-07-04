@@ -1325,3 +1325,34 @@ sectionList.PugViewSection <- function(object, .pattern = NULL, .match_type = c(
   return(resDF)
 }
 
+
+# pubChemData ----
+#' @title Retrieve Raw Data from PUG REST Object
+#'
+#' @description
+#' A short description...
+#'
+#' @param object an object of class 'PugRestInstance' returned from \link{get_pug_rest} function.
+#' @param ... additional arguments. Currently has no effect on results.
+#'
+#' @name pubChemData
+#' @rdname pubChemData
+#'
+#' @seealso \link{get_pug_rest}
+#'
+#' @return a vector, list, or data.frame containing the raw data retrieved from Pub Chem database through PUG REST API.
+#'
+#' @examples
+#' 1L
+#'
+#' @export
+pubChemData <- function(object, ...){
+  UseMethod("pubChemData")
+}
+
+#' @rdname pubChemData
+#'
+#' @export
+pubChemData.PugRestInstance <- function(object, ...){
+  object[["result"]]
+}

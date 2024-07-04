@@ -300,6 +300,34 @@ printSectionDetails <- function(x, ...){
   }
 }
 
+# Calculate the size of a given file or object
+#' @importFrom utils object.size
+#' @importFrom dplyr case_when
+calculateObjectSize <- function(f = NULL, digits = 2, ...){
+  tmp <- as.numeric(file.size(f))
+
+  unit <- case_when(
+    .default = "Bytes",
+    (tmp >= 1024 & tmp < 1024 ** 2) ~ "KB",
+    (tmp >= 1024 ** 2 & tmp < 1024 ** 3) ~ "MB",
+    (tmp >= 1024 ** 3 & tmp < 1024 ** 4) ~ "GB",
+    tmp >= 1024 ** 4 ~ "PB",
+  )
+
+  size <- case_when(
+    .default = tmp,
+    unit == "KB" ~ tmp / 1024,
+    unit == "MB" ~ tmp / (1024 ** 2),
+    unit == "GB" ~ tmp / (1024 ** 3),
+    unit == "PB" ~ tmp / (1024 ** 4)
+  )
+
+  if (is.na(size)){
+    size <- 0
+  }
+  return(list(size = round(size, digits), unit = unit))
+}
+
 # Functions used globally in package tests (testthat) ----
 # allSuccess <- function(object){
 #   all(unlist(lapply(object$result, "[[", "success")))

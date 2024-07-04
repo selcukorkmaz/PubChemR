@@ -55,7 +55,7 @@ PUG REST, standing for Power User Gateway RESTful interface, is a simplified acc
 ### 2.1. Key Features of PUG REST:
 
 * **Flexibility and Combinatorial Use:** PUG REST allows a wide range of combinations of inputs, operations, and outputs, enabling users to create customized requests.
-* **Support for Various Formats:** It supports multiple output formats, including XML, JSON, CSV, PNG, and plain text, catering to different application needs.
+* **Support for Various Formats:** It supports multiple output formats, including JSON, CSV, PNG, and TXT, catering to different application needs.
 * **RESTful Design:** The service is based on HTTP requests with details encoded in the URL path, making it RESTful and user-friendly.
 
 **Usage Policy:**
@@ -73,82 +73,65 @@ The `get_pug_rest` function in the `PubChemR` package provides a versatile inter
 
 The input part of a PUG REST request specifies the records of interest. There are several ways to define this input, with the most common methods detailed below:
 
-**1. By Identifier:** Directly specify SIDs or CIDs. For example, to get the names of a substance with SID 10000 in XML format:
+**1. By Identifier:** Directly specify SIDs or CIDs. For example, to get the names of a substance with SID 10000 in JSON format:
 
 ```{r}
-result <- get_pug_rest(identifier = "10000", namespace = "sid", domain = "substance", operation = "synonyms")
-```
-
-```{r}
+result <- get_pug_rest(identifier = "10000", namespace = "sid", domain = "substance", operation = "synonyms", output = "JSON")
 result
 ```
 
 For multiple IDs, a comma-separated list can be used. For instance, to retrieve a CSV table of compound properties:
 
 ```{r}
-result <- get_pug_rest(identifier = "1,2,3,4,5", namespace = "cid", domain = "compound", property = c("MolecularFormula","MolecularWeight","CanonicalSMILES"), output = "CSV")
-```
-
-```{r}
+result <- get_pug_rest(identifier = c("1","2","3","4","5"), namespace = "cid", domain = "compound", property = c("MolecularFormula","MolecularWeight","CanonicalSMILES"), output = "CSV")
 result
 ```
+
 
 **2. By Name:** Referring to a chemical by its common name. Note that a name may refer to multiple records. For example, to get CIDs for "glucose":
 
 ```{r}
 result <- get_pug_rest(identifier = "glucose", namespace = "name", domain = "compound", operation = "cids", output = "TXT")
-```
-
-```{r}
 result
 ```
+
 
 **3. By Structure Identity:** Using SMILES or InChI key to specify a compound. For example, to get the CID for the SMILES string "CCCC" (butane):
 
 ```{r}
 result <- get_pug_rest(identifier = "CCCC", namespace = "smiles", domain = "compound", operation = "cids", output = "TXT")
-```
-
-```{r}
 result
 ```
+
 
 **4. By Structure Search:** More sophisticated searches like substructure or similarity searches. These may require asynchronous operations due to the time taken to search the database.
 
 ```{r, eval=FALSE}
-result <- get_pug_rest(identifier = "C1CCCCCC1", namespace = "smiles", domain = "compound",  output = "XML", searchtype = "substructure")
-```
-
-```{r}
+result <- get_pug_rest(identifier = "C1CCCCCC1", namespace = "smiles", domain = "compound", searchtype = "substructure", output = "JSON")
 result
 ```
 
 **5. By Fast (Synchronous) Structure Search:** Faster searches by identity, similarity, substructure, and superstructure that usually return results in a single call. For example, to search by fast identity:
 
 ```{r}
-result <- get_pug_rest(identifier = "5793", namespace = "cid", domain = "compound", operation = "cids", output = "TXT", searchtype = "fastidentity", options = list("identity_type = same_connectivity"))
-```
-
-```{r}
+result <- get_pug_rest(identifier = "5793", namespace = "cid", domain = "compound", operation = "cids", searchtype = "fastidentity", options = list("identity_type = same_connectivity"), output = "JSON")
 result
 ```
+
 
 **6. By Cross-Reference (XRef):** Reverse lookup by cross-reference value. For example, to find all SIDs linked to a specific patent identifier:
 
 ```{r}
 result <- get_pug_rest(identifier = "US20050159403A1", namespace = "xref/PatentID", domain = "substance", operation = "sids", output = "JSON")
-
-```
-
-```{r}
 result
 ```
+
 
 ### 3.2. Available Data
 
 Once you've specified the records of interest in PUG REST, the next step is to define what information you want to retrieve about these records. PUG REST excels in providing access to specific data points about each record, such as individual properties or cross-references, without the need to download and sift through large datasets.
 
-**1. Full Records:** PUG REST allows the retrieval of entire records in various formats like ASN.1, XML, SDF, and JSON(P). For example, to retrieve the record for aspirin (CID 2244) in SDF format:
+**1. Full Records:** PUG REST allows the retrieval of entire records in various formats like JSON, CSV, TXT, SDF, and PNG. For example, to retrieve the record for aspirin (CID 2244) in SDF format:
 
 ```{r, eval=FALSE}
 get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", output = "SDF")
@@ -166,52 +149,44 @@ get_pug_rest(identifier = "lipitor", namespace = "name", domain = "compound", ou
 
 ```{r}
 result <- get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", property = "MolecularWeight", output = "TXT")
-```
-
-```{r}
 result
 ```
+
 
 Or to retrieve a CSV table of multiple compounds and properties:
 
 ```{r}
 result <- get_pug_rest(identifier = "1,2,3,4,5", namespace = "cid", domain = "compound", property = c("MolecularWeight", "MolecularFormula", "HBondDonorCount", "HBondAcceptorCount", "InChIKey", "InChI"), output = "CSV")
-```
-
-```{r}
 result
+
+pubChemData(result)
 ```
 
 
 **4. Synonyms:** To view all synonyms of a compound, such as Vioxx:
 
 ```{r}
-result <- get_pug_rest(identifier = "vioxx", namespace = "name", domain = "compound", operation = "synonyms", output = "XML")
-```
-
-```{r}
+result <- get_pug_rest(identifier = "vioxx", namespace = "name", domain = "compound", operation = "synonyms", output = "JSON")
 result
 ```
+
 
 **5. Cross-References (XRefs):** PUG REST provides access to various cross-references. For example, to retrieve MMDB identifiers for protein structures containing aspirin:
 
 ```{r}
-result <- get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", operation = c("xrefs","MMDBID"), output = "XML")
-```
-
-```{r}
+result <- get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", operation = c("xrefs","MMDBID"), output = "JSON")
 result
 ```
+
+
 
 Or to find all patent identifiers associated with a given SID:
 
 ```{r}
 result <- get_pug_rest(identifier = "137349406", namespace = "sid", domain = "substance", operation = c("xrefs","PatentID"), output = "TXT")
-```
-
-```{r}
 result
 ```
+
 
 These examples illustrate the versatility of PUG REST in fetching specific data efficiently. It's an ideal tool for users who need quick access to particular pieces of information from the vast PubChem database without the overhead of processing bulk data.
 
@@ -223,55 +198,70 @@ PubChem BioAssays are complex entities containing a wealth of data. PUG REST pro
 **1. Assay Description:** To obtain the description section of a BioAssay, which includes authorship, general description, protocol, and data readout definitions, use a request like:
 
 ```{r}
-result <- get_pug_rest(identifier = "504526", namespace = "aid", domain = "assay", operation = "description", output = "XML")
+result <- get_pug_rest(identifier = "504526", namespace = "aid", domain = "assay", operation = "description", output = "JSON")
+result
 ```
 
 For a simplified summary format that includes target information, active and inactive SID and CID counts:
 
 ```{r}
 result <- get_pug_rest(identifier = "1000", namespace = "aid", domain = "assay", operation = "summary", output = "JSON")
+result
 ```
+
 
 **2. Assay Data:** To retrieve the entire data set of an assay in CSV format:
 
 ```{r}
 result <- get_pug_rest(identifier = "504526", namespace = "aid", domain = "assay", output = "CSV")
+result
 ```
 
 For a subset of data rows, specify the SIDs:
 
 ```{r}
-result <- get_pug_rest(identifier = "504526", namespace = "aid", domain = "assay", operation = "XML?sid=104169547,109967232", output = "XML")
+result <- get_pug_rest(identifier = "504526", namespace = "aid", domain = "assay", operation = "JSON?sid=104169547,109967232",  output = "JSON")
+result
 ```
 
 For concise data (e.g., active concentration readout) with additional information:
 
 ```{r}
-result <- get_pug_rest(identifier = "504526", namespace = "aid", domain = "assay", operation = "concise", output = "JSON")
+result <- get_pug_rest(identifier = "504526", namespace = "aid", domain = "assay", operation = "concise", output = "CSV")
+result
+```
+
+```{r}
+result <- get_assays(identifier = "504526", namespace = "aid", operation = "concise")
+instance(result)
 ```
 
 For dose-response curve data:
 
 ```{r}
 result <- get_pug_rest(identifier = "504526", namespace = "aid", domain = "assay", operation = "doseresponse/CSV?sid=104169547,109967232", output = "CSV")
+result
 ```
 
 **3. Targets:** To retrieve assay targets, including protein or gene identifiers:
 
 ```{r}
-result <- get_pug_rest(identifier = "490,1000", namespace = "aid", domain = "assay", operation = "targets/ProteinGI,ProteinName,GeneID,GeneSymbol", output = "XML")
+result <- get_pug_rest(identifier = "490,1000", namespace = "aid", domain = "assay", operation = "targets/ProteinGI,ProteinName,GeneID,GeneSymbol", output = "JSON")
+result
 ```
 
 To select assays via target identifier:
 
 ```{r}
 result <- get_pug_rest(identifier = "USP2", namespace = "target/genesymbol", domain = "assay", operation = "aids", output = "TXT")
+result
 ```
 
 **4. Activity Name:** To select BioAssays by the name of the primary activity column:
 
 ```{r}
-result <- get_pug_rest(identifier = "EC50", namespace = "activity", domain = "assay", operation = "aids", output = "JSON")
+result <- get_pug_rest(identifier = "EC50", namespace = "activity", domain = "assay", operation = "aids", output = "TXT")
+result
 ```
 
 These examples demonstrate the flexibility of PUG REST in accessing specific BioAssay data. Users can efficiently retrieve detailed descriptions, comprehensive data sets, concise readouts, and target information, making it a valuable tool for researchers and scientists working with BioAssay data.
@@ -287,19 +277,14 @@ PubChem provides various methods to access gene data, making it a valuable resou
 
 ```{r}
 result <- get_pug_rest(identifier = "1956,13649", namespace = "geneid", domain = "gene", operation = "summary", output = "JSON")
-```
-
-```{r}
 result
 ```
+
 
 * **By Gene Symbol:** Use the official gene symbol, which often maps to multiple genes. For example, to access data for the EGFR gene symbol:
 
 ```{r}
 result <- get_pug_rest(identifier = "EGFR", namespace = "genesymbol", domain = "gene", operation = "summary", output = "JSON")
-```
-
-```{r}
 result
 ```
 
@@ -307,53 +292,44 @@ result
 
 ```{r}
 result <- get_pug_rest(identifier = "ERBB1", namespace = "synonym", domain = "gene", operation = "summary", output = "JSON")
-```
-
-```{r}
 result
 ```
+
 
 **2. Available Gene Data:**
 
 * **Gene Summary:** Returns a summary including GeneID, Symbol, Name, TaxonomyID, Description, and Synonyms. For example:
 
 ```{r}
-result <- get_pug_rest(identifier = "1956,13649", namespace = "geneid", domain = "gene", operation = "summary", output = "JSON")
-```
-
-```{r}
+result <- get_pug_rest(identifier = c("1956","13649"), namespace = "geneid", domain = "gene", operation = "summary", output = "JSON")
 result
 ```
+
 
 * **Assays from Gene:** Retrieves a list of AIDs tested against a specific gene. For example, for gene ID 13649:
 
 ```{r}
 result <- get_pug_rest(identifier = "13649", namespace = "geneid", domain = "gene", operation = "aids", output = "TXT")
-```
-
-```{r}
 result
 ```
+
 
 * **Bioactivities from Gene:** Returns concise bioactivity data for a specific gene. For example:
 
 ```{r}
-result <- get_pug_rest(identifier = "13649", namespace = "geneid", domain = "gene", operation = "concise", output = "JSON")
-```
-
-```{r}
+result <- get_pug_rest(identifier = "13649", namespace = "geneid", domain = "gene", operation = "concise", output = "CSV")
 result
 ```
+
 
 * **Pathways from Gene:** Provides a list of pathways involving a specific gene. For example, for gene ID 13649:
 
 ```{r}
-result <- get_pug_rest(identifier = "13649", namespace = "geneid", domain = "gene", operation = "pwaccs", output = "TXT")
-```
-
-```{r}
+result <- get_pug_rest(identifier = "13649", namespace = "geneid", domain = "gene", operation = "pwaccs", output = "JSON")
 result
 ```
+
+
 
 These methods offer a comprehensive way to access and analyze gene-related data in PubChem, catering to various research needs in genetics and molecular biology.
 
@@ -366,21 +342,15 @@ PubChem provides a versatile platform for accessing detailed protein data, essen
 * **By Protein Accession:** Use NCBI Protein accessions to access protein data. For example, to get a summary for protein accessions P00533 and P01422 in JSON format:
 
 ```{r}
-result <- get_pug_rest(identifier = "P00533,P01422", namespace = "accession", domain = "protein", operation = "summary", output = "JSON")
-```
-
-```{r}
-result 
+result <- get_pug_rest(identifier = c("P00533","P01422"), namespace = "accession", domain = "protein", operation = "summary", output = "JSON")
+result
 ```
 
 **By Protein Synonym:** Access protein data using synonyms or identifiers from external sources. For example, using a ChEMBL ID:
 
 ```{r}
-result <- get_pug_rest(identifier = "ChEMBL:CHEMBL203", namespace = "synonym", domain = "protein", operation = "summary", output = "JSON")
-```
-
-```{r}
-result 
+result <- get_pug_rest(identifier = "CHEMBL203", namespace = "synonym", domain = "protein", operation = "summary", output = "JSON")
+result
 ```
 
 **2. Available Protein Data:**
@@ -388,42 +358,36 @@ result
 * **Protein Summary:** Returns a summary including ProteinAccession, Name, TaxonomyID, and Synonyms. For example:
 
 ```{r}
-result <- get_pug_rest(identifier = "P00533,P01422", namespace = "accession", domain = "protein", operation = "summary", output = "JSON")
+result <- get_pug_rest(identifier = c("P00533","P01422"), namespace = "accession", domain = "protein", operation = "summary", output = "JSON")
+result
 ```
 
-```{r}
-result 
-```
+
 
 **Assays from Protein:** Retrieves a list of AIDs tested against a specific protein. For example, for protein accession P00533:
 
 ```{r}
 result <- get_pug_rest(identifier = "P00533", namespace = "accession", domain = "protein", operation = "aids", output = "TXT")
+result
 ```
 
-```{r}
-result 
-```
 
 **Bioactivities from Protein:** Returns concise bioactivity data for a specific protein. For example:
 
 ```{r}
-result <- get_pug_rest(identifier = "Q01279", namespace = "accession", domain = "protein", operation = "concise", output = "JSON")
+result <- get_pug_rest(identifier = "Q01279", namespace = "accession", domain = "protein", operation = "concise", output = "CSV")
+result
 ```
 
-```{r}
-result 
-```
 
 **Pathways from Protein:** Provides a list of pathways involving a specific protein. For example, for protein accession P00533:
 
 ```{r}
 result <- get_pug_rest(identifier = "P00533", namespace = "accession", domain = "protein", operation = "pwaccs", output = "TXT")
+result 
+
 ```
 
-```{r}
-result 
-```
 
 These methods offer a comprehensive approach to accessing and analyzing protein-related data in PubChem, supporting a wide range of research applications in the fields of biochemistry, molecular biology, and pharmacology.
 
@@ -437,7 +401,8 @@ PubChem's PUG REST service offers a detailed and comprehensive approach to acces
 By Pathway Accession: The primary method to access pathway data in PubChem. Pathway Accession is formatted as Source:ID. For example, to get a summary for the Reactome pathway R-HSA-70171 in JSON format:
 
 ```{r}
-get_pug_rest(identifier = "Reactome:R-HSA-70171", namespace = "pwacc", domain = "pathway", operation = "summary", output = "JSON")
+result <- get_pug_rest(identifier = "Reactome:R-HSA-70171", namespace = "pwacc", domain = "pathway", operation = "summary", output = "JSON")
+result
 ```
 
 **2. Available Pathway Data:**
@@ -445,25 +410,29 @@ get_pug_rest(identifier = "Reactome:R-HSA-70171", namespace = "pwacc", domain = 
 **Pathway Summary:** Returns a summary including PathwayAccession, SourceName, Name, Type, Category, Description, TaxonomyID, and Taxonomy. For example:
 
 ```{r}
-get_pug_rest(identifier = "Reactome:R-HSA-70171,BioCyc:HUMAN_PWY-4983", namespace = "pwacc", domain = "pathway", operation = "summary", output = "JSON")
+result <- get_pug_rest(identifier = "Reactome:R-HSA-70171,BioCyc:HUMAN_PWY-4983", namespace = "pwacc", domain = "pathway", operation = "summary", output = "JSON")
+result
 ```
 
 **Compounds from Pathway:** Retrieves a list of compounds involved in a specific pathway. For example, for the Reactome pathway R-HSA-70171:
 
 ```{r}
-get_pug_rest(identifier = "Reactome:R-HSA-70171", namespace = "pwacc", domain = "pathway", operation = "cids", output = "TXT")
+result <- get_pug_rest(identifier = "Reactome:R-HSA-70171", namespace = "pwacc", domain = "pathway", operation = "cids", output = "TXT")
+result
 ```
 
 **Genes from Pathway:** Provides a list of genes involved in a specific pathway. For example, for the Reactome pathway R-HSA-70171:
 
 ```{r}
-get_pug_rest(identifier = "Reactome:R-HSA-70171", namespace = "pwacc", domain = "pathway", operation = "geneids", output = "TXT")
+result <- get_pug_rest(identifier = "Reactome:R-HSA-70171", namespace = "pwacc", domain = "pathway", operation = "geneids", output = "TXT")
+result
 ```
 
 **Proteins from Pathway:** Returns a list of proteins involved in a given pathway. For example, for the Reactome pathway R-HSA-70171:
 
 ```{r}
-get_pug_rest(identifier = "Reactome:R-HSA-70171", namespace = "pwacc", domain = "pathway", operation = "accessions", output = "TXT")
+result <- get_pug_rest(identifier = "Reactome:R-HSA-70171", namespace = "pwacc", domain = "pathway", operation = "accessions", output = "TXT")
+result
 ```
 
 These methods offer a streamlined and efficient way to access and analyze pathway-related data in PubChem, supporting a wide range of research applications in bioinformatics, molecular biology, and related fields.
@@ -477,53 +446,43 @@ PubChem's PUG REST service provides a comprehensive approach to accessing taxono
 **By Taxonomy ID:** The primary method to access taxonomy data in PubChem using NCBI Taxonomy identifiers. For example, to get a summary for human (Taxonomy ID 9606) and SARS-CoV-2 (Taxonomy ID 2697049) in JSON format:
 
 ```{r}
-result <- get_pug_rest(identifier = "9606,2697049", namespace = "taxid", domain = "taxonomy", operation = "summary", output = "JSON")
+result <- get_pug_rest(identifier = c("9606","2697049"), namespace = "taxid", domain = "taxonomy", operation = "summary", output = "JSON")
+result
 ```
 
-```{r}
-result 
-```
+
 
 **By Taxonomy Synonym:** Access taxonomy data using synonyms like scientific or common names. For example, for Homo sapiens:
 
 ```{r}
 result <- get_pug_rest(identifier = "Homo sapiens", namespace = "synonym", domain = "taxonomy", operation = "summary", output = "JSON")
+result
 ```
 
-```{r}
-result 
-```
 
 **2. Available Taxonomy Data:**
 
 **Taxonomy Summary:** Returns a summary including TaxonomyID, ScientificName, CommonName, Rank, RankedLineage, and Synonyms. For example:
 
 ```{r}
-result <- get_pug_rest(identifier = "9606,10090,10116", namespace = "taxid", domain = "taxonomy", operation = "summary", output = "JSON")
+result <- get_pug_rest(identifier = c("9606","10090","10116"), namespace = "taxid", domain = "taxonomy", operation = "summary", output = "JSON")
+result
 ```
 
-```{r}
-result 
-```
 
 **Assays and Bioactivities:** Retrieves a list of assays (AIDs) associated with a given taxonomy. For example, for SARS-CoV-2:
 
 ```{r}
 result <- get_pug_rest(identifier = "2697049", namespace = "taxid", domain = "taxonomy", operation = "aids", output = "TXT")
+result
 ```
 
-```{r}
-result 
-```
 
 To aggregate concise bioactivity data from each AID:
   
 ```{r}
-result <- get_pug_rest(identifier = "1409578", namespace = "aid", domain = "assay", operation = "concise", output = "JSON")
-```
-
-```{r}
-result 
+result <- get_pug_rest(identifier = "1409578", namespace = "aid", domain = "assay", operation = "concise", output = "CSV")
+result
 ```
 
 These methods offer a streamlined and efficient way to access and analyze taxonomy-related data in PubChem, supporting a wide range of research applications in biology, pharmacology, environmental science, and related fields.
@@ -539,19 +498,14 @@ PubChem's PUG REST service offers a valuable resource for accessing detailed inf
 
 ```{r}
 result <- get_pug_rest(identifier = "CHEMBL3308376,CVCL_0045", namespace = "cellacc", domain = "cell", operation = "summary", output = "JSON")
-```
-
-```{r}
 result
 ```
+
 
 **By Cell Line Synonym:** Access data using cell line names or other synonyms. For instance, for the HeLa cell line:
 
 ```{r}
 result <- get_pug_rest(identifier = "HeLa", namespace = "synonym", domain = "cell", operation = "summary", output = "JSON")
-```
-
-```{r}
 result
 ```
 
@@ -561,30 +515,26 @@ result
 
 ```{r}
 result <- get_pug_rest(identifier = "CVCL_0030,CVCL_0045", namespace = "cellacc", domain = "cell", operation = "summary", output = "JSON")
-```
-
-```{r}
 result
 ```
+
 
 **Assays and Bioactivities from Cell Line:** Retrieves a list of assays (AIDs) tested on a specific cell line. For example, for HeLa:
 
 ```{r}
 result <- get_pug_rest(identifier = "HeLa", namespace = "synonym", domain = "cell", operation = "aids", output = "TXT")
-```
-
-```{r}
 result
 ```
+
 
 To aggregate concise bioactivity data from each AID:
 
 ```{r}
-result <- get_pug_rest(identifier = "79900", namespace = "aid", domain = "assay", operation = "concise", output = "JSON")
-```
-
-```{r}
+result <- get_pug_rest(identifier = "79900", namespace = "aid", domain = "assay", operation = "concise", output = "CSV")
 result
 ```
 
+
 These methods provide an efficient and targeted approach to access and analyze cell line-related data in PubChem, supporting a wide range of research applications in cellular biology, pharmacology, and related fields.
+
+

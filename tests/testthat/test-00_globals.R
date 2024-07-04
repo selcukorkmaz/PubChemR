@@ -93,3 +93,18 @@ test_that("section details successfully printed", {
   expect_output(printSectionDetails(sect$result))
   expect_output(printSectionDetails(section(sect)$result))
 })
+
+
+# calculateObjectSize() ----
+test_that("calculateObjectSize() works properly", {
+  path <- tempdir(check = TRUE)
+
+  write.csv(iris, file = file.path(path, "iris.csv"))
+  expect_true({
+    tmp <- calculateObjectSize(file.path(path, "iris.csv"))
+    all(is.numeric(tmp$size), abs(tmp$size - 4.71) < .02, tmp$unit == "KB")
+  })
+
+  expect_true(calculateObjectSize("a")$size == 0)
+  file.remove(file.path(path, "iris.csv"))
+})

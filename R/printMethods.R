@@ -480,4 +480,51 @@ print.PugViewSection <- function(x, ...){
   }
 }
 
-## PugViewReferenceList ----
+## PugRestInstance ----
+#' @export
+print.PugRestInstance <- function(x, ...){
+  cat("\n")
+  cat(" An object of class ", "'", primaryClass(x), "'", sep = "", "\n\n")
+  cat(" Request Details: ", "\n")
+  cat("  - Domain: ", domain_text(request_args(x, "domain")), sep = "", "\n")
+  cat("  - Namespace: ", namespace_text(request_args(x, "namespace")), sep = "", "\n")
+
+  # Print extra information for 'PugRestInstance' class
+  if ("PugRestInstance" %in% class(x)){
+    cat("  - Operation: ", ifelse(is.null(request_args(x, "operation")), "<NULL>", request_args(x, "operation")), sep = "", "\n")
+  }
+
+  identifiers <- request_args(x, "identifier")
+  nIdentifiers <- length(identifiers)
+  suffix_identifiers <- ""
+  if (length(identifiers) > 2){
+    identifiers <- identifiers[1:2]
+    suffix_identifiers <- paste0(", ... and ", nIdentifiers - 2, " more.")
+  }
+
+  cat("  - Identifier: ", paste0(identifiers, collapse = ", "), suffix_identifiers, sep = "", "\n\n")
+  #cat(" Details:", "\n\n", sep = "")
+
+  if (!x$success){
+    cat(" Stopped with an ERROR. Details are below:", "\n\n")
+    for (i in names(x$error)){
+      cat("  - ", i, ": ", x$error[[i]], sep = "", "\n")
+    }
+    cat("\n\n")
+  }
+
+  if (x$success){
+    if (request_args(x, "save") | toupper(request_args(x, "output")) == "SDF"){
+      cat(" Details [Saved File(s)]: ", "\n")
+      cat("  - File name: '", x$fileDetails$Name, "'", "\n", sep = "")
+      cat("  - Saved to: '", x$fileDetails$Path, "'", "\n", sep = "")
+      cat("  - File type: ", x$fileDetails$Type, "\n", sep = "")
+      cat("  - Size (", x$fileDetails$Size$unit, "): ", x$fileDetails$Size$size, "\n", sep = "")
+      cat("\n")
+    }
+
+    # print notes for getter functions.
+    cat(" NOTE: Run getter function 'pubChemData(...)' to extract raw data retrieved from PubChem Database. \n")
+    cat("       See ?pubChemData for details.", sep = "", "\n")
+  }
+}

@@ -13,10 +13,10 @@ get_pug_rest(
   searchtype = NULL,
   property = NULL,
   options = NULL,
-  saveFile = FALSE,
-  saveImage = FALSE,
+  save = FALSE,
   dpi = 300,
   path = NULL,
+  file_name = NULL,
   ...
 )
 }
@@ -37,13 +37,13 @@ get_pug_rest(
 
 \item{options}{A list of additional options for the request.}
 
-\item{saveFile}{A logical value indicating whether to save the output as a file. Default is FALSE.}
-
-\item{saveImage}{A logical value indicating whether to save the output as an image. Default is FALSE.}
+\item{save}{A logical value indicating whether to save the output as a file or image. Default is FALSE.}
 
 \item{dpi}{An integer specifying the DPI for image output. Default is 300.}
 
 \item{path}{description}
+
+\item{file_name}{a character of length 1. Define the name of file (without file extension) to save. If NULL, default file name is set as "files_downloaded".}
 
 \item{...}{description}
 }
