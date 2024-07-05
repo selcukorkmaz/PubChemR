@@ -1343,7 +1343,8 @@ sectionList.PugViewSection <- function(object, .pattern = NULL, .match_type = c(
 #' @return a vector, list, or data.frame containing the raw data retrieved from Pub Chem database through PUG REST API.
 #'
 #' @examples
-#' 1L
+#' result <- get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", output = "JSON")
+#' pubChemData(result)
 #'
 #' @export
 pubChemData <- function(object, ...){

@@ -21,7 +21,8 @@ a vector, list, or data.frame containing the raw data retrieved from Pub Chem da
 A short description...
 }
 \examples{
-1L
+result <- get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", output = "JSON")
+pubChemData(result)
 
 }
 \seealso{

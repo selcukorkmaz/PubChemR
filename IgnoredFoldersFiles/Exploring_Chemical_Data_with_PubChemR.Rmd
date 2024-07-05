@@ -183,7 +183,8 @@ result
 Or to find all patent identifiers associated with a given SID:
 
 ```{r}
-result <- get_pug_rest(identifier = "137349406", namespace = "sid", domain = "substance", operation = c("xrefs","PatentID"), output = "TXT")
+result <- get_pug_rest(identifier = "137349406", namespace = "sid", domain = "substance", 
+                       operation = c("xrefs","PatentID"), output = "TXT")
 result
 ```
 

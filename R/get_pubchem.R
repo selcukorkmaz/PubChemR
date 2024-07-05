@@ -42,7 +42,7 @@ get_pubchem <- function(identifier, namespace = 'cid', domain = 'compound', oper
       iter <- 1
       while ('Waiting' %in% names(status) && !is.null(status$Waiting[["ListKey"]])) {
         # Delay before making the next request
-        Sys.sleep(2)  # delay for 2 seconds not to blocked by PubChem API.
+        Sys.sleep(1.5)  # delay for 1.5 seconds not to blocked by PubChem API.
         # Make the next request
         response <- GET(request(identifier, namespace, domain, operation, 'JSON', options))
         content <- rawToChar(response$content)
