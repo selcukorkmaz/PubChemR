@@ -1,13 +1,17 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- badges: start -->
 
 [![](https://www.r-pkg.org/badges/version/PubChemR)](https://cran.r-project.org/package=PubChemR)
 [![](https://www.r-pkg.org/badges/last-release/PubChemR?color=orange)](https://cran.r-project.org/package=PubChemR)
 [![](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+[![Codecov test
+coverage](https://codecov.io/gh/selcukorkmaz/PubChemR/branch/devel/graph/badge.svg)](https://app.codecov.io/gh/selcukorkmaz/PubChemR?branch=devel)
 [![BUILD &
 CHECK](https://github.com/selcukorkmaz/PubChemR/actions/workflows/R-BUILD-CHECK.yml/badge.svg)](https://github.com/selcukorkmaz/PubChemR/actions/workflows/R-BUILD-CHECK.yml)
 <!-- [![](https://cranlogs.r-pkg.org/badges/PubChemR)](https://cran.r-project.org/package=PubChemR) -->
 <!-- [![License: GPL (>= 2)](https://img.shields.io/badge/license-GPL%20(%3E=%202)-blue.svg)](https://cran.r-project.org/web/licenses/GPL-2) -->
+<!-- badges: end -->
 
 # PubChemR: An Interface to the PubChem Collection of Chemical Data PubChemR <img src="docs/figures/logo.png" align="right" height="32" />
 
