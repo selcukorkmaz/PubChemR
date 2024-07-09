@@ -1,24 +1,26 @@
 ---
 title: "Working with PubChemR to Access Chemical Data"
-author: "Selcuk Korkmaz, Dincer Goksuluk, Bilge Eren Korkmaz"
+author: "Selcuk Korkmaz, Bilge Eren Korkmaz, Dincer Goksuluk"
 date: "`r Sys.Date()`"
 output: 
-  html_document:
+  html_document: 
     toc: true
     toc_float:
       collapsed: true
-
+    keep_md: false
 vignette: >
   %\VignetteIndexEntry{Working with PubChemR to Access Chemical Data}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
 ---
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  cache.path = "vignettes/cache/"
+  cache = FALSE,
+  class.output="scroll-100",
+  cache.path = "cached/"
 )
 ```
 
@@ -114,16 +116,14 @@ The `get_json` function constructs a query URL based on the provided parameters 
 
 The following example demonstrates how to use the `get_json` function to retrieve information about Aspirin by its common name:
 
-```{r, class.output="scroll-100", cache=TRUE}
+```{r}
 # Retrieve JSON data for Aspirin
 result <- get_json(identifier = "aspirin", namespace = "name")
-
-
 ```
 
 The result is a list containing the parsed JSON response from PubChem. You can explore this list to find specific information about Aspirin
 
-```{r, class.output="scroll-100", cache=TRUE}
+```{r}
 result
 ```
 
@@ -143,7 +143,7 @@ For more advanced use cases, users can specify additional parameters like `domai
 
 For example, to retrieve synonyms of Aspirin, you can modify the function call as follows:
 
-```{r, class.output="scroll-100", cache=TRUE}
+```{r}
 # Retrieve synonyms for Aspirin
 synonyms_result <- get_json(identifier = "aspirin", namespace = "name", operation = "synonyms")
 synonyms_result
@@ -172,7 +172,7 @@ options: Additional arguments passed to the get_json function.
 
 **Usage Example**
 
-```{r, class.output="scroll-100", cache=TRUE}
+```{r}
 # Retrieve AIDs by CID
 aids_result <- get_aids(
   identifier = "2244",
@@ -180,12 +180,17 @@ aids_result <- get_aids(
 )
 ```
 
-```{r, class.output="scroll-100", cache=TRUE}
+```{r}
 aids_result
 ```
 
-```{r, class.output="scroll-100", cache=TRUE}
+```{r}
+# Extract AID data.
+AIDs(aids_result)
+```
 
+
+```{r}
 # Retrieve AIDs by name
 aids_result_name <- get_aids(
   identifier = "aspirin",
@@ -193,7 +198,7 @@ aids_result_name <- get_aids(
 )
 ```
 
-```{r, class.output="scroll-100", cache=TRUE}
+```{r}
 aids_result_name
 ```
 
@@ -217,7 +222,7 @@ domain: The domain of the query, typically 'compound'.
 
 **Usage Example**
 
-```{r, class.output="scroll-100", cache=TRUE}
+```{r}
 # Retrieve CIDs for a given compound name
 cids <- get_cids(
   identifier = "aspirin",
@@ -225,9 +230,12 @@ cids <- get_cids(
 )
 ```
 
-```{r, class.output="scroll-100", cache=TRUE}
+```{r}
 # Display the retrieved CIDs
 cids
+
+# Extract CID data
+CIDs(cids)
 ```
 
 **Practical Applications**
@@ -242,20 +250,19 @@ cids
 
 For more advanced applications, `get_cids` can be combined with other functions to create comprehensive workflows. For example, after retrieving CIDs, one might use these identifiers to fetch detailed compound properties or related biological assay data.
 
-```{r, class.output="scroll-100", cache=TRUE}
+```{r}
 # Retrieve CIDs for multiple compounds
-compounds <- c("Aspirin", "Caffeine")
-cids_list <- lapply(compounds, function(compound) {
-  get_cids(identifier = compound, namespace = "name")
+compounds <- c("Aspirin", "Caffeine", "Ibuprofen")
+result <- get_cids(identifier = compounds, namespace = "name")
+
+cids_df <- CIDs(result)
+
+MolecularWeight <- sapply(cids_df$CID, function(x){
+  get_properties(properties = "MolecularWeight", identifier = x, namespace = "cid")[[1]][["MolecularWeight"]]
 })
 
-# Use the retrieved CIDs to fetch additional data
-for (cids in cids_list) {
-  for (cid in cids$CID) {
-    properties <- get_properties("MolecularWeight", cid)
-    print(properties)
-  }
-}
+cids_df[["MolecularWeight"]] <- MolecularWeight
+cids_df
 ```
 
 In this advanced example, get_cids is used to fetch CIDs for multiple compounds, and then these CIDs are used to retrieve molecular weights for each compound. This approach is useful in studies where comparative analysis of different compounds is required.
@@ -280,7 +287,7 @@ The function queries PubChem using various identifiers and extracts the correspo
 
 **Usage Example**
 
-```{r, class.output="scroll-100", cache=TRUE}
+```{r}
 # Retrieve SIDs for a given compound name
 sids <- get_sids(
   identifier = "aspirin",
@@ -288,7 +295,7 @@ sids <- get_sids(
 )
 ```
 
-```{r, class.output="scroll-100", cache=TRUE}
+```{r}
 # Display the retrieved SIDs
 sids
 ```
@@ -321,7 +328,7 @@ The function queries the PubChem database using specified identifiers and return
 
 **Usage Example**
 
-```{r, class.output="scroll-100", cache=TRUE}
+```{r}
 # Retrieve assay data for a specific AID
 assay_data <- get_assays(
   identifier = 1234,
@@ -329,7 +336,7 @@ assay_data <- get_assays(
 )
 ```
 
-```{r, class.output="scroll-100", cache=TRUE}
+```{r}
 # Display the retrieved assay data
 print(assay_data)
 ```
@@ -346,50 +353,31 @@ get_assays can be utilized in various research contexts, such as:
 
 **Overview**
 
-get_compounds is a powerful function within the PubChemR package, designed to streamline the process of retrieving detailed compound data from the extensive PubChem database. This function is an invaluable tool for chemists, biologists, pharmacologists, and researchers who require comprehensive chemical compound information for their scientific investigations and analyses.
+`get_compounds` is a function in the `PubChemR` package that facilitates the retrieval of detailed compound data from the PubChem database. This function is particularly useful for chemists, biologists, and researchers who require access to comprehensive chemical compound information.
 
 **Functionality**
 
-The get_compounds function interfaces directly with the PubChem database, allowing users to query and extract a wide array of data on chemical compounds. Upon execution, the function returns a list containing detailed information about each queried compound. This information can encompass various aspects such as:
-
-* Chemical Structures: Detailed representations of the molecular structure of compounds.
-* Chemical Properties: Information on physical and chemical properties such as molecular weight, boiling point, melting point, solubility, and more.
-* Biological Activities: Data on the biological activities and effects of the compounds, including bioassay results.
-* Synonyms and Identifiers: A comprehensive list of alternative names and identifiers for the compounds.
-* Safety and Toxicity Information: Data on the safety and potential toxicity of the compounds.
-
-The breadth and depth of information retrieved can significantly aid in research, development, and educational purposes, providing a robust foundation for various scientific endeavors.
+The function queries the PubChem database using specified identifiers and returns a list containing detailed information about each compound. This information can include chemical structures, properties, biological activities, and more, depending on the available data in PubChem.
 
 **Parameters**
 
-* `identifier`: A vector specifying the compound identifiers. These identifiers can be either positive integers (such as CIDs, which are unique compound identifiers in PubChem) or identifier strings (such as chemical names, SMILES strings, InChI, etc.). This parameter allows for flexible input methods tailored to the specific needs of the user.
-
-* `namespace`: Specifies the type of identifier provided in the identifier parameter. Common values for this parameter include:
-
-  + 'cid' (Compound Identifier)
-  + 'name' (Chemical Name)
-  + 'smiles' (Simplified Molecular Input Line Entry System)
-  + 'inchi' (International Chemical Identifier)
-  + 'sdf' (Structure-Data File)
-
-This parameter ensures that the function correctly interprets the identifiers and performs the appropriate query.
-operation: An optional parameter specifying the operation to be performed on the input records. This can include operations such as filtering, sorting, or transforming the data based on specific criteria. By default, this parameter is set to NULL, indicating no additional operations are performed.
-
-* `searchtype`: An optional parameter that defines the type of search to be conducted. This can be used to refine and specify the search strategy, such as exact match, substructure search, or similarity search. By default, this parameter is set to NULL, indicating a general search.
-
-* `options`: A list of additional parameters that can be used to customize the query further. This can include options such as result limits, output formats, and other advanced settings to tailor the data retrieval process to specific requirements.
+* `identifier`: A vector specifying the compound identifiers. These can be positive integers (e.g., cid) or identifier strings (e.g., name, smiles).
+* `namespace`: Specifies the type of identifier provided. Common values include 'cid', 'name', 'smiles', etc.
+* `operation`: The operation to be performed on the input records, defaulting to NULL.
+* `searchtype`: The type of search to be performed, defaulting to NULL.
+* `options`: Additional parameters for the query.
 
 **Usage Example**
 
-```{r, class.output="scroll-100", cache=TRUE}
+```{r}
 # Retrieve compound data for Aspirin
 compound_data <- get_compounds(
-  identifier = c("2244","5245"),
-  namespace = "cid"
+  identifier = "aspirin",
+  namespace = "name"
 )
 ```
 
-```{r, class.output="scroll-100", cache=TRUE}
+```{r}
 # Display the retrieved compound data
 compound_data
 ```
@@ -423,7 +411,7 @@ The function queries the PubChem database using specified identifiers and return
 
 **Usage Example**
 
-```{r, class.output="scroll-100", cache=TRUE}
+```{r}
 # Retrieve substance data for Aspirin
 substance_data <- get_substances(
   identifier = "aspirin",
@@ -431,7 +419,7 @@ substance_data <- get_substances(
 )
 ```
 
-```{r, class.output="scroll-100", cache=TRUE}
+```{r}
 # Display the retrieved substance data
 substance_data
 ```
@@ -465,7 +453,7 @@ The function queries the PubChem database using specified identifiers and return
 
 **Usage Example**
 
-```{r, class.output="scroll-100", cache=TRUE}
+```{r}
 # Retrieve molecular weight and formula for Aspirin
 properties_data <- get_properties(
   properties = c("MolecularWeight", "MolecularFormula"),
@@ -475,7 +463,7 @@ properties_data <- get_properties(
 )
 ```
 
-```{r, class.output="scroll-100", cache=TRUE}
+```{r}
 # Display the retrieved properties
 properties_data
 ```
@@ -511,7 +499,7 @@ The function requests SDF data for a specified compound or substance from PubChe
 
 **Usage Example**
 
-```{r, class.output="scroll-100", cache=TRUE}
+```{r}
 # Retrieve and save SDF data for Aspirin
 get_sdf(
   identifier = "aspirin",
@@ -554,7 +542,7 @@ This function interacts with the PubChem database to retrieve data for a given i
 
 **Usage Example**
 
-```{r, class.output="scroll-100", cache=TRUE}
+```{r}
 # Download JSON file for the compound "aspirin" into "Aspirin.JSON"
 # A folder named "Compound" will be created under the current directory
 download(
@@ -596,7 +584,7 @@ This function queries the PubChem database for synonyms of a given identifier (s
 
 **Usage Example**
 
-```{r, class.output="scroll-100", cache=TRUE}
+```{r}
 
 # Retrieve synonyms for Aspirin
 synonyms <- get_synonyms(
@@ -605,7 +593,7 @@ synonyms <- get_synonyms(
 )
 ```
 
-```{r, class.output="scroll-100", cache=TRUE}
+```{r}
 # Print the retrieved synonyms
 synonyms
 ```
@@ -634,7 +622,7 @@ The function queries the PubChem database to obtain a comprehensive list of sour
 
 **Usage Example**
 
-```{r, class.output="scroll-100", cache=TRUE}
+```{r}
 
 # Retrieve all sources for substances
 substance_sources <- get_all_sources(
@@ -642,7 +630,7 @@ substance_sources <- get_all_sources(
 )
 ```
 
-```{r, class.output="scroll-100", cache=TRUE}
+```{r}
 # Print the list of substance sources
 substance_sources
 ```

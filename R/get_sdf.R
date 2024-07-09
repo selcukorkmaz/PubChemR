@@ -1,7 +1,7 @@
-#' Retrieve SDF Data from PubChem and Save as File
+#' @title Retrieve/Save SDF Data from PubChem
 #'
-#' This function sends a request to PubChem to retrieve data in SDF format based on the specified parameters.
-#' It then saves the retrieved data as an SDF file in the current working directory.
+#' @description This function sends a request to PubChem to retrieve data in SDF format based on the specified parameters.
+#' It then saves the retrieved data as an SDF file in the current working directory (or into the system-specific temporary folder).
 #'
 #' @param identifier A character or numeric value specifying the identifier for the request.
 #' @param namespace A character string specifying the namespace for the request. Default is 'cid'.
@@ -9,8 +9,8 @@
 #' @param operation An optional character string specifying the operation for the request.
 #' @param searchtype An optional character string specifying the search type.
 #' @param path A string indicating the path to the folder where the SDF files will be saved. Default is NULL (i.e., saves the file into a temporary folder).
-#' @param file_name A string. File name for downloaded SDF file. If NULL, "file" is used as the file name. Default is NULL.
-#' @param options Additional parameters to be passed to the \code{\link{request}}.
+#' @param file_name A string. File name for the downloaded SDF file. If NULL, "file" is used as the file name. Default is NULL.
+#' @param options Additional parameters to be passed to the request.
 #'
 #' @return NULL. The function saves the retrieved data as an SDF file in the current working directory and prints a
 #' message indicating the file's location.
@@ -25,7 +25,10 @@
 #'   namespace = "name",
 #'   path = NULL
 #' )
-get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL, searchtype = NULL, path = NULL, file_name = NULL, options = NULL) {
+#'
+#' @export
+get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL,
+                    searchtype = NULL, path = NULL, file_name = NULL, options = NULL) {
 
   if (is.null(file_name)){
     # Generate a file name based on the identifier, ensuring it ends with the .sdf extension
@@ -73,5 +76,4 @@ get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operatio
 
   # Return the full path invisibly if no error occurred
   return(invisible(full_path))
-
 }

@@ -21,14 +21,21 @@ get_substances(
 
 \item{searchtype}{Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.}
 
-\item{options}{Additional parameters passed to \code{\link{get_json}}.}
+\item{options}{Additional parameters passed to PubChem request.}
 }
 \value{
-A named list where each element corresponds to a substance retrieved from PubChem.
-        The names of the list elements are based on the provided identifiers.
-        If no substance is found for a given identifier, the corresponding list element will contain the string "No substance".
+An object of class 'PubChemInstanceList' containing all the substance information of requested compounds.
 }
 \description{
 This function sends a request to PubChem to retrieve substance data based on the specified parameters.
-It returns a list of substances corresponding to the provided identifiers.
+}
+\examples{
+subs <- get_substances(
+  identifier = c("aspirin", "ibuprofen"),
+  namespace = "name"
+)
+
+instance(subs, "aspirin")
+retrieve(instance(subs, "aspirin"), "source")
+
 }

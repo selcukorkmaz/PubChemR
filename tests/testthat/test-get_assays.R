@@ -1,34 +1,64 @@
-# test for 'namespace' arg. ----
-test_that("pulling assays via 'name' is unsuccessful", {
-  expect_error({get_assays(
-    identifier = "aspirin",
-    namespace = "name"
-   )
+assay <- get_assays(
+  identifier = c("1234", "7815"),
+  namespace = "aid"
+)
+testRequest(assay)
+
+test_that("pulling assays via an unknown 'namespace'", {
+  tmp <- get_assays(
+    identifier = c("2244", "1234"),
+    namespace = "cid"
+  )
+  expect_false(allSuccess(tmp))
+})
+
+test_that("get_assay() returns an object of class 'PubChemInstanceList'", {
+  expect_true("PubChemInstanceList" %in% class(assay))
+})
+
+# instance() tests.
+test_that("instance() returns an object of class 'PubChemInstance'", {
+  expect_true("PubChemInstance" %in% class(instance(assay)))
+  expect_output(print(instance(assay)), "An object of class 'PubChemInstance'")
+})
+
+test_that("retrieve() returns selected slots as expected for an assay", {
+  expect_identical(
+    retrieve(assay, .slot = "aid", .which = "1234", .to.data.frame = TRUE),
+    retrieve(instance(assay, "1234"), .slot = "aid", .to.data.frame = TRUE)
+  )
+
+  expect_identical(
+    retrieve(assay, .slot = "aid", .which = "1234", .to.data.frame = FALSE),
+    retrieve(instance(assay, "1234"), .slot = "aid", .to.data.frame = FALSE)
+  )
+
+  # Return results invisibly when .verbose = TRUE
+  expect_invisible(
+    retrieve(assay, .slot = "aid", .to.data.frame = FALSE, .combine.all = TRUE, .verbose = TRUE)
+  )
+
+  # Combine all assays into a data.frame
+  expect_true({
+    tmp <- retrieve(assay, .slot = "aid", .to.data.frame = TRUE, .combine.all = TRUE, .verbose = FALSE)
+    all(request_args(assay, "identifier") %in% tmp[["Identifier"]])
   })
 })
 
+test_that("retrieve() returns error when unknown/undefined slots or identifiers are provided.", {
+  expect_error(retrieve(assay, .which = "dncr"))
+  expect_warning(retrieve(assay, .which = "1234"))
+  expect_true({
+    tmp <- suppressWarnings(retrieve(assay, .which = "1234"))
+    is.null(tmp)
+  })
 
-test_that("pulling assays via 'aid' is successful", {
-  tmp <- try(get_assays(
-    identifier = 2244,
-    namespace = "aid",
-  ))
-
-  expect_false(inherits(tmp, "try-error"))
-
-  # Returned object is a tibble or data.frame
-  expect_true(inherits(tmp, "list"))
-  expect_true(length(tmp) == 1)
-  expect_true(names(tmp) == "'2244'")
+  expect_null(retrieve(assay, .which = "1234", .slot = "unkown_slot"))
 })
 
 
-test_that("return error for unknown/undefined assays", {
-  expect_error({
-    get_assays(
-      identifier = -1,
-      namespace = "aid",
-    )
-  })
+test_that("checking the effect of '.verbose' argument in retrieve() function", {
+  expect_output(retrieve(assay, .slot = "comment", .verbose = TRUE))
+  expect_invisible(retrieve(assay, .slot = "comment", .verbose = TRUE, .combine.all = TRUE))
 })
 

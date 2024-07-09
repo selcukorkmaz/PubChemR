@@ -1,50 +1,60 @@
-#' Retrieve Compounds from PubChem
+#' @title Retrieve Compounds from PubChem
 #'
-#' This function sends a request to PubChem to retrieve compound data based on the specified parameters.
-#' It returns a list of compounds corresponding to the provided identifiers.
+#' @description This function sends a request to the PubChem database to retrieve compound data based on specified parameters.
 #'
-#' @param identifier A vector of positive integers (e.g. cid, sid, aid) or identifier strings (source, inchikey, formula). In some cases, only a single identifier string (name, smiles, xref; inchi, sdf by POST only).
+#' @param identifier A vector of positive integers (e.g., cid, sid, aid) or identifier strings (source, inchikey, formula). In some cases, a single identifier string (e.g., name, smiles, xref; inchi, sdf by POST only) is sufficient.
 #' @param namespace Specifies the namespace for the query. For the 'compound' domain, possible values include 'cid', 'name', 'smiles', 'inchi', 'sdf', 'inchikey', 'formula', 'substructure', 'superstructure', 'similarity', 'identity', 'xref', 'listkey', 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure', and 'fastformula'. For other domains, the possible namespaces are domain-specific.
 #' @param operation The operation to be performed (default: NULL).
 #' @param searchtype Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.
-#' @param options Additional parameters passed to \code{\link{get_json}}.
+#' @param options Additional parameters passed to \code{get_json}.
 #'
-#' @return A named list where each element corresponds to a compound retrieved from PubChem.
-#'         The names of the list elements are based on the provided identifiers.
-#'         If no compound is found for a given identifier, the corresponding list element will contain the string "No compound".
+#' @return An object of class 'PubChemInstanceList' and 'PC_Compounds' containing compound information from the PubChem database.
 #'
-#' @export
+#' @seealso \link{retrieve}, \link{instance}
 #'
 #' @examples
-#' get_compounds(
-#'   identifier = "aspirin",
+#' compound <- get_compounds(
+#'   identifier = c("aspirin", "ibuprofen", "rstudio"),
 #'   namespace = "name"
 #' )
+#'
+#' print(compound)
+#'
+#' # Return results for selected compound.
+#' instance(compound, "aspirin")
+#' instance(compound, "rstudio")
+#' # instance(compound, "unknown"). # returns error.
+#'
+#' # Extract compound properties for the compound "aspirin".
+#' # Use the 'retrieve()' function to extract specific slots from the compound list.
+#' retrieve(instance(compound, "aspirin"), "props")
+#'
+#' @export
 get_compounds <- function(identifier, namespace = 'cid', operation = NULL, searchtype = NULL, options = NULL) {
+  # Try to get the response and parse JSON
+  # Assuming 'get_json' is a function you've previously defined, similar to your Python environment
+  result <- lapply(identifier, function(x){
+    tmp <- get_json(identifier = x, namespace, operation = operation, searchtype = searchtype, options = options)
+    class(tmp) <- c(class(tmp), "PC_Compounds")
+    return(tmp)
+  })
 
-  compounds <- list()
+  Compounds_List <- list(
+    result = result,
+    request_args = list(
+      namespace = namespace,
+      identifier = identifier,
+      domain = "compound",
+      operation = "description",
+      options = options,
+      searchtype = searchtype
+    ),
+    success = logical(),
+    error = NULL
+  )
 
-  for (i in 1:length(identifier)) {
-    # Retrieve the JSON data
-    results <- get_json(identifier[i], namespace, operation = operation, searchtype = searchtype, options = options)
-
-    # Check if results are not empty
-    if (!is.null(results)) {
-      # Create a list of compounds (here, you might want to define what an 'compound' contains)
-
-    if (!is.null(results$PC_Compounds)) {
-        compounds[[i]] <- results$PC_Compounds
-      } else {
-        compounds[[i]] <- results
-      }
-    }}
-
-    if(length(compounds) >= 1){
-
-      names(compounds) <- paste0("'", identifier, "'")
-      results <- compounds
-
-      return(results)
-  }
+  structure(
+    Compounds_List,
+    class = c("PubChemInstanceList")
+  )
 }
-

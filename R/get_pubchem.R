@@ -12,9 +12,10 @@
 #'
 #' @return Returns the response content from the PubChem API based on the constructed URL.
 #'
-#' @importFrom httr GET http_status
+#' @noRd
+#'
+#' @importFrom httr GET http_status content
 #' @importFrom RJSONIO fromJSON
-#' @export
 #'
 #' @examples
 #' get_pubchem(
@@ -23,7 +24,6 @@
 #' )
 get_pubchem <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL,
                         output = 'JSON', searchtype = NULL, options = NULL) {
-
   response <- NULL
   status <- NULL
 
@@ -39,13 +39,19 @@ get_pubchem <- function(identifier, namespace = 'cid', domain = 'compound', oper
       identifier <- status$Waiting[["ListKey"]]
       namespace <- 'listkey'
 
+      iter <- 1
       while ('Waiting' %in% names(status) && !is.null(status$Waiting[["ListKey"]])) {
         # Delay before making the next request
-        Sys.sleep(2)  # delay for 2 seconds
+        Sys.sleep(1.5)  # delay for 1.5 seconds not to blocked by PubChem API.
         # Make the next request
         response <- GET(request(identifier, namespace, domain, operation, 'JSON', options))
         content <- rawToChar(response$content)
         status <- fromJSON(content)
+
+        iter <- iter + 1
+        if (iter == 3){
+          break
+        }
       }
     }
 

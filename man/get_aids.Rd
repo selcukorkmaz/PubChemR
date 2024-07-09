@@ -9,35 +9,43 @@ get_aids(
   namespace = "cid",
   domain = "compound",
   searchtype = NULL,
-  as_data_frame = TRUE,
   options = NULL
 )
 }
 \arguments{
-\item{identifier}{A vector of positive integers (e.g. cid, sid, aid) or identifier strings (source, inchikey, formula). In some cases, only a single identifier string (name, smiles, xref; inchi, sdf by POST only).}
+\item{identifier}{A vector of positive integers (e.g., cid, sid, aid) or identifier strings (source, inchikey, formula). In some cases, it may be a single identifier string (e.g., name, smiles, xref; inchi, sdf by POST only). Multiple elements can be included as a vector. See Notes for details.}
 
 \item{namespace}{Specifies the namespace for the query. For the 'compound' domain, possible values include 'cid', 'name', 'smiles', 'inchi', 'sdf', 'inchikey', 'formula', 'substructure', 'superstructure', 'similarity', 'identity', 'xref', 'listkey', 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure', and 'fastformula'. For other domains, the possible namespaces are domain-specific.}
 
-\item{domain}{Specifies the domain of the query. Possible values are 'substance', 'compound', 'assay', 'gene', 'protein', 'pathway', 'taxonomy', 'cell', 'sources', 'sourcetable', 'conformers', 'annotations', 'classification', and 'standardize'.}
+\item{domain}{Specifies the domain of the query. Possible values are 'substance', 'compound', assay', 'gene', 'protein', 'pathway', 'taxonomy', 'cell', 'sources', 'sourcetable', 'conformers', 'annotations', 'classification', and 'standardize'.}
 
 \item{searchtype}{Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.}
 
-\item{as_data_frame}{A logical value indicating whether to return the results as a tibble (data frame). Default is TRUE.}
-
-\item{options}{Additional arguments passed to \code{\link{get_json}}}
+\item{options}{Additional arguments to be passed to the PubChem Database API.}
 }
 \value{
-If `as_data_frame` is TRUE, a tibble (data frame) where each row corresponds to a provided identifier and its AID.
-        The tibble has columns 'CID' and 'AID'. If `as_data_frame` is FALSE, a list of AIDs is returned.
+An object of class 'PubChemInstance_AIDs', which is a list containing information retrieved from the PubChem database. Assay IDs can be extracted from the returned object using the getter function \link{AIDs}.
 }
 \description{
-This function sends a request to PubChem to retrieve Assay IDs (AIDs) for a given identifier.
-It returns either a tibble (data frame) with the provided identifier and the corresponding AIDs
-or a list of AIDs, depending on the `as_data_frame` parameter.
+This function queries the PubChem database to retrieve Assay IDs (AIDs) based on a given identifier.
+}
+\note{
+To extract assay IDs from returned object, one may use \link{AIDs} function. See examples.
 }
 \examples{
-get_aids(
-  identifier = "aspirin",
+# Request for multiple assays
+# If assay identifier is unknown or incorrect, an error returns from PubChem Database
+aids <- get_aids(
+  identifier = c("aspirin", "ibuprofen", "rstudio"),
   namespace = "name"
 )
+
+print(aids)
+
+# Return all Assay IDs.
+AIDs(aids)
+
+}
+\seealso{
+\link{AIDs}, \link{get_pug_rest}
 }

@@ -21,19 +21,21 @@ get_sids(
 
 \item{searchtype}{A character string specifying the search type. Default is NULL.}
 
-\item{options}{Additional arguments passed to \code{\link{get_json}}.}
+\item{options}{Additional arguments passed to the PubChem request.}
 }
 \value{
-A tibble (data frame) where each row corresponds to a provided identifier and its SID.
-        The tibble has columns 'CID' and 'SID'.
+An object of class 'PubChemInstance_SIDs', which is a list containing information retrieved from the PubChem database. Substance IDs can be extracted from the returned object using the \link{SIDs} function.
 }
 \description{
 This function sends a request to PubChem to retrieve Substance IDs (SIDs) for a given identifier.
-It returns a tibble (data frame) with the provided identifier and the corresponding SIDs.
 }
 \examples{
-get_sids(
-  identifier = "aspirin",
+result <- get_sids(
+  identifier = c("aspirin", "ibuprofen"),
   namespace = "name"
 )
+
+# Extract substance IDs of all compounds
+SIDs(result)
+
 }

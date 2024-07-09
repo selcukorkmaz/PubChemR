@@ -13,9 +13,11 @@ get_pug_rest(
   searchtype = NULL,
   property = NULL,
   options = NULL,
-  saveFile = FALSE,
-  saveImage = FALSE,
-  dpi = 300
+  save = FALSE,
+  dpi = 300,
+  path = NULL,
+  file_name = NULL,
+  ...
 )
 }
 \arguments{
@@ -27,7 +29,7 @@ get_pug_rest(
 
 \item{operation}{An optional character string specifying the operation for the request.}
 
-\item{output}{A character string specifying the output format. Possible values are 'JSON', 'JSONP', 'CSV', 'TXT', and 'PNG'. Default is 'JSON'.}
+\item{output}{A character string specifying the output format. Possible values are 'SDF', 'JSON', 'JSONP', 'CSV', 'TXT', and 'PNG'. Default is 'JSON'.}
 
 \item{searchtype}{An optional character string specifying the search type.}
 
@@ -35,17 +37,22 @@ get_pug_rest(
 
 \item{options}{A list of additional options for the request.}
 
-\item{saveFile}{A logical value indicating whether to save the output as a file. Default is FALSE.}
-
-\item{saveImage}{A logical value indicating whether to save the output as an image. Default is FALSE.}
+\item{save}{A logical value indicating whether to save the output as a file or image. Default is FALSE.}
 
 \item{dpi}{An integer specifying the DPI for image output. Default is 300.}
+
+\item{path}{description}
+
+\item{file_name}{a character of length 1. Define the name of file (without file extension) to save. If NULL, default file name is set as "files_downloaded".}
+
+\item{...}{description}
 }
 \value{
 Depending on the output format, this function returns different types of content:
         JSON or JSONP format returns parsed JSON content.
         CSV format returns a data frame.
         TXT format returns a table.
+        SDF returns SDF file of requested identifier.
         PNG format returns an image object or saves an image file.
 }
 \description{
@@ -53,6 +60,6 @@ This function sends a request to the PubChem PUG REST API to retrieve various ty
 for a given identifier. It supports fetching data in different formats and allows saving the output.
 }
 \examples{
-  get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", output = "JSON")
+result <- get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", output = "JSON")
 
 }

@@ -1,63 +1,59 @@
-# test for 'namespace' arg. ----
-test_that("pulling CIDs via 'name' is succesful", {
-  tmp <- try(get_cids(
-    identifier = "aspirin",
-    namespace = "name",
-  ))
-
+# Helper Functions ----
+toDataFrame <- function(object, ...){
   # Returned object is a tibble or data.frame
-  state1 <- any(inherits(tmp, "tbl"), inherits(tmp, "data.frame"), inherits(tmp, "tbl_df"))
-  state2 <- all(nrow(tmp) != 0, ncol(tmp) != 0)
-
-  expect_true(all(state1, state2))
-})
-
-
-test_that("pulling CIDs via 'smiles' is succesful", {
-  tmp <- try(get_cids(
-    identifier = "CC(=O)OC1=CC=CC=C1C(=O)O",
-    namespace = "smiles",
-  ))
-
-  # Returned object is a tibble or data.frame
-  state1 <- any(inherits(tmp, "tbl"), inherits(tmp, "data.frame"), inherits(tmp, "tbl_df"))
-  state2 <- all(nrow(tmp) != 0, ncol(tmp) != 0)
-
-  expect_true(all(state1, state2))
-})
-
-test_that("pulling CIDs via 'cid' is succesful", {
-  tmp <- try(get_cids(
-    identifier = 2244,
-    namespace = "cid",
-  ))
-
-  # Returned object is a tibble or data.frame
-  state1 <- any(inherits(tmp, "tbl"), inherits(tmp, "data.frame"), inherits(tmp, "tbl_df"))
-  state2 <- all(nrow(tmp) != 0, ncol(tmp) != 0)
-
-  expect_true(all(state1, state2))
-})
-
-test_that("pulling CIDs via multiple 'name' is succesful", {
-  tmp <- try(get_cids(
-    identifier = c("aspirin", "ibuprofen"),
-    namespace = "name",
-  ))
-
-  # Returned object is a tibble or data.frame
-  state1 <- any(inherits(tmp, "tbl"), inherits(tmp, "data.frame"), inherits(tmp, "tbl_df"))
-  state2 <- all(nrow(tmp) == 2, ncol(tmp) != 0)
-  state3 <- all(c("aspirin", "ibuprofen") %in% tmp[["Compound"]])
-
-  expect_true(all(state1, state2))
-})
-
-test_that("handling unknown/incorrect/undefined 'identifiers'", {
-  expect_error({
-    get_cids(identifier = "dncr",
-             namespace = "name",)
+  resDF <- CIDs(object, .to.data.frame = TRUE)
+  expect_true({
+    any(inherits(resDF, "tbl"), inherits(resDF, "data.frame"), inherits(resDF, "tbl_df"))
+    all(nrow(resDF) != 0, ncol(resDF) != 0)
   })
 
+  # Returned object is a list
+  resLIST <- CIDs(object, .to.data.frame = FALSE)
+  expect_true({
+    inherits(resLIST, "list")
+    length(resLIST) > 0
+  })
+}
+
+test1 <- function(object, ...){
+  test_that(paste0("pulling cids via '", request_args(object, "namespace"), "' is succesfull"), {
+    expect_true(allSuccess(object))
+  })
+
+  test_that("CIDs succesfully returns 'data.frame' and 'list'", {
+    toDataFrame(object)
+  })
+}
+
+# Checking requests and AIDs ----
+cids <- try(get_cids(
+  identifier = "aspirin",
+  namespace = "name"
+))
+test1(cids)
+
+cids <- try(get_cids(
+  identifier = "CC(=O)OC1=CC=CC=C1C(=O)O",
+  namespace = "smiles"
+))
+test1(cids)
+
+test_that("pulling cids for multiple identifiers with undefined input.", {
+  cids <- try(get_cids(
+    identifier = c("aspirin", "dncr"),
+    namespace = "name"
+  ))
+
+  expect_true(cids$result[[1]]$success)
+  expect_false(cids$result[[2]]$success)
 })
 
+test_that("undefined/incorrect identifier returns error", {
+  cids <- get_cids(
+    identifier = "dncr",
+    namespace = "name"
+  )
+
+  expect_false(cids$result[[1]]$success)
+  expect_true(!is.null(cids$result[[1]]$error))
+})

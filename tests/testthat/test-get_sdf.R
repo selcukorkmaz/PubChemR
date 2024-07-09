@@ -2,17 +2,18 @@
 test_that("pulling SDFs via 'name' is succesful", {
   temp_dir <- tempdir(check = TRUE)
 
-  tmp <- try(get_sdf(
-    identifier = "aspirin",
-    namespace = "name",
-    path = temp_dir,
-    file_name = "file"
-  ))
+  expect_invisible({
+    tmp <- try(get_sdf(
+      identifier = "aspirin",
+      namespace = "name",
+      path = temp_dir
+    ))
+  })
 
   expect_true(file.exists(temp_dir))
-  expect_true(file.exists(file.path(temp_dir, "file.sdf")))
+  expect_true(file.exists(tmp))
 
-  file.remove(file.path(temp_dir, "file.sdf"))
+  file.remove(tmp)
 })
 
 test_that("pulling SDFs via 'cid' is succesful", {
@@ -44,11 +45,9 @@ test_that("no SDF file saved for unknown/incorrect identifiers", {
   })
 
   expect_null(tmp)
-
 })
 
 test_that("save SDF files to temporary working directory when path is not specified.", {
-
   tmp <- try(get_sdf(
     identifier = "aspirin",
     namespace = "name",
