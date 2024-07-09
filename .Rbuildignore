@@ -13,3 +13,7 @@ IgnoredFoldersFiles
 vignettes/cached
 
 vignettes/
+
+README.*
+codecov.yml
+NEWS.*
