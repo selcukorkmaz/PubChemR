@@ -374,7 +374,7 @@ These examples illustrate the versatility of the PubChem PUG REST API in retriev
 To access annotations related to CAS on the 10th page, you can use the following code:
 
 ```{r}
-result <- get_pug_view(annotation = "annotations", identifier = "CAS",domain = "heading", output = "JSON", page = "10")
+result <- get_pug_view(annotation = "annotations", identifier = "CAS", domain = "heading", output = "JSON", page = "10")
 ```
 This code retrieves the 10th page of annotations related to CAS. The resulting object, result, contains detailed data about the annotations on that page.
 
