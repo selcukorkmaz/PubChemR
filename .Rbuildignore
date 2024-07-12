@@ -6,14 +6,14 @@
 ^doc$
 ^Meta$
 TODO_NOTES.txt
-IgnoredFoldersFiles
+IgnoredFoldersFiles/
+docker/
 
-.github
+vignettes/
 ^vignettes/cached$
 vignettes/cached
 
-vignettes/
-
+.github
 README.*
 codecov.yml
 NEWS.*
