@@ -12,8 +12,10 @@ output:
     keep_md: false
   pdf_document:
     toc: true
-vignette: "%\\VignetteIndexEntry{Working with PubChemR to Access Chemical Data} %\\VignetteEncoding{UTF-8}
-  %\\VignetteEngine{knitr::rmarkdown}\n"
+vignette: >
+  %\VignetteIndexEntry{Working with PubChemR to Access Chemical Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include = FALSE}

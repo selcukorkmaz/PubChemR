@@ -9,7 +9,6 @@ TODO_NOTES.txt
 IgnoredFoldersFiles/
 docker/
 
-vignettes/
 ^vignettes/cached$
 vignettes/cached
 
