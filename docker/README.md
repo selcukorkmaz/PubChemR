@@ -1,6 +1,6 @@
 # Creating Docker Container for Developement Environment.
 
-We propose a docker container to be used for package developement. The built VMs are distributed through Docker Hub ([dncr/rstudio-server](https://hub.docker.com/repository/docker/dncr/rstudio-server/general)) and source codes are available through GitHub ([https://github.com/dncR/rstudio-server](https://github.com/dncR/rstudio-server)). The docker container is built upon **Linux Operating System** (particularly, Ubuntu Jammy) with pre-installed **R and RStudio Server**, and **TeX (using Tex Live distribution)**. All the arguments to be used while *pulling*, *building*, or *creating* docker image/container are given with an environment file **.env**. One may change the value of corresponding arguments to customize Docker Environment. See below for more details on **.env** file.
+We propose a docker container to be used for package developement. The built VMs are distributed through Docker Hub ([dncr/rstudio-server](https://hub.docker.com/repository/docker/dncr/rstudio-server/general)) and source codes are available through GitHub ([https://github.com/dncR/rstudio-server](https://github.com/dncR/rstudio-server)). The docker container is built upon **Linux Operating System** (particularly, Ubuntu Jammy) with pre-installed **R** and **RStudio Server**. All the arguments to be used while *pulling*, *building*, or *creating* docker image/container are given with an environment file **.env**. One may change the value of corresponding arguments to customize Docker Environment. See below for more details on **.env** file.
 
 ## Working with .env file
 
@@ -35,5 +35,5 @@ We benefitted from the installation scripts of [Rocker Project](https://hub.dock
 
 ## Post Installation Steps (Optional)
 
-We included all the scripts used (or not used) while creating the docker image under in-container folder `/rocker_scripts`. Two scripts, called `texlive_base.sh` and `texlive-full.sh`, are available in this folder. One may run one of texlive installation scripts to install TeX distribution.
+We included all the scripts used (or not used) while creating the docker image under in-container folder `/rocker_scripts`. Two scripts, called `texlive_base.sh` and `texlive-full.sh`, are available in this folder. One may run one of these scripts to install **TeX**, which uses the [Tex Live](https://www.tug.org/texlive/) distribution.
 
