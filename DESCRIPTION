@@ -20,7 +20,7 @@ VignetteBuilder: knitr
 URL: https://github.com/selcukorkmaz/PubChemR
 Depends:
   R (>= 3.6.0)
-Imports: 
+Imports:
   dplyr,
   tibble,
   magrittr,
@@ -34,7 +34,7 @@ Imports:
   rsvg,
   png,
   testthat
-Suggests: 
-  knitr, 
+Suggests:
+  knitr,
   rmarkdown
 Config/testthat/edition: 3
