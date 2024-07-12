@@ -33,7 +33,15 @@ One may change the **rstudio-server.yml** file to customize the docker container
 
 We benefitted from the installation scripts of [Rocker Project](https://hub.docker.com/u/rocker) and modified some scripts to create our custom docker image. Rocker Project is available as a GitHub repository [here](https://github.com/rocker-org/rocker-versioned2).
 
-## Post Installation Steps (Optional)
+## Post Installation Steps
+
+### 1. Linux Dependencies (Ubuntu 22.04 - Jammy)
+
+Below linux packages are required to be installed after Docker Container is created.
+
+	- libmagick++-dev
+	
+### 2. TexLive Installation (Optional)
 
 We included all the scripts used (or not used) while creating the docker image under in-container folder `/rocker_scripts`. Two scripts, called `texlive_base.sh` and `texlive-full.sh`, are available in this folder. One may run one of these scripts to install **TeX**, which uses the [Tex Live](https://www.tug.org/texlive/) distribution.
 
