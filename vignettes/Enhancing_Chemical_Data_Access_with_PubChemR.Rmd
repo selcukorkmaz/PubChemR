@@ -61,6 +61,7 @@ PUG View offers a versatile approach to access structured information from PubCh
 ```{r}
 result <- get_pug_view(annotation = "data", identifier = "1234", domain = "compound", output = "JSON")
 ```
+
 This code initializes a request to retrieve data from the PubChem database for the compound with the identifier "1234" (Gallopamil). The annotation parameter is set to "data" indicating that we want the compound data.
 
 ```{r}

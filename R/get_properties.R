@@ -15,6 +15,7 @@
 #' @order 1
 #'
 #' @examples
+#' \donttest{
 #' # Isomeric SMILES of the compounds
 #' props <- get_properties(
 #'   properties = c("MolecularWeight", "MolecularFormula", "InChI"),
@@ -57,6 +58,8 @@
 #' )
 #'
 #' retrieve(props, .combine.all = TRUE)
+#'
+#'}
 #'
 #' @export
 get_properties <- function(properties = NULL, identifier, namespace = 'cid', searchtype = NULL, options = NULL,

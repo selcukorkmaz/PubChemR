@@ -13,6 +13,7 @@
 #' @importFrom RJSONIO fromJSON
 #'
 #' @examples
+#' \donttest{
 #' subs <- get_substances(
 #'   identifier = c("aspirin", "ibuprofen"),
 #'   namespace = "name"
@@ -20,6 +21,7 @@
 #'
 #' instance(subs, "aspirin")
 #' retrieve(instance(subs, "aspirin"), "source")
+#' }
 #'
 #' @export
 get_substances <- function(identifier, namespace = 'sid', operation = NULL, searchtype = NULL, options = NULL) {
