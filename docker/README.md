@@ -38,7 +38,11 @@ We benefitted from the installation scripts of [Rocker Project](https://hub.dock
 
 Below linux packages are required to be installed after Docker Container is created.
 
-	- libmagick++-dev
+```sh
+sudo apt-get update
+sudo apt-get install -y \
+  libmagick++-dev
+```
 	
 ### 2. TexLive Installation (Optional)
 
