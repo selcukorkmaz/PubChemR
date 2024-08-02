@@ -8,15 +8,15 @@
 
 name: BUILD & CHECK
 
-# on:
-#  push:
-#    branches: [ "master" ]
-#  pull_request:
-#    branches: [ "master" ]
-
 on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+# on:
   # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+#  workflow_dispatch:
   
 permissions:
   contents: write
