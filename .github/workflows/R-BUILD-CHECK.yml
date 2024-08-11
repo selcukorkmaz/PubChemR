@@ -23,7 +23,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-jammy
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         r-version: ['4.3.0']
