@@ -5,14 +5,66 @@
 #' for different output formats including JSON and SVG.
 #'
 #' @param annotation A character string specifying the type of annotation to retrieve.
+#'
+#'                   Valid values are:
+#'
+#'                    \code{annotations} (default): Retrieve annotations across all of PubChem’s primary databases.
+#'
+#'                    \code{categories}: List all PubChem depositors and their SIDs for a given compound, including categorization.
+#'
+#'                    \code{literature}: Retrieve URLs into PubMed for literature associated with a compound, organized by subheading.
+#'
+#'                    \code{image}: Display biologic images associated with compounds.
+#'
+#'                    \code{qr}: Generate QR codes that link to the LCSS page for a compound.
+#'
+#'                    \code{linkout}: Retrieve all the NCBI LinkOut records present for a substance, compound, or assay.
+#'
+#'                    \code{structure}: Retrieve 3D protein structures associated with a compound.
+#'
 #' @param identifier A single identifier for the query, either numeric or character.
-#' @param domain A character string specifying the domain for the request. Default is 'compound'.
-#' @param output A character string specifying the output format. Possible values are 'JSON' and 'SVG'. Default is 'JSON'.
-#' @param heading An optional character string for specifying a heading in the request.
-#' @param headingType An optional character string for specifying a heading type in the request.
-#' @param page An optional character string for specifying a page number in the request.
-#' @param qrSize A character string specifying the size of the QR code. Possible values are 'short' and 'long'. Default is 'short'.
-#' @param save A logical value indicating whether to save the output. Default is FALSE.
+#'                   **Note:** Only one identifier is allowed per request for certain annotations.
+#'                   For some annotations like \code{annotations} with a \code{heading}, the \code{identifier} can be \code{NULL}.
+#' @param domain A character string specifying the domain for the request.
+#'
+#'               Possible values include:
+#'
+#'
+#'               \code{compound} (default)
+#'
+#'               \code{substance}
+#'
+#'               - Other domains as specified in the API documentation.
+#' @param output A character string specifying the output format.
+#'
+#'               Possible values include:
+#'
+#'               \code{JSON} (default)
+#'
+#'               \code{XML}
+#'
+#'               \code{CSV}
+#'
+#'               \code{TXT}
+#'
+#'               \code{PNG}
+#'
+#'               \code{SVG}
+#'
+#' @param heading An optional character string specifying a heading to filter the data.
+#'                Used with \code{annotations} when \code{identifier} is \code{NULL}.
+#' @param headingType An optional character string specifying a heading type to filter the data.
+#'                     Possible values include \code{Compound}, \code{Substance}, etc.
+#' @param page An optional integer specifying a page number for pagination.
+#' @param qrSize A character string specifying the size of the QR code.
+#'                Possible values are \code{short} (default) and \code{long}. Used when \code{annotation} is \code{qr}.
+#' @param save A logical value indicating whether to save the output to a file. Default is \code{FALSE}.
+#'
+#' @details
+#' The PubChem PUG View API allows users to retrieve detailed information about compounds, substances, and assays.
+#' This function constructs the appropriate API call based on the provided parameters.
+#' For more detailed information, please refer to the
+#' \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-view}{PubChem PUG View API documentation}.
 #'
 #' @return Depending on the output format, this function returns different types of content:
 #'         JSON or JSONP format returns parsed JSON content.
@@ -20,7 +72,9 @@
 #'         For QR codes, it returns an image object or saves a PNG file.
 #'
 #' @examples
+#' \donttest{
 #' get_pug_view(identifier = "2244", annotation = "linkout", domain = "compound")
+#' }
 #'
 #' @importFrom RJSONIO fromJSON
 #' @importFrom httr GET status_code

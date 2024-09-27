@@ -13,21 +13,71 @@ get_sids(
 )
 }
 \arguments{
-\item{identifier}{A numeric or character vector specifying the identifiers for the request.}
+\item{identifier}{A vector of identifiers, either numeric or character.
+The type of identifier depends on the \code{namespace} and \code{domain} parameters.
+**Note**: \code{identifier} must be provided; it cannot be \code{NULL}.}
 
-\item{namespace}{A character string specifying the namespace for the request. Default is 'cid'.}
+\item{namespace}{A character string specifying the namespace of the identifier.
 
-\item{domain}{A character string specifying the domain for the request. Default is 'compound'.}
+                 Possible values depend on the \code{domain} parameter and include:
 
-\item{searchtype}{A character string specifying the search type. Default is NULL.}
+                 - For \code{domain = 'compound'}: \code{cid}, \code{name}, \code{smiles}, \code{inchi},
+                 \code{sdf}, \code{inchikey}, \code{formula}, etc.
 
-\item{options}{Additional arguments passed to the PubChem request.}
+                 - For \code{domain = 'substance'}: \code{sid}, \code{sourceid/<source id>}, \code{sourceall/<source name>}, \code{name}, etc.
+
+                 - For \code{domain = 'assay'}: \code{aid}, \code{listkey}, \code{type/<assay type>}, \code{sourceall/<source name>}, etc.
+
+                 For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Input}{Input} section of the PUG REST API.}
+
+\item{domain}{A character string specifying the domain of the query.
+
+              Possible values are:
+
+              - \code{compound} (default)
+
+              - \code{substance}
+
+              - \code{assay}
+
+              - Other domains as specified in the API documentation.}
+
+\item{searchtype}{An optional character string specifying the search type.
+
+                  Possible values depend on the \code{namespace} and \code{domain}.
+
+                  Examples include:
+
+                  - \code{substructure}, \code{superstructure}, \code{similarity}, \code{identity} for structure searches.
+
+                  - \code{fastidentity}, \code{fastsimilarity_2d}, \code{fastsimilarity_3d}, etc. for fast searches.
+
+                  If \code{NULL} (default), no search type is specified.
+
+                  For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Input}{Input} section of the PUG REST API.}
+
+\item{options}{A list of additional options for the request.
+               Available options depend on the specific request and the API.
+
+               Examples include:
+
+               - For similarity searches: \code{list(Threshold = 95)}
+
+               - For substructure searches: \code{list(MaxRecords = 100)}
+
+               If \code{NULL} (default), no additional options are included.
+
+               For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Structure-Search-Operations}{Structure Search Operations} section of the PUG REST API.}
 }
 \value{
 An object of class 'PubChemInstance_SIDs', which is a list containing information retrieved from the PubChem database. Substance IDs can be extracted from the returned object using the \link{SIDs} function.
 }
 \description{
 This function sends a request to PubChem to retrieve Substance IDs (SIDs) for a given identifier.
+}
+\details{
+#' For more detailed information, please refer to the
+\href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest}{PubChem PUG REST API documentation}.
 }
 \examples{
 result <- get_sids(

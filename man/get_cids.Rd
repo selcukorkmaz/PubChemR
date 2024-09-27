@@ -13,21 +13,69 @@ get_cids(
 )
 }
 \arguments{
-\item{identifier}{A vector of positive integers (e.g., cid, sid, aid) or identifier strings (e.g., source, inchikey, formula). In some cases, only a single identifier string is required (e.g., name, smiles, xref; inchi, sdf by POST only). Multiple elements can be included as a vector. See Notes for details.}
+\item{identifier}{A vector of identifiers, either numeric or character.
+The type of identifier depends on the \code{namespace} and \code{domain} parameters.
+**Note**: \code{identifier} must be provided; it cannot be \code{NULL}.}
 
-\item{namespace}{Specifies the namespace for the query. For the 'compound' domain, possible values include 'cid', 'name', 'smiles', 'inchi', 'sdf', 'inchikey', 'formula', 'substructure', 'superstructure', 'similarity', 'identity', 'xref', 'listkey', 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure', and 'fastformula'. For other domains, the possible namespaces are domain-specific.}
+\item{namespace}{A character string specifying the namespace of the identifier.
 
-\item{domain}{Specifies the domain of the query. Possible values are 'substance', 'compound', 'assay', 'gene', 'protein', 'pathway', 'taxonomy', 'cell', 'sources', 'sourcetable', 'conformers', 'annotations', 'classification', and 'standardize'.}
+                 Possible values depend on the \code{domain} parameter and include:
 
-\item{searchtype}{Specifies the type of search to be performed. For structure searches, possible values include combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', or 'cid'. For fast searches, possible values include combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.}
+                 - For \code{domain = 'compound'}: \code{cid}, \code{name}, \code{smiles}, \code{inchi}, \code{sdf}, \code{inchikey}, \code{formula}, etc.
 
-\item{options}{Additional arguments to be passed to the PubChem Database API.}
+                 - For \code{domain = 'substance'}:\code{sid}, \code{sourceid/<source id>}, \code{sourceall/<source name>}, \code{name}, etc.
+
+                 - For \code{domain = 'assay'}: \code{aid}, \code{listkey}, \code{type/<assay type>}, \code{sourceall/<source name>}, etc.
+
+                 For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Input}{Input} section of the PUG REST API.}
+
+\item{domain}{A character string specifying the domain of the query.
+
+              Possible values are:
+
+              - \code{compound} (default)
+
+              - \code{substance}
+
+              - \code{assay}
+
+              - Other domains as specified in the API documentation.}
+
+\item{searchtype}{An optional character string specifying the search type.
+
+                  Possible values depend on the \code{namespace} and \code{domain}.
+
+                  Examples include:
+
+                  - \code{substructure}, \code{superstructure}, \code{similarity}, \code{identity} for structure searches.
+
+                  - \code{fastidentity}, \code{fastsimilarity_2d}, \code{fastsimilarity_3d}, etc. for fast searches.
+
+                  If \code{NULL} (default), no search type is specified.}
+
+\item{options}{A list of additional options for the request.
+
+               Available options depend on the specific request and the API.
+
+               Examples include:
+
+               - For similarity searches: \code{list(Threshold = 95)}
+
+               - For substructure searches: \code{list(MaxRecords = 100)}
+
+               If \code{NULL} (default), no additional options are included.
+
+               For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Structure-Search-Operations}{Structure Search Operations} section of the PUG REST API.}
 }
 \value{
 An object of class 'PubChemInstance_CIDs', which is a list containing information retrieved from the PubChem database. Compound IDs can be extracted from the returned object using the \link{CIDs} function.
 }
 \description{
 This function sends a request to PubChem to retrieve Compound IDs (CIDs) for given identifier(s).
+}
+\details{
+For more detailed information, please refer to the
+\href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest}{PubChem PUG REST API documentation}.
 }
 \note{
 To extract compoud IDs from returned object, one may use \link{CIDs} function. See examples.

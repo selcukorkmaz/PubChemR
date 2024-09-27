@@ -17,23 +17,67 @@ get_pug_view(
 )
 }
 \arguments{
-\item{annotation}{A character string specifying the type of annotation to retrieve.}
+\item{annotation}{A character string specifying the type of annotation to retrieve.
 
-\item{identifier}{A single identifier for the query, either numeric or character.}
+                  Valid values are:
 
-\item{domain}{A character string specifying the domain for the request. Default is 'compound'.}
+                   \code{annotations} (default): Retrieve annotations across all of PubChem’s primary databases.
 
-\item{output}{A character string specifying the output format. Possible values are 'JSON' and 'SVG'. Default is 'JSON'.}
+                   \code{categories}: List all PubChem depositors and their SIDs for a given compound, including categorization.
 
-\item{heading}{An optional character string for specifying a heading in the request.}
+                   \code{literature}: Retrieve URLs into PubMed for literature associated with a compound, organized by subheading.
 
-\item{headingType}{An optional character string for specifying a heading type in the request.}
+                   \code{image}: Display biologic images associated with compounds.
 
-\item{page}{An optional character string for specifying a page number in the request.}
+                   \code{qr}: Generate QR codes that link to the LCSS page for a compound.
 
-\item{qrSize}{A character string specifying the size of the QR code. Possible values are 'short' and 'long'. Default is 'short'.}
+                   \code{linkout}: Retrieve all the NCBI LinkOut records present for a substance, compound, or assay.
 
-\item{save}{A logical value indicating whether to save the output. Default is FALSE.}
+                   \code{structure}: Retrieve 3D protein structures associated with a compound.}
+
+\item{identifier}{A single identifier for the query, either numeric or character.
+**Note:** Only one identifier is allowed per request for certain annotations.
+For some annotations like \code{annotations} with a \code{heading}, the \code{identifier} can be \code{NULL}.}
+
+\item{domain}{A character string specifying the domain for the request.
+
+              Possible values include:
+
+
+              \code{compound} (default)
+
+              \code{substance}
+
+              - Other domains as specified in the API documentation.}
+
+\item{output}{A character string specifying the output format.
+
+              Possible values include:
+
+              \code{JSON} (default)
+
+              \code{XML}
+
+              \code{CSV}
+
+              \code{TXT}
+
+              \code{PNG}
+
+              \code{SVG}}
+
+\item{heading}{An optional character string specifying a heading to filter the data.
+Used with \code{annotations} when \code{identifier} is \code{NULL}.}
+
+\item{headingType}{An optional character string specifying a heading type to filter the data.
+Possible values include \code{Compound}, \code{Substance}, etc.}
+
+\item{page}{An optional integer specifying a page number for pagination.}
+
+\item{qrSize}{A character string specifying the size of the QR code.
+Possible values are \code{short} (default) and \code{long}. Used when \code{annotation} is \code{qr}.}
+
+\item{save}{A logical value indicating whether to save the output to a file. Default is \code{FALSE}.}
 }
 \value{
 Depending on the output format, this function returns different types of content:
@@ -46,7 +90,15 @@ This function sends a request to the PubChem PUG View API to retrieve various ty
 for a given identifier. It supports fetching annotations, QR codes, and more, with options
 for different output formats including JSON and SVG.
 }
+\details{
+The PubChem PUG View API allows users to retrieve detailed information about compounds, substances, and assays.
+This function constructs the appropriate API call based on the provided parameters.
+For more detailed information, please refer to the
+\href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-view}{PubChem PUG View API documentation}.
+}
 \examples{
+\donttest{
 get_pug_view(identifier = "2244", annotation = "linkout", domain = "compound")
+}
 
 }

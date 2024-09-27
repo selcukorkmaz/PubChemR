@@ -13,21 +13,87 @@ get_compounds(
 )
 }
 \arguments{
-\item{identifier}{A vector of positive integers (e.g., cid, sid, aid) or identifier strings (source, inchikey, formula). In some cases, a single identifier string (e.g., name, smiles, xref; inchi, sdf by POST only) is sufficient.}
+\item{identifier}{A vector of positive integers (e.g., cid, sid, aid) or identifier strings (source, inchikey, formula).
+In some cases, a single identifier string (e.g., name, smiles, xref; inchi, sdf by POST only) is sufficient.
+**Note**: \code{identifier} must be provided; it cannot be \code{NULL}.}
 
-\item{namespace}{Specifies the namespace for the query. For the 'compound' domain, possible values include 'cid', 'name', 'smiles', 'inchi', 'sdf', 'inchikey', 'formula', 'substructure', 'superstructure', 'similarity', 'identity', 'xref', 'listkey', 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure', and 'fastformula'. For other domains, the possible namespaces are domain-specific.}
+\item{namespace}{A character string specifying the namespace of the identifier.
 
-\item{operation}{The operation to be performed (default: NULL).}
+                 Possible values include:
 
-\item{searchtype}{Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.}
+                 - \code{cid}: PubChem Compound Identifier (default)
 
-\item{options}{Additional parameters passed to \code{get_json}.}
+                 - \code{name}: Chemical name
+
+                 - \code{smiles}: SMILES string
+
+                 - \code{inchi}: InChI string
+
+                 - \code{inchikey}: InChIKey
+
+                 - \code{formula}: Molecular formula
+
+                 For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Input}{Input} section of the PUG REST API.}
+
+\item{operation}{A character string specifying the operation to perform.
+
+                 Possible values include:
+
+                 - \code{synonyms}: Retrieve synonyms for the compounds.
+
+                 - \code{description}: Retrieve compound descriptions.
+
+                 - \code{sids}: Retrieve Substance IDs related to the compounds.
+
+                 - \code{aids}: Retrieve Assay IDs related to the compounds.
+
+                 - \code{classification}: Retrieve compound classification.
+
+                 - \code{cids}: Retrieve Compound IDs (used when the input is not CID).
+
+                 If \code{NULL} (default), the basic compound record is retrieved.
+
+                 For a full list of operations, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Operation}{Operations} section of the PUG REST API.}
+
+\item{searchtype}{An optional character string specifying the search type.
+
+                  Possible values include:
+
+                  - \code{similarity}
+
+                  - \code{substructure}
+
+                  - \code{superstructure}
+
+                  - \code{identity}
+
+                  If \code{NULL} (default), no search type is specified.
+
+                 For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Input}{Input} section of the PUG REST API.}
+
+\item{options}{A list of additional options for the request.
+
+               Available options depend on the specific request and the API.
+
+               Examples include:
+
+               - For similarity searches: \code{list(Threshold = 95)}
+
+               - For substructure searches: \code{list(MaxRecords = 100)}
+
+               If \code{NULL} (default), no additional options are included.
+
+               For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Structure-Search-Operations}{Structure Search Operations} section of the PUG REST API.}
 }
 \value{
 An object of class 'PubChemInstanceList' and 'PC_Compounds' containing compound information from the PubChem database.
 }
 \description{
 This function sends a request to the PubChem database to retrieve compound data based on specified parameters.
+}
+\details{
+For more detailed information, please refer to the
+\href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest}{PubChem PUG REST API documentation}.
 }
 \examples{
 compound <- get_compounds(

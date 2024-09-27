@@ -3,16 +3,76 @@
 #' @description This function sends a request to PubChem to retrieve data in SDF format based on the specified parameters.
 #' It then saves the retrieved data as an SDF file in the current working directory (or into the system-specific temporary folder).
 #'
-#' @param identifier A character or numeric value specifying the identifier for the request.
-#' @param namespace A character string specifying the namespace for the request. Default is 'cid'.
-#' @param domain A character string specifying the domain for the request. Default is 'compound'.
-#' @param operation An optional character string specifying the operation for the request.
-#' @param searchtype An optional character string specifying the search type.
-#' @param path A string indicating the path to the folder where the SDF files will be saved. Default is NULL (i.e., saves the file into a temporary folder).
-#' @param file_name A string. File name for the downloaded SDF file. If NULL, "file" is used as the file name. Default is NULL.
-#' @param options Additional parameters to be passed to the request.
+#' @param identifier A vector of compound identifiers, either numeric or character.
+#'                   The type of identifier depends on the \code{namespace} parameter.
+#'                   **Note**: \code{identifier} must be provided; it cannot be \code{NULL}.
+#' @param namespace A character string specifying the namespace of the identifier.
 #'
-#' @return NULL. The function saves the retrieved data as an SDF file in the current working directory and prints a
+#'                  Possible values include:
+#'
+#'                  - \code{cid}: PubChem Compound Identifier (default)
+#'
+#'                  - \code{name}: Chemical name
+#'
+#'                  - \code{smiles}: SMILES string
+#'
+#'                  - \code{inchi}: InChI string
+#'
+#'                  - \code{inchikey}: InChIKey
+#'
+#'                  - \code{formula}: Molecular formula
+#'
+#'                  - Other namespaces as specified in the API documentation.
+#'
+#'                  For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Input}{Input} section of the PUG REST API.
+#'
+#' @param domain A character string specifying the domain of the query.
+#'
+#'               Possible values include:
+#'
+#'               - \code{compound} (default)
+#'
+#'               - Other domains as specified in the API documentation.
+#'
+#' @param operation A character string specifying the operation to perform.
+#'                  For SDF retrieval, the operation is typically \code{NULL} or \code{record}.
+#'                  If \code{NULL} (default), the basic compound record is retrieved.
+#'                  For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Operation}{Operations} section of the PUG REST API.
+#' @param searchtype An optional character string specifying the search type.
+#'
+#'                   Possible values include:
+#'
+#'                   - \code{substructure}
+#'
+#'                   - \code{superstructure}
+#'
+#'                   - \code{similarity}
+#'
+#'                   - \code{identity}
+#'
+#'                   - Other search types as specified in the API documentation.
+#'
+#'                   If \code{NULL} (default), no search type is specified.
+#'
+#'                   For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Input}{Input} section of the PUG REST API.
+#'
+#' @param path A character string specifying the directory path where the SDF file will be saved.
+#'             If \code{NULL} (default), the file is saved in a temporary directory.
+#' @param file_name A character string specifying the name of the SDF file (without file extension).
+#'                  If \code{NULL} (default), a file name is generated based on the \code{identifier} and timestamp.
+#' @param options A list of additional options for the request.
+#'                Available options depend on the specific request and the API.
+#'                If \code{NULL} (default), no additional options are included.
+#'                For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Structure-Search-Operations}{Structure Search Operations} section of the PUG REST API.
+#'
+#' @details
+#' The PubChem PUG REST API allows users to retrieve compound data in various formats, including SDF.
+#' This function constructs the appropriate API call and saves the SDF data to a file.
+#' For more detailed information, please refer to the
+#' \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest}{PubChem PUG REST API documentation}.
+
+#'
+#' @return The function saves the retrieved data as an SDF file in the current working directory and prints a
 #' message indicating the file's location.
 #'
 #' @importFrom utils download.file

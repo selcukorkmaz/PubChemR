@@ -2,12 +2,78 @@
 #'
 #' @description This function sends a request to PubChem to retrieve compound properties based on the specified parameters.
 #'
-#' @param properties A character vector specifying the properties to be retrieved. It is ignored if all available properties are requested from PubChem. See examples.
-#' @param identifier A vector of positive integers (e.g., CID, SID, AID) or identifier strings (e.g., source, InChIKey, formula). In some cases, only a single identifier string is allowed (e.g., name, SMILES, xref; InChI, SDF by POST only).
-#' @param namespace Specifies the namespace for the query. For the 'compound' domain, possible values include 'cid', 'name', 'smiles', 'inchi', 'sdf', 'inchikey', 'formula', 'substructure', 'superstructure', 'similarity', 'identity', 'xref', 'listkey', 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure', and 'fastformula'. For other domains, the possible namespaces are domain-specific.
-#' @param searchtype Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.
-#' @param options Additional arguments passed to \code{get_json}.
-#' @param propertyMatch A list containing the arguments passed to the \link{property_map} function. See examples of the \code{property_map()} function.
+#' @param properties A character vector specifying the properties to retrieve.
+#'                   If \code{NULL} (default), all available properties are retrieved.
+#'                   Properties can be specified by exact names, partial matches, or patterns, controlled by the \code{propertyMatch} argument.
+#'                   For a full list of properties, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Compound-Property-Tables}{Property Table}.
+#' @param identifier A vector of compound identifiers, either numeric or character.
+#'                   The type of identifier depends on the \code{namespace} parameter.
+#'                   **Note**: \code{identifier} must be provided; it cannot be \code{NULL}.
+#' @param namespace A character string specifying the namespace of the identifier.
+#'
+#'                  Possible values include:
+#'
+#'                  - \code{cid}: PubChem Compound Identifier (default)
+#'
+#'                  - \code{name}: Chemical name
+#'
+#'                  - \code{smiles}: SMILES string
+#'
+#'                  - \code{inchi}: InChI string
+#'
+#'                  - \code{inchikey}: InChIKey
+#'
+#'                  - \code{formula}: Molecular formula
+#'
+#'                  - Other namespaces as specified in the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Input}{API documentation}.
+#'
+#' @param searchtype An optional character string specifying the search type.
+#'
+#'                   Possible values include:
+#'
+#'                   - \code{similarity}
+#'
+#'                   - \code{substructure}
+#'
+#'                   - \code{superstructure}
+#'
+#'                   - \code{identity}
+#'
+#'                   - Other search types as specified in the API documentation.
+#'
+#'                   If \code{NULL} (default), no search type is specified.
+#'
+#'                   For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Input}{API documentation}.
+#'
+#' @param options A list of additional options for the request.
+#'
+#'                Available options depend on the specific request and the API.
+#'
+#'                Examples include:
+#'
+#'                - For similarity searches: \code{list(Threshold = 95)}
+#'
+#'                - For substructure searches: \code{list(MaxRecords = 100)}
+#'
+#'                If \code{NULL} (default), no additional options are included.
+#'
+#'                For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Structure-Search-Operations}{Structure Search Operations} section of the PUG REST API.
+#'
+#' @param propertyMatch A list of arguments to control how properties are matched.
+#'
+#'                      The list can include:
+#'
+#'                      - \code{type}: The type of match. Possible values are \code{exact}, \code{contain}, \code{match}. Default is \code{contain}.
+#'
+#'                      - \code{.ignore.case}: Logical value indicating if the match should ignore case. Default is \code{FALSE}.
+#'
+#'                      - \code{x}: The properties to match (set internally; do not set manually).
+#'
+#'                      Default is \code{list(.ignore.case = FALSE, type = "contain")}.
+#'
+#' @details
+#' For more detailed information, please refer to the
+#' \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest}{PubChem PUG REST API documentation}.
 #'
 #' @return An object of class "PubChemInstanceList" containing all the properties of the requested compounds.
 #'

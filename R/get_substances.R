@@ -2,11 +2,70 @@
 #'
 #' @description This function sends a request to PubChem to retrieve substance data based on the specified parameters.
 #'
-#' @param identifier A character or numeric vector specifying the identifiers for the request.
-#' @param namespace A character string specifying the namespace for the request. Default is 'sid'.
-#' @param operation Specifies the operation to be performed on the input records. For the 'compound' domain, possible operations include 'record', 'property', 'synonyms', 'sids', 'cids', 'aids', 'assaysummary', 'classification', 'xrefs', and 'description'. The available operations are domain-specific.
-#' @param searchtype Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.
-#' @param options Additional parameters passed to PubChem request.
+#' @param identifier A vector of substance identifiers, either numeric or character.
+#'                   The type of identifier depends on the \code{namespace} parameter.
+#'                   **Note**: \code{identifier} must be provided; it cannot be \code{NULL}.
+#' @param namespace A character string specifying the namespace of the identifier.
+#'
+#'                  Possible values include:
+#'
+#'                  - \code{sid}: PubChem Substance Identifier (default)
+#'
+#'                  - \code{sourceid/<source id>}: Source-specific substance ID
+#'
+#'                  - \code{sourceall/<source name>}: Source name
+#'
+#'                  - \code{name}: Substance name
+#'
+#'                  - \code{<xref>}: Cross-reference
+#'
+#'                  - \code{listkey}: A list key obtained from a previous query
+#'
+#'                  For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Input}{Input} section of the PUG REST API.
+#'
+#' @param operation A character string specifying the operation to perform.
+#'
+#'                  Possible values include:
+#'
+#'                  - \code{record}: Retrieve the full substance record (default)
+#'
+#'                  - \code{synonyms}: Retrieve synonyms for the substances
+#'
+#'                  - \code{sids}: Retrieve Substance IDs
+#'
+#'                  - \code{cids}: Retrieve Compound IDs related to the substances
+#'
+#'                  - \code{aids}: Retrieve Assay IDs related to the substances
+#'
+#'                  - \code{assaysummary}: Retrieve assay summary
+#'
+#'                  - \code{classification}: Retrieve substance classification
+#'
+#'                  - \code{<xrefs>}: Retrieve cross-references
+#'
+#'                  - \code{description}: Retrieve substance descriptions
+#'
+#'                  If \code{NULL} (default), the operation defaults to \code{record}.
+#'
+#'                  For a full list of operations, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Operation}{Operations} section of the PUG REST API.
+#'
+#' @param options A list of additional options for the request.
+#'
+#'                Available options depend on the specific request and the API.
+#'
+#'                Examples include:
+#'
+#'                - For similarity searches: \code{list(Threshold = 95)}
+#'
+#'                - For substructure searches: \code{list(MaxRecords = 100)}
+#'
+#'                If \code{NULL} (default), no additional options are included.
+#'
+#'                For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Structure-Search-Operations}{Structure Search Operations} section of the PUG REST API.
+#'
+#' @details
+#' For more detailed information, please refer to the
+#' \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest}{PubChem PUG REST API documentation}.
 #'
 #' @return An object of class 'PubChemInstanceList' containing all the substance information of requested compounds.
 #'
@@ -24,9 +83,9 @@
 #' }
 #'
 #' @export
-get_substances <- function(identifier, namespace = 'sid', operation = NULL, searchtype = NULL, options = NULL) {
+get_substances <- function(identifier, namespace = 'sid', operation = NULL, options = NULL) {
   result <- lapply(identifier, function(x){
-    tmp <- get_json(identifier = x, namespace, "substance", operation, searchtype, options)
+    tmp <- get_json(identifier = x, namespace, "substance", operation, NULL, options)
     class(tmp) <- c("PC_Substance", class(tmp))
     return(tmp)
   })

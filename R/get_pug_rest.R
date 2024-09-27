@@ -3,29 +3,166 @@
 #' This function sends a request to the PubChem PUG REST API to retrieve various types of data
 #' for a given identifier. It supports fetching data in different formats and allows saving the output.
 #'
-#' @param identifier A vector of identifier for the query, either numeric or character.
-#' @param namespace A character string specifying the namespace for the request. Default is 'cid'.
-#' @param domain A character string specifying the domain for the request. Default is 'compound'.
-#' @param operation An optional character string specifying the operation for the request.
-#' @param output A character string specifying the output format. Possible values are 'SDF', 'JSON', 'JSONP', 'CSV', 'TXT', and 'PNG'. Default is 'JSON'.
-#' @param searchtype An optional character string specifying the search type.
-#' @param property An optional character string specifying the property for the request.
-#' @param options A list of additional options for the request.
-#' @param save A logical value indicating whether to save the output as a file or image. Default is FALSE.
-#' @param dpi An integer specifying the DPI for image output. Default is 300.
-#' @param path description
-#' @param file_name a character of length 1. Define the name of file (without file extension) to save. If NULL, default file name is set as "files_downloaded".
-#' @param ... description
 #'
-#' @return Depending on the output format, this function returns different types of content:
-#'         JSON or JSONP format returns parsed JSON content.
-#'         CSV format returns a data frame.
-#'         TXT format returns a table.
-#'         SDF returns SDF file of requested identifier.
-#'         PNG format returns an image object or saves an image file.
+#' @param identifier A vector of identifiers for the query, either numeric or character.
+#'                   The type of identifier depends on the \code{namespace} parameter.
+#'                   **Note**: \code{identifier} must be provided; it cannot be \code{NULL}.
+#' @param namespace A character string specifying the namespace for the request.
+#'
+#'                  Possible values include:
+#'
+#'                  - \code{cid}: PubChem Compound Identifier (default)
+#'
+#'                  - \code{name}: Chemical name
+#'
+#'                  - \code{smiles}: SMILES string
+#'
+#'                  - \code{inchi}: InChI string
+#'
+#'                  - \code{inchikey}: InChIKey
+#'
+#'                  - \code{formula}: Molecular formula
+#'
+#'                  - \code{sid}: Substance ID
+#'
+#'                  For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Input}{PUG REST API documentation}.
+#'
+#' @param domain A character string specifying the domain for the request.
+#'
+#'               Possible values include:
+#'
+#'               - \code{compound} (default)
+#'
+#'               - \code{substance}
+#'
+#'               - \code{assay}
+#'
+#'               For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Input}{PUG REST API documentation}.
+#'
+#' @param operation An optional character string specifying the operation for the request.
+#'
+#'                  Possible values depend on the \code{domain} and \code{namespace}.
+#'
+#'                  Examples include:
+#'
+#'                  - \code{property}
+#'
+#'                  - \code{synonyms}
+#'
+#'                  - \code{classification}
+#'
+#'                  - \code{conformers}
+#'
+#'                  - \code{cids}, \code{sids}, \code{aids} (to get related compound, substance, or assay IDs)
+#'
+#'                  If \code{NULL} (default), the default operation for the specified \code{domain} and \code{namespace} is used.
+#'
+#'                  For a full list of operations, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Operation}{PUG REST API documentation}.
+#'
+#' @param output A character string specifying the output format.
+#'
+#'               Possible values are:
+#'
+#'               - \code{JSON} (default)
+#'
+#'               - \code{JSONP}
+#'
+#'               - \code{XML}
+#'
+#'               - \code{CSV}
+#'
+#'               - \code{SDF}
+#'
+#'               - \code{TXT}
+#'
+#'               - \code{PNG}
+#'
+#'               For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Output}{PUG REST API documentation}.
+#'
+#' @param searchtype An optional character string specifying the search type.
+#'
+#'                   Possible values include:
+#'
+#'                   - \code{similarity}
+#'
+#'                   - \code{substructure}
+#'
+#'                   - \code{superstructure}
+#'
+#'                   If \code{NULL} (default), no search type is specified.
+#'
+#'                   For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Input}{PUG REST API documentation}.
+#'
+#' @param property An optional character string specifying the property or properties to retrieve.
+#'
+#'                 This is typically used when \code{operation} is \code{property}.
+#'
+#'                 Examples include:
+#'
+#'                 - \code{MolecularWeight}
+#'
+#'                 - \code{MolecularFormula}
+#'
+#'                 - \code{IUPACName}
+#'
+#'                 - \code{InChI}
+#'
+#'                 - \code{InChIKey}
+#'
+#'                 If \code{NULL} (default), all available properties are returned.
+#'
+#'                 For a full list of properties, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Compound-Property-Tables}{Compound Property Tables}.
+#'
+#' @param options A list of additional options for the request.
+#'
+#'                Available options depend on the specific request and the API.
+#'
+#'                Examples include:
+#'
+#'                - For similarity searches: \code{list(Threshold = 95)}
+#'
+#'                - For substructure searches: \code{list(MaxRecords = 100)}
+#'
+#'                If \code{NULL} (default), no additional options are included.
+#'
+#'                For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Structure-Search-Operations}{Structure Search Operations} section of the PUG REST API.
+#'
+#' @param save A logical value indicating whether to save the output as a file or image.
+#'             Default is \code{FALSE}. If \code{TRUE}, the output will be saved to the path specified by \code{path}.
+#' @param dpi An integer specifying the DPI for image output when \code{output} is \code{PNG}. Default is \code{300}.
+#' @param path A character string specifying the directory path where the output file will be saved if \code{save} is \code{TRUE}.
+#'             If \code{NULL} (default), a temporary directory will be used.
+#' @param file_name A character string specifying the name of the file (without file extension) to save.
+#'                  If \code{NULL} (default), the file name is set as \code{"files_downloaded"}.
+#' @param ... Additional arguments passed to the underlying HTTP request functions.
+#'
+#' @details
+#' For more information on the possible values for parameters such as \code{namespace}, \code{domain}, \code{operation},
+#' \code{output}, \code{searchtype}, and \code{property}, please refer to the
+#' \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=URL-based-API}{PUG REST API documentation}.
+#'
+#' @return An object of class `'PugRestInstance'` containing:
+#' \describe{
+#'   \item{`success`}{Logical value indicating if the request was successful.}
+#'   \item{`error`}{If `success` is `FALSE`, a list containing error messages.}
+#'   \item{`result`}{The content retrieved from the API; format depends on `output`.}
+#'   \item{`request_args`}{A list of the arguments used in the request.}
+#'   \item{`fileDetails`}{If `save` is `TRUE`, details about the saved file.}
+#' }
 #'
 #' @examples
+#' # Retrieve compound information in JSON format
 #' result <- get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", output = "JSON")
+#'
+#' # Retrieve molecular formula and molecular weight for a compound
+#' result <- get_pug_rest(
+#'   identifier = "2244",
+#'   namespace = "cid",
+#'   domain = "compound",
+#'   operation = "property",
+#'   property = c("MolecularFormula", "MolecularWeight"),
+#'   output = "JSON"
+#' )
 #'
 #' @importFrom httr GET RETRY
 #' @importFrom RJSONIO fromJSON

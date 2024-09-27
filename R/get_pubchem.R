@@ -2,13 +2,110 @@
 #'
 #' This function constructs a URL to query the PubChem API based on the provided parameters and returns the response content.
 #'
-#' @param identifier A vector of positive integers (e.g. cid, sid, aid) or identifier strings (source, inchikey, formula). In some cases, only a single identifier string (name, smiles, xref; inchi, sdf by POST only).
-#' @param namespace Specifies the namespace for the query. For the 'compound' domain, possible values include 'cid', 'name', 'smiles', 'inchi', 'sdf', 'inchikey', 'formula', 'substructure', 'superstructure', 'similarity', 'identity', 'xref', 'listkey', 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure', and 'fastformula'. For other domains, the possible namespaces are domain-specific.
-#' @param domain Specifies the domain of the query. Possible values are 'substance', 'compound', 'assay', 'gene', 'protein', 'pathway', 'taxonomy', 'cell', 'sources', 'sourcetable', 'conformers', 'annotations', 'classification', and 'standardize'.
-#' @param operation Specifies the operation to be performed on the input records. For the 'compound' domain, possible operations include 'record', 'property', 'synonyms', 'sids', 'cids', 'aids', 'assaysummary', 'classification', 'xrefs', and 'description'. The available operations are domain-specific.
-#' @param output Specifies the desired output format. Possible values are 'XML', 'ASNT', 'ASNB', 'JSON', 'JSONP', 'SDF', 'CSV', 'PNG', and 'TXT'.
-#' @param searchtype Specifies the type of search to be performed. For structure searches, possible values are combinations of 'substructure', 'superstructure', 'similarity', 'identity' with 'smiles', 'inchi', 'sdf', 'cid'. For fast searches, possible values are combinations of 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.
-#' @param options Additional arguments passed to \code{\link{request}}.
+#' @param identifier A vector of identifiers, either numeric or character.
+#'                   The type of identifier depends on the \code{namespace} parameter.
+#'                   **Note**: \code{identifier} must be provided; it cannot be \code{NULL}.
+#' @param namespace A character string specifying the namespace of the identifier.
+#'
+#'                  Possible values include:
+#'
+#'                  - \code{cid}: PubChem Compound Identifier (default)
+#'
+#'                  - \code{name}: Chemical name
+#'
+#'                  - \code{smiles}: SMILES string
+#'
+#'                  - \code{inchi}: InChI string
+#'
+#'                  - \code{inchikey}: InChIKey
+#'
+#'                  - \code{formula}: Molecular formula
+#'
+#'                  - Other namespaces as specified in the API documentation.
+#'
+#'                  For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Input}{Input} section of the PUG REST API.
+#'
+#' @param domain A character string specifying the domain of the query.
+#'
+#'               Possible values include:
+#'
+#'               - \code{compound} (default)
+#'
+#'               - \code{substance}
+#'
+#'               - \code{assay}
+#'
+#'               - Other domains as specified in the API documentation.
+#'
+#' @param operation A character string specifying the operation to perform.
+#'
+#'                  Possible values depend on the \code{domain} parameter.
+#'
+#'                  Examples include:
+#'
+#'                  - \code{record}: Retrieve the full record.
+#'
+#'                  - \code{property}: Retrieve specified properties.
+#'
+#'                  - \code{synonyms}: Retrieve synonyms.
+#'
+#'                  - \code{sids}: Retrieve Substance IDs.
+#'
+#'                  - \code{cids}: Retrieve Compound IDs.
+#'
+#'                  - \code{aids}: Retrieve Assay IDs.
+#'
+#'                  If \code{NULL} (default), the basic record is retrieved.
+#'
+#'                  For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Operation}{Operations} section of the PUG REST API.
+#'
+#' @param output A character string specifying the output format.
+#'
+#'               Possible values include:
+#'
+#'               - \code{JSON} (default)
+#'
+#'               - \code{XML}
+#'
+#'               - \code{CSV}
+#'
+#'               - \code{SDF}
+#'
+#'               - \code{TXT}
+#'
+#'               - \code{PNG}
+#'
+#'               For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Output}{Output} section of the PUG REST API.
+#'
+#' @param searchtype An optional character string specifying the search type.
+#'
+#'                   Possible values include:
+#'
+#'                   - \code{substructure}
+#'
+#'                   - \code{superstructure}
+#'
+#'                   - \code{similarity}
+#'
+#'                   - \code{identity}
+#'
+#'                   - Other search types as specified in the API documentation.
+#'
+#'                   If \code{NULL} (default), no search type is specified.
+#'
+#'                   For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Input}{Input} section of the PUG REST API.
+#'
+#' @param options A list of additional options for the request.
+#'                Available options depend on the specific request and the API.
+#'                If \code{NULL} (default), no additional options are included.
+#'                For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Structure-Search-Operations}{Structure Search Operations} section of the PUG REST API.
+#'
+#' @details
+#' The PubChem PUG REST API allows users to retrieve data about compounds, substances, assays, and more.
+#' This function constructs the appropriate API call based on the provided parameters.
+#' For more detailed information, please refer to the
+#' \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest}{PubChem PUG REST API documentation}.
+
 #'
 #' @return Returns the response content from the PubChem API based on the constructed URL.
 #'

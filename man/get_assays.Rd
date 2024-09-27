@@ -4,30 +4,80 @@
 \alias{get_assays}
 \title{Retrieve Assays from PubChem}
 \usage{
-get_assays(
-  identifier,
-  namespace = "aid",
-  operation = NULL,
-  searchtype = NULL,
-  options = NULL
-)
+get_assays(identifier, namespace = "aid", operation = NULL, options = NULL)
 }
 \arguments{
-\item{identifier}{A vector of positive integers (e.g., cid, sid, aid) or identifier strings (source, inchikey, formula). In some cases, only a single identifier string (name, smiles, xref; inchi, sdf by POST only) can be provided. Multiple elements can be included as a vector. See Notes for details.}
+\item{identifier}{A vector of positive integers (e.g., \code{cid}, \code{sid}, \code{aid}) or identifier strings (source, \code{inchikey}, \code{formula}).
+In some cases, only a single identifier string (e.g., \code{name}, \code{smiles}, \code{xref}; \code{inchi}, \code{sdf} by POST only) can be provided.
+Multiple elements can be included as a vector. See Notes for details.}
 
-\item{namespace}{Specifies the namespace for the query. For the 'compound' domain, possible values include 'cid', 'name', 'smiles', 'inchi', 'sdf', 'inchikey', 'formula', 'substructure', 'superstructure', 'similarity', 'identity', 'xref', 'listkey', 'fastidentity', 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure', and 'fastformula'. For other domains, the possible namespaces are domain-specific.}
+\item{namespace}{A character string specifying the namespace of the identifier.
 
-\item{operation}{The operation to be performed (default: NULL).}
+                 Possible values include:
 
-\item{searchtype}{The type of search to be performed (default: NULL).}
+                 - \code{aid}: PubChem Assay Identifier (default)
 
-\item{options}{Additional parameters (currently has no effect on the results).}
+                 - \code{listkey}: A list key obtained from a previous query
+
+                 - \code{type/<assay type>}: Specify the assay type
+
+                 - \code{sourceall/<source name>}: Specify the source name
+
+                 - \code{target/<assay target>}: Specify the assay target
+
+                 - \code{activity/<activity column name>}: Specify the activity column name
+
+                 For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Input}{Input} section of the PUG REST API.}
+
+\item{operation}{A character string specifying the operation to perform.
+
+                 Possible values include:
+
+                 - \code{record}: Retrieve the full assay record
+
+                 - \code{concise}: Retrieve a concise summary of the assay
+
+                 - \code{aids}: Retrieve related Assay IDs
+
+                 - \code{sids}: Retrieve related Substance IDs
+
+                 - \code{cids}: Retrieve related Compound IDs
+
+                 - \code{description}: Retrieve assay descriptions (default)
+
+                 - \code{targets/<target type>}: Retrieve targets of the assay
+
+                 - \code{summary}: Retrieve a summary of the assay
+
+                 - \code{classification}: Retrieve assay classification
+
+                 If \code{NULL} (default), the operation defaults to \code{description}.
+
+                 For a full list of operations, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Operation}{Operations} section of the PUG REST API.}
+
+\item{options}{A list of additional options for the request.
+
+               Available options depend on the specific request and the API.
+
+               Examples include:
+
+               - For similarity searches: \code{list(Threshold = 95)}
+
+               - For substructure searches: \code{list(MaxRecords = 100)}
+
+               If \code{NULL} (default), no additional options are included.
+
+               For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Structure-Search-Operations}{Structure Search Operations} section of the PUG REST API.}
 }
 \value{
 An object of class 'PubChemInstanceList' containing the information retrieved from the PubChem database.
 }
 \description{
 This function sends a request to PubChem to retrieve assay data based on the specified parameters.
+}
+\details{
+For more detailed information, please refer to the
+\href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest}{PubChem PUG REST API documentation}.
 }
 \note{
 To extract information about a specific assay from the returned list, use the \link{instance} function.
