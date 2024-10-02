@@ -291,7 +291,7 @@ Using structure-based identifiers like SMILES or InChI keys is particularly usef
 To illustrate, let’s perform a fast identity search for the compound with CID 5793, using the same connectivity option:
 
 ```{r}
-result <- get_pug_rest(identifier = "5793", namespace = "cid", domain = "compound", operation = "cids", output = "TXT", searchtype = "fastidentity", options = list("identity_type = same_connectivity"))
+result <- get_pug_rest(identifier = "5793", namespace = "cid", domain = "compound", operation = "cids", output = "TXT", searchtype = "fastidentity", options = list(identity_type = "same_connectivity"))
 result
 ```
 When the following code executed, it retrieves the output in data frame, listing all CIDs that match the fast identity search criteria. 

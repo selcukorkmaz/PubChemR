@@ -11,7 +11,7 @@ services:
     # To build the image locally, comment out "image" below, and uncomment
     # "build" and the lines indented under it.
     # Use local images created using a dockerfile.
-    image: dncr/rstudio-server:${R_VERSION}-${UBUNTU_VERSION}
+    image: dncr/rstudio-server:${R_VERSION}-${ARCH}-${UBUNTU_VERSION}
     env_file:
       - .env
     # set restart policit for the container

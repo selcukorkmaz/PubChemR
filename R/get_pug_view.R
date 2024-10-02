@@ -73,7 +73,8 @@
 #'
 #' @examples
 #' \donttest{
-#' get_pug_view(identifier = "2244", annotation = "linkout", domain = "compound")
+#' result <- get_pug_view(identifier = "2244", annotation = "linkout", domain = "compound")
+#' retrieve(result, .slot = "ObjUrl", .to.data.frame = FALSE)
 #' }
 #'
 #' @importFrom RJSONIO fromJSON
@@ -89,119 +90,128 @@ get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compoun
                          output = 'JSON', heading = NULL, headingType = NULL, page = NULL,
                          qrSize = "short", save = FALSE) {
 
-  # Create empty Pug View structure to be used when error returns.
-  createPugViewObject <- function(error = FALSE, result = list(), request_args = list(), subclass = NULL, ...){
+  # Create a helper function to construct a Pug View object for errors and successful responses
+  createPugViewObject <- function(error = FALSE, result = list(), request_args = list(), subclass = NULL, ...) {
     dots <- list(...)
-
     tmp <- list(
       result = result,
       request_args = request_args,
       success = !error,
       error = NULL
     )
-
-    if (length(dots) > 0){
+    if (length(dots) > 0) {
       tmp <- c(tmp, dots)
     }
-
     structure(
       tmp,
       class = c("PugViewInstance", subclass)
     )
   }
 
-  # Check for missing annotation
+  # Check for missing or invalid arguments and handle them gracefully
   if (is.null(annotation)) {
-    warning("annotation cannot be NULL. It is set 'data' by default.")
+    warning("Annotation cannot be NULL. Setting 'annotation' to 'data' by default.")
     annotation <- "data"
   }
 
-  # if (is.null(identifier)){
-  #   results <- createPugViewObject(error = TRUE)
-  #   results$error <- list(Message = "'identifier' cannot be NULL. ")
-  #   return(results)
-  # }
+  if (is.null(identifier)) {
+    results <- createPugViewObject(error = TRUE)
+    results$error <- list(Message = "'identifier' cannot be NULL.")
+    return(results)
+  }
 
+  # Convert numeric identifiers to character
   if (is.numeric(identifier)) {
     identifier <- as.character(identifier)
   }
 
-  # PUG-View does not support multiple identifiers in a single request
+  # Handle multiple identifiers by only using the first one
   if (length(identifier) > 1) {
-    warning(paste0("One identifier is allowed per request. Only the first element in 'identifier' (i.e., ", identifier[1], ") is used."))
+    warning(paste0("One identifier is allowed per request. Using only the first element: ", identifier[1]))
     identifier <- identifier[1]
   }
 
-  if (domain == "key") {
-    output <- NULL
-  }
-
-  if (!is.null(identifier)){
+  # URL encode the identifier to make it URL-safe
+  if (!is.null(identifier)) {
     identifier <- URLencode(identifier)
   }
 
-  # Build API URL
+  # Define the base API URL
   api_base <- "https://pubchem.ncbi.nlm.nih.gov/rest/pug_view"
 
-  # Ensure the identifier is URL encoded
-  # urlid <- URLencode(identifier)
-
-  # Building the URL components
+  # Construct the API URL based on the input parameters
   comps <- Filter(Negate(is.null), list(api_base, annotation, domain, identifier, output))
+  apiurl <- paste(comps, collapse = '/')
 
-  apiurl <- if (!is.null(heading)) {
-    paste0(paste(comps, collapse = '/'), "?heading=", URLencode(sub(" ", "+", heading)))
+  # Additional query parameters if needed
+  if (!is.null(heading)) {
+    apiurl <- paste0(apiurl, "?heading=", URLencode(sub(" ", "+", heading)))
   } else if (!is.null(headingType)) {
-    paste0(paste(comps, collapse = '/'), "?heading_type=", URLencode(sub(" ", "+", headingType)))
+    apiurl <- paste0(apiurl, "?heading_type=", URLencode(sub(" ", "+", headingType)))
   } else if (!is.null(page)) {
-    paste0(paste(comps, collapse = '/'), "?page=", URLencode(sub(" ", "+", page)))
+    apiurl <- paste0(apiurl, "?page=", URLencode(sub(" ", "+", page)))
   } else if (annotation == "qr") {
-    if (qrSize == "short"){
-      comps <- Filter(Negate(is.null), list(api_base, annotation, "short", domain, identifier, output))
-    } else if(qrSize == "long"){
-      comps <- Filter(Negate(is.null), list(api_base, annotation, "long", domain, identifier, output))
-    }
-    paste(comps, collapse = '/')
-  } else {
-    paste(comps, collapse = '/')
+    qr_segment <- if (qrSize == "short") "short" else "long"
+    apiurl <- paste(c(api_base, annotation, qr_segment, domain, identifier, output), collapse = '/')
   }
 
-  # Simple Rate Limiting (5 requests per second)
+  # Implement simple rate limiting (5 requests per second)
   Sys.sleep(0.2)
 
-  # Perform the GET request
-  response <- GET(apiurl)
+  # Perform the GET request and handle potential errors
+  response <- tryCatch({
+    GET(apiurl)
+  }, error = function(e) {
+    results <- createPugViewObject(error = TRUE)
+    results$error <- list(Message = "Failed to make API request", Code = conditionMessage(e))
+    return(results)
+  })
 
-  # Check for successful response
+  # Check if the request was successful
+  if (inherits(response, "PugViewInstance")) return(response)  # Return early if the response is an error
+
+  # Handle HTTP errors
   if (status_code(response) != 200) {
     results <- createPugViewObject(error = TRUE)
-    results$error <- list(Message = "Error in API request",
-                          Code = paste0("HTTP Error ", status_code(response)))
+    results$error <- list(
+      Message = "Error in API request",
+      Code = paste0("HTTP Error ", status_code(response))
+    )
     return(results)
   }
 
-  # Handling response based on output format
-  if (!is.null(output) && output %in% c('JSON')) {
-    savedContent <- content(response, "text", encoding = "UTF-8")
-    content <- fromJSON(savedContent)
-
-    if (save){
-      write(savedContent, file = paste0(domain, "_", identifier, ".", output))
+  # Parse the response content based on the output format
+  content <- tryCatch({
+    if (!is.null(output) && output == 'JSON') {
+      savedContent <- content(response, "text", encoding = "UTF-8")
+      parsed_content <- fromJSON(savedContent)
+      if (save) {
+        write(savedContent, file = paste0(domain, "_", identifier, ".", output))
+      }
+      parsed_content
+    } else if (!is.null(output) && output == "SVG" && domain != "key") {
+      svg_content <- charToRaw(content(response, as = "text", encoding = "UTF-8"))
+      img_content <- image_read(svg_content)
+      if (save) {
+        rsvg_png(svg = svg_content, file = paste0(identifier, ".png"))
+      }
+      img_content
+    } else if (domain == "key") {
+      img_content <- image_read(readPNG(getURLContent(apiurl)))
+      img_content
+    } else {
+      content(response, "text", encoding = "UTF-8")
     }
-  } else if (!is.null(output) && output == "SVG" && domain != "key"){
-    str <- charToRaw(content(response, as = "text", encoding = "UTF-8"))
-    content <- image_read(str)
+  }, error = function(e) {
+    results <- createPugViewObject(error = TRUE)
+    results$error <- list(Message = "Failed to parse API response", Code = conditionMessage(e))
+    return(results)
+  })
 
-    if (save){
-      rsvg_png(svg = str, file = paste0(identifier, ".png"))
-    }
-  } else if (domain == "key"){
-    str <- readPNG(getURLContent(apiurl))
-    content <- image_read(str)
-  } else {
-    content <- content(response, "text", encoding = "UTF-8")
-  }
+  # If content parsing failed, return the error object
+  if (inherits(content, "PugViewInstance")) return(content)
 
+  # Return the successfully parsed content as a PugViewInstance object
   createPugViewObject(
     result = content,
     request_args = list(
@@ -217,3 +227,5 @@ get_pug_view <- function(annotation = NULL, identifier = NULL, domain = 'compoun
     )
   )
 }
+
+

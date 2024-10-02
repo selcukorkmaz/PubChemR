@@ -88,6 +88,8 @@ syns <- get_synonyms(
   namespace = "name"
 )
 
+syns
+
 synonyms(syns)
 
 }

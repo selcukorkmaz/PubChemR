@@ -20,8 +20,8 @@ test_that("retry the request and return error", {
 })
 
 test_that("tests for SDF output successful", {
-  tmp <- get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", output = "SDF")
-  tmp2 <- get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", output = "SDF",
+  tmp <- get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", save = TRUE, output = "SDF")
+  tmp2 <- get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", output = "SDF", save = TRUE,
                        file_name = "my_file")
 
   expect_true(tmp$success)
@@ -107,3 +107,4 @@ test_that("test for JSON output successful", {
   })
   file.remove(file.path(tmp$fileDetails$Path, "my_file.JSON"))
 })
+

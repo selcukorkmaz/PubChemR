@@ -178,17 +178,8 @@ For more information on the possible values for parameters such as \code{namespa
 \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=URL-based-API}{PUG REST API documentation}.
 }
 \examples{
-# Retrieve compound information in JSON format
 result <- get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", output = "JSON")
+pubChemData(result)
 
-# Retrieve molecular formula and molecular weight for a compound
-result <- get_pug_rest(
-  identifier = "2244",
-  namespace = "cid",
-  domain = "compound",
-  operation = "property",
-  property = c("MolecularFormula", "MolecularWeight"),
-  output = "JSON"
-)
 
 }

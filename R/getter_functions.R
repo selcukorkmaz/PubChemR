@@ -91,7 +91,11 @@ instance <- function(object, ...){
 #'
 #' @export
 retrieve <- function(object, ...){
-  UseMethod("retrieve")
+  if (is.null(object)) {
+    warning("The object passed to 'retrieve' is NULL. Please provide a valid object of the expected class.")
+  }else{
+    UseMethod("retrieve")
+  }
 }
 
 #' @param .slot A string specifying which slot to return. Should not be NULL or length of >1 with some exceptions. See the notes for details.
@@ -357,71 +361,162 @@ retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
 #'
 #' @export
 retrieve.PubChemInstanceList <- function(object, .which = NULL, .slot = NULL, .to.data.frame = TRUE,
-                                         .combine.all = FALSE, ...){
-
+                                         .combine.all = FALSE, ...) {
   dots <- list(...)
-  args <- c(list(.slot = .slot, .to.data.frame = .to.data.frame,
-                 .combine.all = .combine.all), dots)
+  args <- c(list(object = NULL, .slot = NULL, .to.data.frame = .to.data.frame, .combine.all = .combine.all), dots)
 
   returnInvisible <- FALSE
 
-  if (!.combine.all){
-    if (is.null(.which)){
-      idx <- 1
-    } else {
-      if (length(.which) > 1){
-        .which <- .which[1]
-        warning("Multiple instances is not allowed in '.which'. Only the first instance is returned.")
+  # Ensure that the object is not NULL
+  if (is.null(object)) {
+    stop("The object provided is NULL. Please provide a valid PubChemInstanceList object.")
+  }
+
+  # Check if the results contain valid data
+  if (all(sapply(object$result, is.null))) {
+    stop("All instances in the object contain NULL results. Please check if the data was retrieved correctly.")
+  }
+
+  # Check if multiple slots are provided
+  if (!is.null(.slot) && length(.slot) > 1) {
+
+    # Retrieve the data for each identifier and combine them
+    combined_results <- lapply(request_args(object, "identifier"), function(identifier) {
+      # Check if the identifier's result is NULL
+      idx <- which(request_args(object, "identifier") == identifier)
+      if (is.null(object$result[[idx]])) {
+        warning(paste("The result for the identifier '", identifier, "' is NULL. Skipping this identifier."))
+        return(NULL)
       }
 
-      if (!(.which %in% request_args(object, "identifier"))){
+      # Retrieve data for each slot for the current identifier
+      slot_data_list <- lapply(.slot, function(current_slot) {
+        tryCatch({
+          retrieve(object = object, .which = identifier, .slot = current_slot, .to.data.frame = TRUE, .combine.all = FALSE, ...)
+        }, error = function(e) {
+          warning(paste("Failed to retrieve slot '", current_slot, "' for identifier '", identifier, "': ", conditionMessage(e), sep = ""))
+          return(NULL)
+        })
+      })
+
+      # Combine slot data for the current identifier
+      combined_slot_data <- Reduce(function(df1, df2) {
+        if (is.null(df1)) return(df2)
+        if (is.null(df2)) return(df1)
+        merge(df1, df2, by = "Identifier", all = TRUE)
+      }, slot_data_list)
+
+      return(combined_slot_data)
+    })
+
+    # Remove NULL results from combined results
+    combined_results <- combined_results[!sapply(combined_results, is.null)]
+
+    # If combining all identifiers into a single dataframe
+    if (.combine.all && length(combined_results) > 0) {
+      combined_results_df <- bind_rows(combined_results)
+      return(combined_results_df)
+    } else if (.combine.all && length(combined_results) == 0) {
+      warning("No valid data was found for any identifiers. Returning NULL.")
+      return(NULL)
+    } else {
+      return(combined_results)
+    }
+  }
+
+  # If handling a single slot or combining instances
+  if (!.combine.all) {
+    # Handle the case for a single instance of the PubChem object
+    if (is.null(.which)) {
+      idx <- 1
+    } else {
+      if (length(.which) > 1) {
+        .which <- .which[1]
+        warning("Multiple instances are not allowed in '.which'. Only the first instance is returned.")
+      }
+
+      if (!(.which %in% request_args(object, "identifier"))) {
         stop("Unknown instance identifier. Run 'request_args(object, \"identifier\")' to see all the requested instance identifiers.")
       }
       idx <- which(request_args(object, "identifier") == .which)
     }
 
+    # If the selected instance is NULL, return an informative message
+    if (is.null(object$result[[idx]])) {
+      warning(paste("The result for the identifier '", .which, "' is NULL. No data to retrieve."))
+      return(NULL)
+    }
+
+    # Assign the selected instance to the object argument
     args$object <- object$result[[idx]]
-    if (!is.null(args[[".verbose"]])){
+    args$.slot <- .slot  # Pass the single slot value to the function
+
+    if (!is.null(args[[".verbose"]])) {
       returnInvisible <- args[[".verbose"]]
     }
 
-    res <- do.call("retrieve", args)
+    # Call retrieve with the selected instance object
+    res <- tryCatch({
+      do.call("retrieve", args)
+    }, error = function(e) {
+      warning(paste("Failed to retrieve data for the identifier '", .which, "': ", conditionMessage(e), sep = ""))
+      return(NULL)
+    })
 
   } else {
-    if (!is.null(args[[".verbose"]])){
-      if (args[[".verbose"]]){
+    # Handle multiple instances when .combine.all is TRUE
+    if (!is.null(args[[".verbose"]])) {
+      if (args[[".verbose"]]) {
         args[[".verbose"]] <- FALSE
         returnInvisible <- TRUE
       }
     }
 
+    # Process each identifier separately and retrieve the desired slots
     res <- suppressMessages({
-      lapply(request_args(object, "identifier"), function(x){
+      lapply(request_args(object, "identifier"), function(x) {
         tmp <- instance(object, .which = x)
-        args$object <- tmp
-        success <- try({
-          tmp2 <- do.call("retrieve", args)
-        })
 
-        if (inherits(success, "try-error")){
+        # If the instance is NULL, return NULL with a warning
+        if (is.null(tmp)) {
+          warning(paste("The result for the identifier '", x, "' is NULL. Skipping this identifier."))
           return(NULL)
         }
 
-        return(tmp2)
+        args$object <- tmp
+        args$.slot <- .slot  # Pass the slot to the function
+
+        # Attempt to retrieve data for the instance
+        success <- tryCatch({
+          do.call("retrieve", args)
+        }, error = function(e) {
+          warning(paste("Failed to retrieve data for the identifier '", x, "': ", conditionMessage(e), sep = ""))
+          return(NULL)
+        })
+
+        return(success)
       })
     })
 
-    if (args$.to.data.frame){
+    # Remove NULL results from the results
+    res <- res[!sapply(res, is.null)]
+
+    # Combine results into a single data frame if requested and valid data exists
+    if (.to.data.frame && length(res) > 0) {
       res <- bind_rows(res)
+    } else if (.to.data.frame && length(res) == 0) {
+      warning("No valid data was found for any identifiers. Returning NULL.")
+      return(NULL)
     }
   }
 
-  if (returnInvisible){
+  if (returnInvisible) {
     invisible(res)
   } else {
     return(res)
   }
 }
+
 
 #' @param .idx An integer indicating which substance result should be returned. A PubChem request may return multiple
 #' substances in the output. \code{.idx} specifies the index of the substance to be extracted from the complete list.
@@ -769,9 +864,9 @@ AIDs.PubChemInstance_AIDs <- function(object, .to.data.frame = TRUE, ...) {
 
   if (.to.data.frame) {
     res <- lapply(tmp, function(x) {
-      if (!x$success) {
-        return(NULL)
-      }
+      # if (!x$success) {
+      #   return(NULL)
+      # }
 
       if (nms == "FORMULA") {
         tmp2 <- tibble(CID = integer(), AID = integer())
@@ -789,10 +884,17 @@ AIDs.PubChemInstance_AIDs <- function(object, .to.data.frame = TRUE, ...) {
         tmp2 <- bind_cols(x$result$InformationList$Information)
       }
 
-      if (colnames(tmp2)[1] != nms) {
-        tbl <- tibble(request_args(x, .which = "identifier"))
-        names(tbl) <- toupper(stringr::str_to_title(request_args(x, .which = "namespace")))
-        tmp2 <- bind_cols(tbl, tmp2)
+      if(nrow(tmp2) == 0){
+
+        tmp2 = NULL
+
+      }else{
+
+        if (colnames(tmp2)[1] != nms) {
+          tbl <- tibble(request_args(x, .which = "identifier"))
+          names(tbl) <- toupper(stringr::str_to_title(request_args(x, .which = "namespace")))
+          tmp2 <- bind_cols(tbl, tmp2)
+        }
       }
 
       return(tmp2)
@@ -839,27 +941,34 @@ AIDs <- function(object, ...){
 CIDs.PubChemInstance_CIDs <- function(object, .to.data.frame = TRUE, ...){
   tmp <- object$result
 
-  if (.to.data.frame){
-    res <- lapply(tmp, function(x){
-      xx <- suppressMessages({
-        CID_List <- if (request_args(x, "domain") == "compound"){
-          list(CID = x$result$IdentifierList$CID)
-        } else if (request_args(x, "domain") %in% c("substance", "assay")){
-          list(CID = x$result$InformationList$Information[[1]]$CID)
-        } else {
-          list(CID = x$result$IdentifierList$CID)
-        }
+  if(is.null(object$result[[1]]$success)){
 
-        c(list(x$request_args$identifier), CID_List) %>%
-          bind_cols
-      })
-      names(xx)[1] <- namespace_text(x$request_args$namespace)
-      return(xx)
-    }) %>%
-      bind_rows %>%
-      as_tibble
-  } else {
-    res <- lapply(tmp, "[[", "result")
+    res = NULL
+
+  }else{
+
+    if (.to.data.frame){
+      res <- lapply(tmp, function(x){
+        xx <- suppressMessages({
+          CID_List <- if (request_args(x, "domain") == "compound"){
+            list(CID = x$result$IdentifierList$CID)
+          } else if (request_args(x, "domain") %in% c("substance", "assay")){
+            list(CID = x$result$InformationList$Information[[1]]$CID)
+          } else {
+            list(CID = x$result$IdentifierList$CID)
+          }
+
+          c(list(x$request_args$identifier), CID_List) %>%
+            bind_cols
+        })
+        names(xx)[1] <- namespace_text(x$request_args$namespace)
+        return(xx)
+      }) %>%
+        bind_rows %>%
+        as_tibble
+    } else {
+      res <- lapply(tmp, "[[", "result")
+    }
   }
 
   return(res)

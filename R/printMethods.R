@@ -503,7 +503,6 @@ print.PugRestInstance <- function(x, ...){
   }
 
   cat("  - Identifier: ", paste0(identifiers, collapse = ", "), suffix_identifiers, sep = "", "\n\n")
-  #cat(" Details:", "\n\n", sep = "")
 
   if (!x$success){
     cat(" Stopped with an ERROR. Details are below:", "\n\n")
@@ -519,11 +518,15 @@ print.PugRestInstance <- function(x, ...){
       cat("  - File name: '", x$fileDetails$Name, "'", "\n", sep = "")
       cat("  - Saved to: '", x$fileDetails$Path, "'", "\n", sep = "")
       cat("  - File type: ", x$fileDetails$Type, "\n", sep = "")
-      cat("  - Size (", x$fileDetails$Size$unit, "): ", x$fileDetails$Size$size, "\n", sep = "")
+      if (!is.null(x$fileDetails$Size) && is.list(x$fileDetails$Size)) {
+        cat("  - Size (", x$fileDetails$Size$unit, "): ", x$fileDetails$Size$size, "\n", sep = "")
+      } else {
+        cat("  - Size: Unknown\n")
+      }
       cat("\n")
     }
 
-    # print notes for getter functions.
+    # Print notes for getter functions.
     cat(" NOTE: Run getter function 'pubChemData(...)' to extract raw data retrieved from PubChem Database. \n")
     cat("       See ?pubChemData for details.", sep = "", "\n")
   }

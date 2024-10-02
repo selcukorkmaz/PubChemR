@@ -84,23 +84,59 @@
 #'
 #' @export
 get_substances <- function(identifier, namespace = 'sid', operation = NULL, options = NULL) {
-  result <- lapply(identifier, function(x){
-    tmp <- get_json(identifier = x, namespace, "substance", operation, NULL, options)
-    class(tmp) <- c("PC_Substance", class(tmp))
-    return(tmp)
-  })
 
+  # Initialize result list
   Substances_List <- list(
-    result = result,
+    result = vector("list", length(identifier)),  # Create a list with the same length as identifiers
     request_args = list(
       namespace = namespace,
       identifier = identifier,
       domain = "substance"
     ),
-    success = logical(),
-    error = NULL
+    success = rep(FALSE, length(identifier)),  # Initialize success with FALSE for each identifier
+    error = vector("character", length(identifier))  # Initialize an empty character vector for errors
   )
 
+  # Attempt to get the response and handle errors gracefully
+  result <- lapply(seq_along(identifier), function(i) {
+    x <- identifier[i]
+    # Use tryCatch to handle potential errors
+    response <- tryCatch({
+      # Attempt to retrieve data using the get_json function
+      tmp <- get_json(identifier = x, namespace, "substance", operation, NULL, options)
+      class(tmp) <- c("PC_Substance", class(tmp))  # Add custom class to response
+      Substances_List$success[i] <- TRUE  # Set success to TRUE if request is successful
+      tmp
+    }, error = function(e) {
+      # Capture the error message
+      error_message <- conditionMessage(e)
+
+      # Determine the error type and assign an appropriate message
+      if (grepl("Timeout", error_message, ignore.case = TRUE)) {
+        error_message <- paste0("Request timeout: The server did not respond in time for identifier '", x, "'. Please try again later.")
+      } else if (grepl("Could not resolve host", error_message, ignore.case = TRUE) ||
+                 grepl("InternetOpenUrl", error_message, ignore.case = TRUE)) {
+        error_message <- "Network error: Could not connect to the server. Please check your internet connection and try again."
+      } else if (grepl("HTTP error", error_message, ignore.case = TRUE)) {
+        error_message <- paste0("HTTP error: The server returned an error for identifier '", x, "'. Please check the server status or try again later.")
+      } else {
+        error_message <- paste0("An unknown error occurred for identifier '", x, "': ", error_message)
+      }
+
+      # Append error message to Substances_List$error at the corresponding index
+      Substances_List$error[i] <- error_message
+      Substances_List$success[i] <- FALSE  # Ensure success is set to FALSE for this identifier
+
+      # Return NULL for this identifier to indicate failure
+      NULL
+    })
+    return(response)
+  })
+
+  # Store the results in the Substances_List object
+  Substances_List$result <- result
+
+  # Return the structured object with results and error details
   structure(
     Substances_List,
     class = c("PubChemInstanceList")

@@ -15,7 +15,7 @@
 #'
 #'                  - For \code{domain = 'substance'}: \code{sid}, \code{sourceid/<source id>}, \code{sourceall/<source name>}, \code{name}, etc.
 #'
-#'                  - For \code{domain = 'assay'}: code{aid}, \code{listkey}, \code{type/<assay type>}, \code{sourceall/<source name>}, etc.
+#'                  - For \code{domain = 'assay'}: \code{aid}, \code{listkey}, \code{type/<assay type>}, \code{sourceall/<source name>}, etc.
 #'
 #'                  For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Input}{Input} section.
 #'
@@ -84,16 +84,10 @@
 #'
 #' @export
 get_aids <- function(identifier, namespace = 'cid', domain = 'compound', searchtype = NULL, options = NULL) {
-  # Try to get the response and parse JSON
-  # Assuming 'get_json' is a function you've previously defined, similar to your Python environment
-  result <- lapply(identifier, function(x){
-    tmp <- get_json(identifier = x, namespace, domain, 'aids', searchtype, options)
-    class(tmp) <- NULL
-    return(tmp)
-  })
 
+  # Initialize result list
   AIDs_List <- list(
-    result = result,
+    result = list(),
     request_args = list(
       namespace = namespace,
       identifier = identifier,
@@ -103,6 +97,45 @@ get_aids <- function(identifier, namespace = 'cid', domain = 'compound', searcht
     error = NULL
   )
 
+  # Attempt to get the response and handle errors gracefully
+  result <- lapply(identifier, function(x) {
+    # Use tryCatch to handle potential errors
+    response <- tryCatch({
+      # Attempt to retrieve data using the get_json function
+      tmp <- get_json(identifier = x, namespace, domain, 'aids', searchtype, options)
+      class(tmp) <- NULL
+      AIDs_List$success <- c(AIDs_List$success, TRUE)
+      tmp
+    }, error = function(e) {
+      # Capture the error message
+      error_message <- conditionMessage(e)
+
+      # Determine the error type and assign an appropriate message
+      if (grepl("Timeout", error_message, ignore.case = TRUE)) {
+        error_message <- paste0("Request timeout: The server did not respond in time for identifier '", x, "'. Please try again later.")
+      } else if (grepl("Could not resolve host", error_message, ignore.case = TRUE) ||
+                 grepl("InternetOpenUrl", error_message, ignore.case = TRUE)) {
+        error_message <- "Network error: Could not connect to the server. Please check your internet connection and try again."
+      } else if (grepl("HTTP error", error_message, ignore.case = TRUE)) {
+        error_message <- paste0("HTTP error: The server returned an error for identifier '", x, "'. Please check the server status or try again later.")
+      } else {
+        error_message <- paste0("An unknown error occurred for identifier '", x, "': ", error_message)
+      }
+
+      # Append error message to AIDs_List$error
+      AIDs_List$error <- c(AIDs_List$error, error_message)
+      AIDs_List$success <- c(AIDs_List$success, FALSE)
+
+      # Return NULL for this identifier to indicate failure
+      NULL
+    })
+    return(response)
+  })
+
+  # Store the results in the AIDs_List object
+  AIDs_List$result <- result
+
+  # Return the structured object with results and error details
   structure(
     AIDs_List,
     class = c("PubChemInstance_AIDs")

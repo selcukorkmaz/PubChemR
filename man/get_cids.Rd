@@ -86,7 +86,7 @@ compound <- get_cids(
   namespace = "name"
 )
 
-print(compound)
+compound
 
 # Extract compound IDs.
 CIDs(compound)

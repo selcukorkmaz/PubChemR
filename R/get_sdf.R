@@ -90,50 +90,58 @@
 get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL,
                     searchtype = NULL, path = NULL, file_name = NULL, options = NULL) {
 
-  if (is.null(file_name)){
-    # Generate a file name based on the identifier, ensuring it ends with the .sdf extension
-    file_name <- paste0(identifier, "_", Sys.time(), ".sdf")  # Adding a timestamp for uniqueness
-    file_name <- trimws(file_name) # Remove leading and trailing white spaces.
-    file_name <- gsub(" ", "_", gsub(":", "_", file_name))  # Replace spaces with underscores, if any
-  } else {
-    file_name <- paste0(file_name, ".sdf")
+  # Validate inputs
+  if (is.null(identifier)) {
+    stop("Error: 'identifier' cannot be NULL. Please provide a valid identifier.")
   }
 
-  if (is.null(path)){
+  # Generate file name if not provided
+  if (is.null(file_name)) {
+    # Generate a file name based on the identifier and timestamp to ensure uniqueness
+    file_name <- paste0(identifier, "_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".sdf")
+  } else {
+    # Append .sdf extension if not already present
+    file_name <- ifelse(grepl("\\.sdf$", file_name), file_name, paste0(file_name, ".sdf"))
+  }
+
+  # Handle file path and create directories if necessary
+  if (is.null(path)) {
     message("'path' is not specified. Saving files into a temporary folder.")
     path <- tempdir(check = TRUE)
   } else {
-    if (!file.exists(path)){
-      dir.create(path, recursive = TRUE)
+    # Create the directory if it doesn't exist
+    if (!dir.exists(path)) {
+      dir_created <- tryCatch({
+        dir.create(path, recursive = TRUE)
+      }, error = function(e) {
+        stop(paste("Error: Unable to create directory at specified 'path':", path, "\n", conditionMessage(e)))
+      })
     }
   }
 
-  # Initialize the full path
+  # Construct the full file path
   full_path <- file.path(path, file_name)
 
-  # Use tryCatch to handle errors gracefully
+  # Try to download the SDF file
   result <- tryCatch({
-    # Make the request. The 'get' function is expected to return the response content directly.
+    # Make the request to retrieve the SDF file URL using the 'request' function
     response_sdf <- request(identifier, namespace, domain, operation, 'SDF', searchtype, options)
 
-    # Check if the response is not empty or NULL before proceeding
+    # Check if the response URL exists
     if (url.exists(response_sdf)) {
-      # Write the content to a file in SDF format in the current working directory
-      download.file(response_sdf, full_path)
-      message("  SDF file to save --> '", file_name, "'", sep = "", "\n")
-      message("  Saved into folder --> ", path, sep = "", "\n")
-      message("  Completed options", "\n")
+      # Download the SDF file to the specified path
+      download.file(response_sdf, full_path, quiet = TRUE)
+      message("SDF file saved successfully:\n  File Name: '", file_name, "'\n  Saved at: ", path)
+      return(invisible(full_path))
     } else {
-      message("Received no content to write to the SDF file.")
+      message("Error: Received no content to write to the SDF file. URL may be invalid or the content is missing.")
       return(NULL)
     }
   }, error = function(e) {
-    # Here, you could check for specific types of errors (like NotFoundError)
-    # and handle them as needed. For simplicity, we're just printing the error message.
-    message(paste("Info:", e$message))
-    return(NULL)  # Return NULL to indicate no result or failure in the process
+    message("Failed to download SDF file. Error:", conditionMessage(e))
+    return(NULL)  # Return NULL to indicate failure in the process
   })
 
-  # Return the full path invisibly if no error occurred
-  return(invisible(full_path))
+  # Return the full path or NULL if an error occurred
+  return(result)
 }

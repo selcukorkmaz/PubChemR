@@ -25,7 +25,7 @@ The type of identifier depends on the \code{namespace} and \code{domain} paramet
 
                  - For \code{domain = 'substance'}: \code{sid}, \code{sourceid/<source id>}, \code{sourceall/<source name>}, \code{name}, etc.
 
-                 - For \code{domain = 'assay'}: code{aid}, \code{listkey}, \code{type/<assay type>}, \code{sourceall/<source name>}, etc.
+                 - For \code{domain = 'assay'}: \code{aid}, \code{listkey}, \code{type/<assay type>}, \code{sourceall/<source name>}, etc.
 
                  For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Input}{Input} section.}
 

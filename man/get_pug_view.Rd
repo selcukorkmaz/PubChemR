@@ -98,7 +98,8 @@ For more detailed information, please refer to the
 }
 \examples{
 \donttest{
-get_pug_view(identifier = "2244", annotation = "linkout", domain = "compound")
+result <- get_pug_view(identifier = "2244", annotation = "linkout", domain = "compound")
+retrieve(result, .slot = "ObjUrl", .to.data.frame = FALSE)
 }
 
 }

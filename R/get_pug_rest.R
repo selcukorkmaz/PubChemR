@@ -151,18 +151,9 @@
 #' }
 #'
 #' @examples
-#' # Retrieve compound information in JSON format
 #' result <- get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", output = "JSON")
+#' pubChemData(result)
 #'
-#' # Retrieve molecular formula and molecular weight for a compound
-#' result <- get_pug_rest(
-#'   identifier = "2244",
-#'   namespace = "cid",
-#'   domain = "compound",
-#'   operation = "property",
-#'   property = c("MolecularFormula", "MolecularWeight"),
-#'   output = "JSON"
-#' )
 #'
 #' @importFrom httr GET RETRY
 #' @importFrom RJSONIO fromJSON
@@ -173,242 +164,302 @@
 #' @importFrom stringr str_split
 #'
 #' @export
+
 get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compound',
                          operation = NULL, output = 'JSON', searchtype = NULL, property = NULL, options = NULL,
                          save = FALSE, dpi = 300, path = NULL, file_name = NULL, ...) {
-
-  # Create empty Pug View structure to be used when error returns.
+  # Create a structured object to return results or errors
   createPugRestObject <- function(success = TRUE, error = NULL, result = list(),
-                                  request_args = list(), ...){
-    dots <- list(...)
-
-    tmp <- list(
+                                  request_args = list(), fileDetails = NULL) {
+    structure(list(
       result = result,
       request_args = request_args,
       success = success,
-      error = error
-    )
+      error = error,
+      fileDetails = fileDetails
+    ), class = "PugRestInstance")
+  }
 
-    if (length(dots) > 0){
-      tmp <- c(tmp, dots)
+  # Function to format file size into size and unit
+  format_file_size <- function(size_in_bytes) {
+    units <- c("bytes", "KB", "MB", "GB", "TB")
+    if (is.na(size_in_bytes) || size_in_bytes <= 0) {
+      return(list(size = 0, unit = "bytes"))
     }
-
-    structure(
-      tmp,
-      class = "PugRestInstance"
-    )
+    exp <- floor(log(size_in_bytes, 1024))
+    exp <- min(exp, length(units) - 1)
+    size <- round(size_in_bytes / (1024 ^ exp), 2)
+    unit <- units[exp + 1]
+    return(list(size = size, unit = unit))
   }
 
-  # dots <- list(...)
-  call_args <- list(identifier = identifier, namespace = namespace, domain = domain,
-                    operation = operation, output = output, searchtype = searchtype,
-                    property = property, options = options, dpi = dpi, path = path,
-                    save = save)
+  # Load required packages
+  if (!requireNamespace("httr", quietly = TRUE)) {
+    stop("The 'httr' package is required. Please install it using install.packages('httr').")
+  }
+  if (!requireNamespace("jsonlite", quietly = TRUE)) {
+    stop("The 'jsonlite' package is required. Please install it using install.packages('jsonlite').")
+  }
 
-  if (!is.null(output)){
-    output = toupper(output)
-  } else {
-    PugREST_List <- createPugRestObject(
+  # Validate output parameter before any use
+  if (is.null(output)) {
+    return(createPugRestObject(
       success = FALSE,
-      error = list(Message = "Incorrect input defined. 'output' cannot be NULL."),
-      request_args = call_args
-    )
-    return(PugREST_List)
+      error = list(Message = "Invalid input: 'output' cannot be NULL."),
+      request_args = list(
+        identifier = identifier, namespace = namespace, domain = domain, operation = operation,
+        output = output, searchtype = searchtype, property = property, options = options,
+        dpi = dpi, path = path, save = save
+      )
+    ))
+  } else {
+    output <- toupper(output)
   }
 
-  # If requested to save specific files, path is checked and created.
-  if (output == 'SDF' | save){
-    # Write the content to a file in SDF format in the given 'path'
-    if (is.null(file_name)){
+  # Load 'png' package if needed
+  if (output == "PNG") {
+    if (!requireNamespace("png", quietly = TRUE)) {
+      stop("The 'png' package is required for handling PNG outputs. Please install it using install.packages('png').")
+    }
+  }
+
+  # Validate identifier
+  if (is.null(identifier)) {
+    return(createPugRestObject(
+      success = FALSE,
+      error = list(Message = "'identifier' cannot be NULL."),
+      request_args = list(
+        identifier = identifier, namespace = namespace, domain = domain, operation = operation,
+        output = output, searchtype = searchtype, property = property, options = options,
+        dpi = dpi, path = path, save = save
+      )
+    ))
+  }
+
+  # Validate options parameter
+  if (!is.null(options)) {
+    if (is.null(names(options)) || any(names(options) == "")) {
+      return(createPugRestObject(
+        success = FALSE,
+        error = list(Message = "Invalid input: 'options' must be a named list."),
+        request_args = list(
+          identifier = identifier, namespace = namespace, domain = domain, operation = operation,
+          output = output, searchtype = searchtype, property = property, options = options,
+          dpi = dpi, path = path, save = save
+        )
+      ))
+    }
+  }
+
+  # Handle file name and path for saving outputs
+  if (save) {
+    if (is.null(file_name)) {
       file_name <- paste0("files_downloaded", ".", output)
     } else {
-      if (length(file_name) > 1){
-        file_name <- file_name[1]
-      }
       file_name <- paste0(file_name, ".", output)
     }
 
-    fileType <- case_when(
-      .default = "JavaScript Object Notation (JSON/JSONP)",
-      output == "CSV" ~ "Comma Separated Values (CSV)",
-      output == "TXT" ~ "Text Files (TXT)",
-      output == "SDF" ~ "Structure Data Files (SDF)",
-      output == "PNG" ~ "Portable Network Graphic (PNG)"
-    )
-
-    if (is.null(path)){
+    if (is.null(path)) {
       path <- tempdir(check = TRUE)
     } else {
-      # Check if given path exists or successfully created
-      if (!dir.exists(path)){
-        try(dir.create(path, recursive = TRUE, showWarnings = FALSE))
-
-        if (!dir.exists(path)){
+      if (!dir.exists(path)) {
+        tryCatch({
+          dir.create(path, recursive = TRUE)
+        }, error = function(e) {
           path <- tempdir(check = TRUE)
-          warning(paste0("Cannot create given 'path'. Saving into temporary path '", path, "'"))
-        }
+          warning(paste0("Cannot create the specified 'path'. Using temporary path: ", path))
+        })
       }
     }
 
-    file_details <- list(Name = file_name, Path = path, Type = fileType,
-                         Size = calculateObjectSize(file.path(path, file_name)))
-
-    # replace path argument if it is set NULL or given path is not valid.
-    call_args$path <- path
+    # Store file details in a list
+    file_details <- list(Name = file_name, Path = path, Type = output)
+  } else {
+    file_details <- NULL
   }
 
   # Construct the base URL for PUG REST
   base_url <- "https://pubchem.ncbi.nlm.nih.gov/rest/pug"
+  apiurl <- paste(base_url, domain, sep = "/")
 
-  # Build the URL with the given parameters
-  apiurl <- paste0(base_url, "/", domain, "/", namespace, "/")
-
-  # Add searchtype to the URL if provided
+  # Add searchtype, namespace, identifier, operation, and property to URL as needed
   if (!is.null(searchtype)) {
-    searchtype <- paste0(searchtype, collapse = "/")
-    apiurl <- paste0(base_url, "/", domain, "/", searchtype, "/", namespace, "/")
+    apiurl <- paste(apiurl, searchtype, sep = "/")
   }
 
-  # Add identifier to the URL if provided
+  if (!is.null(namespace)) {
+    apiurl <- paste(apiurl, namespace, sep = "/")
+  }
+
   if (!is.null(identifier)) {
-    apiurl <- paste0(apiurl, paste0(toupper(identifier), collapse = ","), "/")
+    # Convert identifier to character vector
+    identifier <- as.character(identifier)
+    encoded_identifier <- URLencode(identifier, reserved = TRUE)
+    apiurl <- paste(apiurl, paste(encoded_identifier, collapse = ","), sep = "/")
   }
 
-  # Add operation to the URL if provided
   if (!is.null(operation)) {
-    operation <- paste0(operation, collapse = "/")
-    apiurl <- paste0(apiurl, operation, "/")
+    apiurl <- paste(apiurl, paste(operation, collapse = "/"), sep = "/")
   }
 
-  # Add searchtype to the URL if provided
   if (!is.null(property)) {
-    if (length(property) > 1){
-      property = paste0(property, collapse = ",")
-    }
-
-    apiurl <- paste0(apiurl, "property/", property, "/")
+    apiurl <- paste(apiurl, "property", paste(property, collapse = ","), sep = "/")
   }
 
-  # Finalize URL with output format
-  apiurl <- paste0(apiurl, output)
+  # Append the output format to the URL
+  apiurl <- paste(apiurl, output, sep = "/")
 
-  # Add options to the URL if provided
+  # Add options as query parameters
   if (!is.null(options)) {
-    if (namespace == "inchi"){
-      options <- paste0("?", paste0("inchi=", curlEscape(unlist(options)), collapse = "&"))
-      options <- gsub(" ", "", options)
-    } else {
-      options <- paste0("?", paste0( names(options), unlist(options), collapse = "&"))
-      options <- gsub(" ", "", options)
-    }
-
-    apiurl <- paste0(apiurl, options)
+    query_params <- paste(names(options), unlist(options), sep = "=", collapse = "&")
+    options_query <- paste0("?", query_params)
+    apiurl <- paste0(apiurl, options_query)
   }
 
-  if (output == "SDF"){
-    if (url.exists(apiurl)){
-      tmp <- try(download.file(apiurl, file.path(path, file_name)))
-
-      PugREST_List <- if (inherits(tmp, "try-error")){
-        createPugRestObject(
-          success = FALSE,
-          error = list(Message = "Cannot donwload SDF file. Please check inputs and try again."),
-          request_args = call_args
-        )
-      } else {
-        createPugRestObject(
-          success = TRUE,
-          request_args = call_args,
-          fileDetails = file_details
-        )
-      }
-    } else {
-      PugREST_List <- createPugRestObject(
-        success = FALSE,
-        error = list(Message = "URL does not exist. Received no content to write SDF file."),
-        request_args = call_args
+  # Perform the HTTP GET request within a tryCatch block
+  response <- tryCatch({
+    RETRY("GET", apiurl, times = 3, pause_min = 1, pause_base = 2)
+  }, error = function(e) {
+    return(createPugRestObject(
+      success = FALSE,
+      error = list(Message = paste("Failed to make API request:", conditionMessage(e))),
+      request_args = list(
+        identifier = identifier, namespace = namespace, domain = domain, operation = operation,
+        output = output, searchtype = searchtype, property = property, options = options,
+        dpi = dpi, path = path, save = save
       )
-    }
-    return(PugREST_List)
-  } else {
-    # Make the HTTP GET request and return the response
-    # response <- GET(URLencode(apiurl))
-    response <- RETRY("GET", URLencode(apiurl), times = 3, pause_min = 1, pause_base = 2)
+    ))
+  })
 
-    if (response$status_code != 400){
-      # Check if the response is asking to wait and has a ListKey
-      if ('Waiting' %in% names(content) && !is.null(content$Waiting[["ListKey"]])) {
-        identifier <- content$Waiting[["ListKey"]]
-        namespace <- 'listkey'
-
-        iter <- 1
-        while ('Waiting' %in% names(content) && !is.null(content$Waiting[["ListKey"]]) && iter < 4) {
-          # Delay before making the next request
-          Sys.sleep(2)  # delay for 2 seconds
-          # Make the next request
-          response <- GET(request(identifier, namespace, domain, operation, output, options))
-          responseContent <- rawToChar(response$content)
-
-          content <- fromJSON(responseContent)
-          iter <- iter + 1
-        }
-      }
-
-      if (output == "CSV"){
-        content <- read.csv(response$url)
-        if (save){
-          write.csv(content, file = file.path(path, file_name), row.names = FALSE)
-        }
-      }
-
-      # Handling response based on output format
-      if (output %in% c('JSON', 'JSONP')) {
-        savedContent <- content(response, "text", encoding = "UTF-8")
-
-        if (output == "JSONP"){
-          savedContent <- sub('[^;\\{]*', '', savedContent)  # remove function name and opening parenthesis
-          savedContent <- sub('\\)$', '', savedContent) # remove closing parenthesis
-        }
-
-        content <- fromJSON(savedContent)
-
-        if (save){
-          write(savedContent, file = file.path(path, file_name))
-        }
-      }
-
-      # Fetch PNG image from PubChem
-      if (!is.null(output) && output == "PNG"){
-        content <- readPNG(getURLContent(apiurl))
-        print(image_read(content), info = FALSE)
-
-        if (save){
-          writePNG(content, target = file.path(path, file_name), dpi = dpi)
-        }
-      }
-
-      if (output == "TXT"){
-        content <- read.table(response$url)
-
-        if (save){
-          write.table(content, file = file.path(path, file_name),
-                      sep = "\t", quote = FALSE, row.names = FALSE, fileEncoding = "UTF-8")
-        }
-      }
-
-      PugREST_List <- createPugRestObject(success = TRUE, request_args = call_args,
-                          result = content)
-
-      if (save){
-        PugREST_List$fileDetails <- file_details
-      }
-    } else {
-      error_message <- fromJSON(rawToChar(response$content))[["Fault"]]
-      PugREST_List <- createPugRestObject(success = FALSE, error = lapply(error_message, "[", 1),
-                                          request_args = call_args)
-    }
-
-    return(PugREST_List)
+  # If response is an error object, return it immediately
+  if (inherits(response, "PugRestInstance")) {
+    return(response)
   }
-}
 
+  # If the response is NULL due to an error, return an error object
+  if (is.null(response)) {
+    return(createPugRestObject(
+      success = FALSE,
+      error = list(Message = "Failed to get a response from the server."),
+      request_args = list(
+        identifier = identifier, namespace = namespace, domain = domain, operation = operation,
+        output = output, searchtype = searchtype, property = property, options = options,
+        dpi = dpi, path = path, save = save
+      )
+    ))
+  }
+
+  # Handle non-200 status codes
+  if (!inherits(response, "response") || response$status_code != 200) {
+    status_code <- if (inherits(response, "response")) response$status_code else "Unknown"
+    return(createPugRestObject(
+      success = FALSE,
+      error = list(Message = paste("Error in API request: HTTP", status_code)),
+      request_args = list(
+        identifier = identifier, namespace = namespace, domain = domain, operation = operation,
+        output = output, searchtype = searchtype, property = property, options = options,
+        dpi = dpi, path = path, save = save
+      )
+    ))
+  }
+
+  # Parse and handle the response based on the output type
+  content <- tryCatch({
+    switch(output,
+           "PNG" = {
+             img_content_raw <- content(response, "raw")
+             img_content <- readPNG(img_content_raw)
+             if (save) {
+               writePNG(img_content, target = file.path(path, file_name))
+             }
+             img_content
+           },
+           "SDF" = {
+             if (save) {
+               download.file(response$url, destfile = file.path(path, file_name), quiet = TRUE)
+               content <- list()
+             } else {
+               content_text <- content(response, "text", encoding = "UTF-8")
+               content_text
+             }
+           },
+           "CSV" = {
+             content_text <- content(response, "text", encoding = "UTF-8")
+             if (save) {
+               writeLines(content_text, con = file.path(path, file_name))
+             }
+             read.csv(text = content_text)
+           },
+           "TXT" = {
+             content_text <- content(response, "text", encoding = "UTF-8")
+             if (save) {
+               writeLines(content_text, con = file.path(path, file_name))
+             }
+             # Parse content_text into a data frame
+             lines <- unlist(strsplit(content_text, "\n"))
+             lines <- lines[lines != ""]
+             data_frame <- data.frame(Text = lines, stringsAsFactors = FALSE)
+             data_frame
+           },
+           {
+             # Handle JSON and JSONP formats or fallback to raw text
+             content_text <- content(response, "text", encoding = "UTF-8")
+             if (output == "JSONP") {
+               content_text <- sub('[^;\\{]*', '', content_text)
+               content_text <- sub('\\)$', '', content_text)
+             }
+             parsed_content <- fromJSON(content_text)
+             if (save) {
+               writeLines(content_text, con = file.path(path, file_name))
+             }
+             parsed_content
+           }
+    )
+  }, error = function(e) {
+    return(createPugRestObject(
+      success = FALSE,
+      error = list(Message = paste("Failed to parse API response:", conditionMessage(e))),
+      request_args = list(
+        identifier = identifier, namespace = namespace, domain = domain, operation = operation,
+        output = output, searchtype = searchtype, property = property, options = options,
+        dpi = dpi, path = path, save = save
+      )
+    ))
+  })
+
+  # If content parsing failed, return an error object
+  if (is.null(content)) {
+    return(createPugRestObject(
+      success = FALSE,
+      error = list(Message = "Failed to parse the API response."),
+      request_args = list(
+        identifier = identifier, namespace = namespace, domain = domain, operation = operation,
+        output = output, searchtype = searchtype, property = property, options = options,
+        dpi = dpi, path = path, save = save
+      )
+    ))
+  }
+
+  # Check file size and update file details if the content was saved
+  if (save && !is.null(file_details)) {
+    file_size_bytes <- file.info(file.path(path, file_name))$size
+    if (!is.na(file_size_bytes)) {
+      size_info <- format_file_size(file_size_bytes)
+      file_details$Size <- size_info
+    } else {
+      file_details$Size <- list(size = NA, unit = "Unknown")
+    }
+  }
+
+  # Return the final result object
+  createPugRestObject(
+    success = TRUE,
+    result = content,
+    request_args = list(
+      identifier = identifier, namespace = namespace, domain = domain, operation = operation,
+      output = output, searchtype = searchtype, property = property, options = options,
+      dpi = dpi, path = path, save = save
+    ),
+    fileDetails = file_details
+  )
+}
