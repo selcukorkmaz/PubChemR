@@ -29,7 +29,8 @@ get_pubchem <- function(identifier, namespace = 'cid', domain = 'compound', oper
 
   # If the searchtype is not 'xref' or if the namespace is 'formula', handle it differently
   if ((!is.null(searchtype) && searchtype != 'xref') || (!is.null(namespace) && namespace == 'formula')) {
-    response <- GET(request(identifier, namespace, domain, NULL, 'JSON', searchtype, options))
+    requestURL <- request(identifier, namespace, domain, NULL, 'JSON', searchtype, options)
+    response <- GET(requestURL)
 
     content <- rawToChar(response$content)
     status <- fromJSON(content)
@@ -43,8 +44,10 @@ get_pubchem <- function(identifier, namespace = 'cid', domain = 'compound', oper
       while ('Waiting' %in% names(status) && !is.null(status$Waiting[["ListKey"]])) {
         # Delay before making the next request
         Sys.sleep(1.5)  # delay for 1.5 seconds not to blocked by PubChem API.
+
         # Make the next request
-        response <- GET(request(identifier, namespace, domain, operation, 'JSON', options))
+        requestURL <- request(identifier, namespace, domain, operation, 'JSON', options)
+        response <- GET(requestURL)
         content <- rawToChar(response$content)
         status <- fromJSON(content)
 
@@ -57,12 +60,14 @@ get_pubchem <- function(identifier, namespace = 'cid', domain = 'compound', oper
 
     # If the final output is not JSON, we make another request for the correct output format
     if (output != 'JSON') {
-      response <- GET(request(identifier, namespace, domain, operation, output, searchtype, options))
+      requestURL <- request(identifier, namespace, domain, operation, output, searchtype, options)
+      response <- GET(requestURL)
       content <- rawToChar(response$content)  # Assuming 'content' is the field with data
     }
   } else {
     # If it doesn't meet the conditions above, make a standard request
-    response <- GET(request(identifier, namespace, domain, operation, output, searchtype, options))
+    requestURL <- request(identifier, namespace, domain, operation, output, searchtype, options)
+    response <- GET(requestURL)
 
     # Check if the request was successful
     if (http_status(response)$category != "Success") {

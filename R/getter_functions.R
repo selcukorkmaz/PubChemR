@@ -1357,3 +1357,26 @@ pubChemData <- function(object, ...){
 pubChemData.PugRestInstance <- function(object, ...){
   object[["result"]]
 }
+
+
+
+#' @title Check and Return PubChem URL
+#'
+#' @description
+#' Use this function to check and return PubChem URL used to retrieve data from PubChem database.
+#'
+#' @param object a PubChem object requested using related fucntion, e.g., \link{get_pug_view}, \link{get_pug_view},
+#' or \code{get_*} type wrappers such as \link{get_compounds}.
+#' @param check_status a logical. If TRUE, the PubChem URL is checked if it is a valid connection or not. Default is TRUE.
+#' @param ... further arguements passed to other methods. Currently has no effect on the output.
+#'
+#' @return a list with PubChem URL and check status.
+#' @export
+#'
+#' @examples
+#' 1L
+pubchemURL <- function(object, check_status = TRUE, ...){
+
+}
+
+
