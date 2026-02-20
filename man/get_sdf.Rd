@@ -97,10 +97,12 @@ For more detailed information, please refer to the
 \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest}{PubChem PUG REST API documentation}.
 }
 \examples{
+\donttest{
 get_sdf(
   identifier = "aspirin",
   namespace = "name",
   path = NULL
 )
+}
 
 }

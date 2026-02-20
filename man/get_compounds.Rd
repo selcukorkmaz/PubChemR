@@ -96,6 +96,7 @@ For more detailed information, please refer to the
 \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest}{PubChem PUG REST API documentation}.
 }
 \examples{
+\donttest{
 compound <- get_compounds(
   identifier = c("aspirin", "ibuprofen", "rstudio"),
   namespace = "name"
@@ -111,7 +112,7 @@ instance(compound, "rstudio")
 # Extract compound properties for the compound "aspirin".
 # Use the 'retrieve()' function to extract specific slots from the compound list.
 retrieve(instance(compound, "aspirin"), "props")
-
+}
 }
 \seealso{
 \link{retrieve}, \link{instance}

@@ -76,6 +76,7 @@
 #' @seealso \link{retrieve}, \link{instance}
 #'
 #' @examples
+#' \donttest{
 #' # Retrieve a list of assays from the PubChem database
 #' assays <- get_assays(
 #'   identifier = c(1234, 7815),
@@ -88,7 +89,7 @@
 #'
 #' # Retrieve specific elements from the assay output
 #' retrieve(assay1234, "aid")
-#'
+#'}
 #' @export
 get_assays <- function(identifier, namespace = 'aid', operation = NULL, options = NULL) {
 

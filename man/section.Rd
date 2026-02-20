@@ -47,6 +47,7 @@ This command will print section "S1" and the subsection "S3" located under "S1" 
 }
 }
 \examples{
+\donttest{
 # Pug View request for the compound "aspirin (CID = 2244)".
 pview <- get_pug_view(identifier = "2244", annotation = "data", domain = "compound")
 
@@ -61,7 +62,7 @@ sectionList(section(pview, "S1"))
 
 # Print multiple sections
 # section(section(pview, "S1", .verbose = TRUE), "S3", .verbose = TRUE)
-
+}
 }
 \seealso{
 \link{sectionList}

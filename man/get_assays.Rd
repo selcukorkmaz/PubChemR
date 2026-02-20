@@ -85,6 +85,7 @@ To extract information about a specific assay from the returned list, use the \l
 Each assay may include information on several properties. Specific information from the assay can be extracted using the \link{retrieve} function. See examples.
 }
 \examples{
+\donttest{
 # Retrieve a list of assays from the PubChem database
 assays <- get_assays(
   identifier = c(1234, 7815),
@@ -97,7 +98,7 @@ print(assay1234)
 
 # Retrieve specific elements from the assay output
 retrieve(assay1234, "aid")
-
+}
 }
 \seealso{
 \link{retrieve}, \link{instance}

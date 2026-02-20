@@ -70,6 +70,7 @@
 #' @seealso \link{AIDs}, \link{get_pug_rest}
 #'
 #' @examples
+#' \donttest{
 #' # Request for multiple assays
 #' # If assay identifier is unknown or incorrect, an error returns from PubChem Database
 #' aids <- get_aids(
@@ -81,7 +82,7 @@
 #'
 #' # Return all Assay IDs.
 #' AIDs(aids)
-#'
+#'}
 #' @export
 get_aids <- function(identifier, namespace = 'cid', domain = 'compound', searchtype = NULL, options = NULL) {
 

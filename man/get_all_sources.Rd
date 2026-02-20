@@ -27,7 +27,9 @@ For more detailed information, please refer to the
 \href{https://pubchem.ncbi.nlm.nih.gov/sources}{PubChem Data Sources documentation}.
 }
 \examples{
+\donttest{
 get_all_sources(
   domain = 'substance'
 )
+}
 }

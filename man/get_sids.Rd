@@ -80,6 +80,7 @@ This function sends a request to PubChem to retrieve Substance IDs (SIDs) for a 
 \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest}{PubChem PUG REST API documentation}.
 }
 \examples{
+\donttest{
 result <- get_sids(
   identifier = c("aspirin", "ibuprofen"),
   namespace = "name"
@@ -87,5 +88,6 @@ result <- get_sids(
 
 # Extract substance IDs of all compounds
 SIDs(result)
+}
 
 }

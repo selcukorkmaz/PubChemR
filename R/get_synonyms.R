@@ -68,6 +68,7 @@
 #' @return An object of class 'PubChemInstance_Synonyms', which is a list containing information retrieved from the PubChem database. Synonyms data can be extracted from the returned object using the \link{synonyms} function.
 #'
 #' @examples
+#' \donttest{
 #' syns <- get_synonyms(
 #'   identifier = "aspirin",
 #'   namespace = "name"
@@ -76,7 +77,7 @@
 #' syns
 #'
 #' synonyms(syns)
-#'
+#'}
 #' @export
 get_synonyms <- function(identifier, namespace = 'cid', domain = 'compound', searchtype = NULL, options = NULL) {
 

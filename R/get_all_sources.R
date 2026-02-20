@@ -22,9 +22,11 @@
 #' @export
 #'
 #' @examples
+#' \donttest{
 #' get_all_sources(
 #'   domain = 'substance'
 #' )
+#' }
 get_all_sources <- function(domain = 'substance') {
   # Validate the domain parameter
   if (!domain %in% c("substance", "compound", "assay")) {

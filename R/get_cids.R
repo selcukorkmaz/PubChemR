@@ -68,6 +68,7 @@
 #' To extract compoud IDs from returned object, one may use \link{CIDs} function. See examples.
 #'
 #' @examples
+#' \donttest{
 #' compound <- get_cids(
 #'   identifier = "aspirin",
 #'   namespace = "name"
@@ -77,6 +78,7 @@
 #'
 #' # Extract compound IDs.
 #' CIDs(compound)
+#'}
 #'
 #' @export
 get_cids <- function(identifier, namespace = 'name', domain = 'compound', searchtype = NULL, options = NULL) {

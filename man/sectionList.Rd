@@ -45,6 +45,7 @@ Pattern matching is used to filter sections that match user-defined patterns. It
 }
 }
 \examples{
+\donttest{
 pview <- get_pug_view(identifier = "2244", annotation = "data", domain = "compound")
 
 # List all section names
@@ -57,7 +58,7 @@ sectionList(pview, .pattern = "properties", .match_type = "end")
 
 # Use section IDs to extract section data from Pug View request
 section(pview, "S12") # Safety and Hazards
-
+}
 }
 \seealso{
 \link{section}

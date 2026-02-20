@@ -25,7 +25,9 @@ A \code{data.frame} (or \code{list}) object containing the synonym data.
 Extracts synonym data from a PubChem request using the function \link{get_synonyms}.
 }
 \examples{
+\donttest{
 syns <- get_synonyms(identifier = c("aspirin", "caffeine"), namespace = "name")
 synonyms(syns)
+}
 
 }

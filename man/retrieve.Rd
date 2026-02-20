@@ -115,6 +115,7 @@ For other slots, \code{.to.data.frame} is considered as usual. See examples for 
 }
 
 \examples{
+\donttest{
 compounds <- get_compounds(
   identifier = c("aspirin", "ibuprofen", "rstudio"),
   namespace = "name"
@@ -126,7 +127,8 @@ aspirin <- instance(compounds, "aspirin")
 
 # Extract a specific slot from the "aspirin" compound.
 retrieve(aspirin, "props", .to.data.frame = TRUE)
-
+}
+\donttest{
 # Examples (PubChemInstanceList)
 retrieve(compounds, "aspirin", "props", .to.data.frame = TRUE)
 
@@ -145,7 +147,8 @@ retrieve(assays, "7815", "xref", .verbose = TRUE)
 
 # Ignores ".verbose" and ".which" if ".combine.all = TRUE".
 retrieve(assays, .slot = "xref", .verbose = TRUE, .combine.all = TRUE)
-
+}
+\donttest{
 ### PUG VIEW EXAMPLES ###
 pview <- get_pug_view(identifier = "2244", annotation = "data", domain = "compound")
 
@@ -155,5 +158,6 @@ sect <- retrieve(pview, .slot = "Section")
 print(sect)
 
 retrieve(pview, .slot = "RecordType", .to.data.frame = TRUE)
+}
 
 }

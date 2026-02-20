@@ -83,6 +83,7 @@ For more detailed information, please refer to the
 \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest}{PubChem PUG REST API documentation}.
 }
 \examples{
+\donttest{
 syns <- get_synonyms(
   identifier = "aspirin",
   namespace = "name"
@@ -91,5 +92,5 @@ syns <- get_synonyms(
 syns
 
 synonyms(syns)
-
+}
 }

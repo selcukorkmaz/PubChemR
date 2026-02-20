@@ -151,8 +151,14 @@
 #' }
 #'
 #' @examples
-#' result <- get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", output = "JSON")
-#' pubChemData(result)
+#' \donttest{
+#'   result <- get_pug_rest(identifier = "2244",
+#'                          namespace = "cid",
+#'                          domain = "compound",
+#'                          output = "JSON"
+#'                         )
+#'   pubChemData(result)
+#' }
 #'
 #'
 #' @importFrom httr GET RETRY
@@ -196,9 +202,6 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
   # Load required packages
   if (!requireNamespace("httr", quietly = TRUE)) {
     stop("The 'httr' package is required. Please install it using install.packages('httr').")
-  }
-  if (!requireNamespace("jsonlite", quietly = TRUE)) {
-    stop("The 'jsonlite' package is required. Please install it using install.packages('jsonlite').")
   }
 
   # Validate output parameter before any use

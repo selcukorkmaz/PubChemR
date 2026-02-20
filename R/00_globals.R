@@ -2,7 +2,6 @@
 
 #' Import testthat Package
 #' @noRd
-#' @import testthat
 NULL
 
 # The base URL for the PubChem API.
@@ -101,6 +100,7 @@ names(ELEMENTS) <- 1:118
 #' @order 2
 #'
 #' @examples
+#' \donttest{
 #' #### EXAMPLES FOR property_map() ####
 #' # List all available properties:
 #' property_map(type = "all")
@@ -117,7 +117,7 @@ names(ELEMENTS) <- 1:118
 #' # Partial match with multiple search patterns:
 #' property_map(c("molecular", "mass", "inchi"),
 #'   type = "contain", .ignore.case = TRUE)
-#'
+#'}
 #' @export
 property_map <- function(x, type = c("match", "contain", "start", "end", "all"), .ignore.case = TRUE, ...){
   properties_list <- c(

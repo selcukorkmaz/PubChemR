@@ -81,6 +81,7 @@ For more detailed information, please refer to the
 To extract assay IDs from returned object, one may use \link{AIDs} function. See examples.
 }
 \examples{
+\donttest{
 # Request for multiple assays
 # If assay identifier is unknown or incorrect, an error returns from PubChem Database
 aids <- get_aids(
@@ -92,7 +93,7 @@ print(aids)
 
 # Return all Assay IDs.
 AIDs(aids)
-
+}
 }
 \seealso{
 \link{AIDs}, \link{get_pug_rest}

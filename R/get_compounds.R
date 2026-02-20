@@ -82,6 +82,7 @@
 #' @seealso \link{retrieve}, \link{instance}
 #'
 #' @examples
+#' \donttest{
 #' compound <- get_compounds(
 #'   identifier = c("aspirin", "ibuprofen", "rstudio"),
 #'   namespace = "name"
@@ -97,7 +98,7 @@
 #' # Extract compound properties for the compound "aspirin".
 #' # Use the 'retrieve()' function to extract specific slots from the compound list.
 #' retrieve(instance(compound, "aspirin"), "props")
-#'
+#'}
 #' @export
 get_compounds <- function(identifier, namespace = 'cid', operation = NULL, searchtype = NULL, options = NULL) {
 

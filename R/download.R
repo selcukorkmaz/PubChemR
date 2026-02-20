@@ -26,6 +26,7 @@
 #' @export
 #'
 #' @examples
+#' \donttest{
 #' # Download JSON file for the compound "aspirin" into "Aspirin.JSON"
 #' # A folder named "Compound" will be created under current directory"
 #' download(
@@ -41,6 +42,7 @@
 #' # Remove downloaded files and folders.
 #' file.remove("./Compound/Aspirin.json")
 #' file.remove("./Compound/")
+#' }
 download <- function(filename = NULL, outformat, path, identifier, namespace = 'cid', domain = 'compound', operation = NULL,
                      searchtype = NULL, overwrite = FALSE, options = NULL) {
 

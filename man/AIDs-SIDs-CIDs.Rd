@@ -36,16 +36,22 @@ If failed to convert into a data.frame, a list will be returned with a warning. 
 These functions are used to retrieve identification information for assays, substances, and compounds from the PubChem database.
 }
 \examples{
+\donttest{
 # Retrieve Assay IDs
 aids <- get_aids(identifier = c("aspirin", "caffeine"), namespace = "name")
 AIDs(aids)
+}
 
+\donttest{
 # Compound IDs
 cids <- get_cids(identifier = c("aspirin", "caffein"), namespace = "name")
 CIDs(cids)
+}
 
+\donttest{
 # Substance IDs
 sids <- get_sids(identifier = c("aspirin", "caffein"), namespace = "name")
 SIDs(sids)
+}
 
 }

@@ -14,10 +14,12 @@
 #' @return A list or string vector containing the options used in the function call.
 #'
 #' @examples
+#' \donttest{
 #' request <- get_cids("aspirin", namespace = "name")
 #'
 #' request_args(request, "identifier")
 #' request_args(request)
+#' }
 #'
 #' @export
 request_args <- function(object, .which = NULL, ...){
@@ -62,6 +64,7 @@ instance.PubChemInstanceList <- function(object, .which = NULL, ...){
 #' @order 1
 #'
 #' @examples
+#' \donttest{
 #' compounds <- get_compounds(
 #'   identifier = c("aspirin", "ibuprofen"),
 #'   namespace = "name"
@@ -69,7 +72,7 @@ instance.PubChemInstanceList <- function(object, .which = NULL, ...){
 #'
 #' instance(compounds)  # Returns the results for "aspirin"
 #' instance(compounds, "ibuprofen")
-#'
+#'}
 #' @export
 instance <- function(object, ...){
   UseMethod("instance")
@@ -158,6 +161,7 @@ retrieve <- function(object, ...){
 #' @importFrom magrittr '%>%'
 #'
 #' @examples
+#' \donttest{
 #' compounds <- get_compounds(
 #'   identifier = c("aspirin", "ibuprofen", "rstudio"),
 #'   namespace = "name"
@@ -169,7 +173,7 @@ retrieve <- function(object, ...){
 #'
 #' # Extract a specific slot from the "aspirin" compound.
 #' retrieve(aspirin, "props", .to.data.frame = TRUE)
-#'
+#'}
 #' @export
 retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE, .verbose = FALSE, ...){
   dots <- list(...)
@@ -337,6 +341,7 @@ retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
 #' @order 3
 #'
 #' @examples
+#' \donttest{
 #' # Examples (PubChemInstanceList)
 #' retrieve(compounds, "aspirin", "props", .to.data.frame = TRUE)
 #'
@@ -355,7 +360,7 @@ retrieve.PubChemInstance <- function(object, .slot = NULL, .to.data.frame = TRUE
 #'
 #' # Ignores ".verbose" and ".which" if ".combine.all = TRUE".
 #' retrieve(assays, .slot = "xref", .verbose = TRUE, .combine.all = TRUE)
-#'
+#'}
 #' @importFrom dplyr bind_rows bind_cols
 #' @importFrom tibble tibble
 #'
@@ -676,6 +681,7 @@ retrieve.PC_Substance <- function(object, .slot = NULL, .idx = 1, .to.data.frame
 #' For other slots, \code{.to.data.frame} is considered as usual. See examples for usage.
 #'
 #' @examples
+#' \donttest{
 #' ### PUG VIEW EXAMPLES ###
 #' pview <- get_pug_view(identifier = "2244", annotation = "data", domain = "compound")
 #'
@@ -685,6 +691,7 @@ retrieve.PC_Substance <- function(object, .slot = NULL, .idx = 1, .to.data.frame
 #' print(sect)
 #'
 #' retrieve(pview, .slot = "RecordType", .to.data.frame = TRUE)
+#' }
 #'
 #' @importFrom dplyr bind_cols bind_rows full_join mutate_all
 #' @importFrom tibble as_tibble as_tibble_col tibble
@@ -922,9 +929,11 @@ AIDs.PubChemInstance_AIDs <- function(object, .to.data.frame = TRUE, ...) {
 #' @order 1
 #'
 #' @examples
+#' \donttest{
 #' # Retrieve Assay IDs
 #' aids <- get_aids(identifier = c("aspirin", "caffeine"), namespace = "name")
 #' AIDs(aids)
+#' }
 #'
 #' @export
 AIDs <- function(object, ...){
@@ -978,9 +987,11 @@ CIDs.PubChemInstance_CIDs <- function(object, .to.data.frame = TRUE, ...){
 #' @order 2
 #'
 #' @examples
+#' \donttest{
 #' # Compound IDs
 #' cids <- get_cids(identifier = c("aspirin", "caffein"), namespace = "name")
 #' CIDs(cids)
+#' }
 #'
 #' @export
 CIDs <- function(object, ...){
@@ -1025,9 +1036,11 @@ SIDs.PubChemInstance_SIDs <- function(object, .to.data.frame = TRUE, ...){
 #' @order 3
 #'
 #' @examples
+#' \donttest{
 #' # Substance IDs
 #' sids <- get_sids(identifier = c("aspirin", "caffein"), namespace = "name")
 #' SIDs(sids)
+#' }
 #'
 #' @export
 SIDs <- function(object, ...){
@@ -1082,8 +1095,10 @@ synonyms.PubChemInstance_Synonyms <- function(object, .to.data.frame = TRUE, ...
 #' @return A \code{data.frame} (or \code{list}) object containing the synonym data.
 #'
 #' @examples
+#' \donttest{
 #' syns <- get_synonyms(identifier = c("aspirin", "caffeine"), namespace = "name")
 #' synonyms(syns)
+#' }
 #'
 #' @export
 synonyms <- function(object, ...){
@@ -1139,6 +1154,7 @@ section <- function(object, ...){
 #' @seealso \link{sectionList}
 #'
 #' @examples
+#' \donttest{
 #' # Pug View request for the compound "aspirin (CID = 2244)".
 #' pview <- get_pug_view(identifier = "2244", annotation = "data", domain = "compound")
 #'
@@ -1153,7 +1169,7 @@ section <- function(object, ...){
 #'
 #' # Print multiple sections
 #' # section(section(pview, "S1", .verbose = TRUE), "S3", .verbose = TRUE)
-#'
+#'}
 #' @export
 section.PugViewInstance <- function(object, .id = "S1", .verbose = FALSE, ...){
   dots <- list(...)
@@ -1303,6 +1319,7 @@ sectionList.PugViewInstance <- function(object, ...){
 #' @importFrom tidyr ends_with starts_with contains
 #'
 #' @examples
+#' \donttest{
 #' pview <- get_pug_view(identifier = "2244", annotation = "data", domain = "compound")
 #'
 #' # List all section names
@@ -1315,7 +1332,7 @@ sectionList.PugViewInstance <- function(object, ...){
 #'
 #' # Use section IDs to extract section data from Pug View request
 #' section(pview, "S12") # Safety and Hazards
-#'
+#'}
 #' @export
 sectionList.PugViewSectionList <- function(object, .pattern = NULL, .match_type = c("contain", "match", "start", "end"), ...){
 
@@ -1452,8 +1469,10 @@ sectionList.PugViewSection <- function(object, .pattern = NULL, .match_type = c(
 #' @return a vector, list, or data.frame containing the raw data retrieved from Pub Chem database through PUG REST API.
 #'
 #' @examples
+#' \donttest{
 #' result <- get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", output = "JSON")
 #' pubChemData(result)
+#' }
 #'
 #' @export
 pubChemData <- function(object, ...){

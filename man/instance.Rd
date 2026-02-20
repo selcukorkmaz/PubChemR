@@ -22,6 +22,7 @@ This function extracts the results of a PubChem instance from an \code{object}. 
 information about a compound from a comprehensive list where multiple elements (such as assay, compound, etc.) are requested.
 }
 \examples{
+\donttest{
 compounds <- get_compounds(
   identifier = c("aspirin", "ibuprofen"),
   namespace = "name"
@@ -29,5 +30,5 @@ compounds <- get_compounds(
 
 instance(compounds)  # Returns the results for "aspirin"
 instance(compounds, "ibuprofen")
-
+}
 }

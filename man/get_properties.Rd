@@ -163,6 +163,7 @@ retrieve(props, .combine.all = TRUE)
 
 }
 
+\donttest{
 #### EXAMPLES FOR property_map() ####
 # List all available properties:
 property_map(type = "all")
@@ -179,5 +180,5 @@ property_map("mass", type = "end", .ignore.case = TRUE)
 # Partial match with multiple search patterns:
 property_map(c("molecular", "mass", "inchi"),
   type = "contain", .ignore.case = TRUE)
-
+}
 }

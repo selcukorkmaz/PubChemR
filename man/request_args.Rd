@@ -22,9 +22,11 @@ A list or string vector containing the options used in the function call.
 This function retrieves the input arguments from a specified PubChem database request object.
 }
 \examples{
+\donttest{
 request <- get_cids("aspirin", namespace = "name")
 
 request_args(request, "identifier")
 request_args(request)
+}
 
 }

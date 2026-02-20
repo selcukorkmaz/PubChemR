@@ -83,64 +83,81 @@
 #' }
 #'
 #' @export
-get_substances <- function(identifier, namespace = 'sid', operation = NULL, options = NULL) {
+get_substances <- function(identifier, namespace = "sid", operation = NULL, options = NULL) {
 
-  # Initialize result list
-  Substances_List <- list(
-    result = vector("list", length(identifier)),  # Create a list with the same length as identifiers
+  out <- list(
+    result = vector("list", length(identifier)),
     request_args = list(
       namespace = namespace,
       identifier = identifier,
       domain = "substance"
     ),
-    success = rep(FALSE, length(identifier)),  # Initialize success with FALSE for each identifier
-    error = vector("character", length(identifier))  # Initialize an empty character vector for errors
+    success = rep(FALSE, length(identifier))
   )
 
-  # Attempt to get the response and handle errors gracefully
-  result <- lapply(seq_along(identifier), function(i) {
-    x <- identifier[i]
-    # Use tryCatch to handle potential errors
-    response <- tryCatch({
-      # Attempt to retrieve data using the get_json function
-      tmp <- get_json(identifier = x, namespace, "substance", operation, NULL, options)
-      class(tmp) <- c("PC_Substance", class(tmp))  # Add custom class to response
-      Substances_List$success[i] <- TRUE  # Set success to TRUE if request is successful
-      tmp
-    }, error = function(e) {
-      # Capture the error message
-      error_message <- conditionMessage(e)
+  # Helper: detect *top-level* PUG REST Fault only (be precise)
+  has_top_fault <- function(x) {
+    is.list(x) && !is.null(x$Fault)
+  }
 
-      # Determine the error type and assign an appropriate message
-      if (grepl("Timeout", error_message, ignore.case = TRUE)) {
-        error_message <- paste0("Request timeout: The server did not respond in time for identifier '", x, "'. Please try again later.")
-      } else if (grepl("Could not resolve host", error_message, ignore.case = TRUE) ||
-                 grepl("InternetOpenUrl", error_message, ignore.case = TRUE)) {
-        error_message <- "Network error: Could not connect to the server. Please check your internet connection and try again."
-      } else if (grepl("HTTP error", error_message, ignore.case = TRUE)) {
-        error_message <- paste0("HTTP error: The server returned an error for identifier '", x, "'. Please check the server status or try again later.")
-      } else {
-        error_message <- paste0("An unknown error occurred for identifier '", x, "': ", error_message)
+  fault_message <- function(x) {
+    if (!is.list(x$Fault)) return("PubChem fault.")
+    parts <- c(x$Fault$Code, x$Fault$Message, paste(x$Fault$Details, collapse = "; "))
+    parts <- parts[!vapply(parts, is.null, logical(1))]
+    msg <- paste(parts, collapse = " - ")
+    if (nzchar(msg)) msg else "PubChem fault."
+  }
+
+  # Consider any non-empty list without a top-level Fault as meaningful
+  is_meaningful <- function(x) {
+    is.list(x) && length(x) > 0 && is.null(x$Fault)
+  }
+
+  make_error_list <- function(msg, cls = "not_found") {
+    list(error = list(message = msg, class = cls))
+  }
+
+  for (i in seq_along(identifier)) {
+    x <- identifier[i]
+
+    res <- tryCatch({
+      tmp <- get_json(
+        identifier = x,
+        namespace   = namespace,
+        domain      = "substance",
+        operation   = operation,
+        path        = NULL,
+        options     = options
+      )
+
+      # Fault from PubChem
+      if (has_top_fault(tmp)) {
+        stop(fault_message(tmp), call. = FALSE)
       }
 
-      # Append error message to Substances_List$error at the corresponding index
-      Substances_List$error[i] <- error_message
-      Substances_List$success[i] <- FALSE  # Ensure success is set to FALSE for this identifier
+      # Empty/meaningless payload -> treat as no hit
+      if (!is_meaningful(tmp)) {
+        stop(sprintf("Empty result for identifier '%s' in namespace '%s'.", x, namespace), call. = FALSE)
+      }
 
-      # Return NULL for this identifier to indicate failure
+      # SUCCESS: store the payload directly (so instance() keeps working)
+      class(tmp) <- unique(c("PC_Substance", class(tmp)))
+      out$result[[i]] <- tmp
+      out$success[i]  <- TRUE
+      NULL
+    },
+    error = function(e) {
+      # FAILURE: store a list with $error (tests expect this)
+      out$result[[i]] <- make_error_list(conditionMessage(e), class(e)[1])
+      out$success[i]  <- FALSE
       NULL
     })
-    return(response)
-  })
+  }
 
-  # Store the results in the Substances_List object
-  Substances_List$result <- result
+  # Make selection by name easier for instance() implementations
+  names(out$result) <- identifier
 
-  # Return the structured object with results and error details
-  structure(
-    Substances_List,
-    class = c("PubChemInstanceList")
-  )
+  structure(out, class = c("PubChemInstanceList"))
 }
 
 

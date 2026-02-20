@@ -115,10 +115,12 @@
 #' @importFrom RJSONIO fromJSON
 #'
 #' @examples
+#' \donttest{
 #' get_pubchem(
 #'   identifier = "aspirin",
 #'   namespace = "name"
 #' )
+#' }
 get_pubchem <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL,
                         output = 'JSON', searchtype = NULL, options = NULL) {
   response <- NULL

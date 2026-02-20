@@ -80,11 +80,13 @@
 #' @export
 #'
 #' @examples
+#' \donttest{
 #' get_sdf(
 #'   identifier = "aspirin",
 #'   namespace = "name",
 #'   path = NULL
 #' )
+#' }
 #'
 #' @export
 get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operation = NULL,

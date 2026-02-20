@@ -1,7 +1,7 @@
 Package: PubChemR
 Type: Package
 Title: Interface to the 'PubChem' Database for Chemical Data Retrieval
-Version: 2.1.2
+Version: 2.1.8
 Authors@R: c(person("Selcuk", "Korkmaz", email="selcukorkmaz@gmail.com", role=c("aut", "cre"),
                     comment = c(ORCID = "0000-0003-4632-6850")),
              person("Bilge Eren", "Yamasan", email="berenyamasan@hotmail.com", role="aut",
@@ -16,10 +16,8 @@ License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2
-VignetteBuilder: knitr
-URL: https://github.com/selcukorkmaz/PubChemR
-Depends:
-  R (>= 3.6.0)
+URL: https://selcukorkmaz.github.io/pubchemr-tutorial/, https://github.com/selcukorkmaz/PubChemR
+BugReports: https://github.com/selcukorkmaz/PubChemR/issues
 Imports:
   dplyr,
   tibble,
@@ -32,9 +30,4 @@ Imports:
   RCurl,
   magick,
   rsvg,
-  png,
-  testthat
-Suggests:
-  knitr,
-  rmarkdown
-Config/testthat/edition: 3
+  png

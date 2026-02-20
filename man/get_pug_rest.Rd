@@ -178,8 +178,14 @@ For more information on the possible values for parameters such as \code{namespa
 \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=URL-based-API}{PUG REST API documentation}.
 }
 \examples{
-result <- get_pug_rest(identifier = "2244", namespace = "cid", domain = "compound", output = "JSON")
-pubChemData(result)
+\donttest{
+  result <- get_pug_rest(identifier = "2244",
+                         namespace = "cid",
+                         domain = "compound",
+                         output = "JSON"
+                        )
+  pubChemData(result)
+}
 
 
 }

@@ -81,6 +81,7 @@ For more detailed information, please refer to the
 To extract compoud IDs from returned object, one may use \link{CIDs} function. See examples.
 }
 \examples{
+\donttest{
 compound <- get_cids(
   identifier = "aspirin",
   namespace = "name"
@@ -90,6 +91,7 @@ compound
 
 # Extract compound IDs.
 CIDs(compound)
+}
 
 }
 \seealso{
