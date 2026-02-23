@@ -1,0 +1,407 @@
+pkgname <- "PubChemR"
+source(file.path(R.home("share"), "R", "examples-header.R"))
+options(warn = 1)
+options(pager = "console")
+library('PubChemR')
+
+base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
+base::assign(".old_wd", base::getwd(), pos = 'CheckExEnv')
+cleanEx()
+nameEx("AIDs-SIDs-CIDs")
+### * AIDs-SIDs-CIDs
+
+flush(stderr()); flush(stdout())
+
+### Name: AIDs-SIDs-CIDs
+### Title: Assay, Compound, and Substance Identifiers
+### Aliases: AIDs-SIDs-CIDs AIDs CIDs SIDs AIDs.PubChemInstance_AIDs
+###   CIDs.PubChemInstance_CIDs SIDs.PubChemInstance_SIDs
+
+### ** Examples
+
+
+
+
+
+
+
+cleanEx()
+nameEx("download")
+### * download
+
+flush(stderr()); flush(stdout())
+
+### Name: download
+### Title: Download Content from PubChem and Save to a File
+### Aliases: download
+
+### ** Examples
+
+
+
+
+cleanEx()
+nameEx("get_aids")
+### * get_aids
+
+flush(stderr()); flush(stdout())
+
+### Name: get_aids
+### Title: Retrieve Assay IDs (AIDs) from PubChem
+### Aliases: get_aids
+
+### ** Examples
+
+
+
+
+cleanEx()
+nameEx("get_all_sources")
+### * get_all_sources
+
+flush(stderr()); flush(stdout())
+
+### Name: get_all_sources
+### Title: Retrieve All Sources from PubChem
+### Aliases: get_all_sources
+
+### ** Examples
+
+
+
+
+cleanEx()
+nameEx("get_assays")
+### * get_assays
+
+flush(stderr()); flush(stdout())
+
+### Name: get_assays
+### Title: Retrieve Assays from PubChem
+### Aliases: get_assays
+
+### ** Examples
+
+
+
+
+cleanEx()
+nameEx("get_biological_test_results")
+### * get_biological_test_results
+
+flush(stderr()); flush(stdout())
+
+### Name: get_biological_test_results
+### Title: Retrieve "Biological Test Results" Section from PubChem Contents
+### Aliases: get_biological_test_results
+
+### ** Examples
+
+
+
+
+cleanEx()
+nameEx("get_cids")
+### * get_cids
+
+flush(stderr()); flush(stdout())
+
+### Name: get_cids
+### Title: Retrieve Compound IDs (CIDs) from PubChem
+### Aliases: get_cids
+
+### ** Examples
+
+
+
+
+
+cleanEx()
+nameEx("get_compounds")
+### * get_compounds
+
+flush(stderr()); flush(stdout())
+
+### Name: get_compounds
+### Title: Retrieve Compounds from PubChem
+### Aliases: get_compounds
+
+### ** Examples
+
+
+
+
+cleanEx()
+nameEx("get_properties")
+### * get_properties
+
+flush(stderr()); flush(stdout())
+
+### Name: get_properties
+### Title: Retrieve Compound Properties from PubChem
+### Aliases: get_properties property_map
+
+### ** Examples
+
+
+
+
+
+cleanEx()
+nameEx("get_pug_rest")
+### * get_pug_rest
+
+flush(stderr()); flush(stdout())
+
+### Name: get_pug_rest
+### Title: Retrieve Data from PubChem PUG REST API
+### Aliases: get_pug_rest
+
+### ** Examples
+
+
+
+
+
+
+cleanEx()
+nameEx("get_pug_view")
+### * get_pug_view
+
+flush(stderr()); flush(stdout())
+
+### Name: get_pug_view
+### Title: Retrieve PUG View Data from PubChem
+### Aliases: get_pug_view
+
+### ** Examples
+
+
+
+
+
+cleanEx()
+nameEx("get_sdf")
+### * get_sdf
+
+flush(stderr()); flush(stdout())
+
+### Name: get_sdf
+### Title: Retrieve/Save SDF Data from PubChem
+### Aliases: get_sdf
+
+### ** Examples
+
+
+
+
+
+cleanEx()
+nameEx("get_sids")
+### * get_sids
+
+flush(stderr()); flush(stdout())
+
+### Name: get_sids
+### Title: Retrieve Substance IDs (SIDs) from PubChem
+### Aliases: get_sids
+
+### ** Examples
+
+
+
+
+
+cleanEx()
+nameEx("get_substances")
+### * get_substances
+
+flush(stderr()); flush(stdout())
+
+### Name: get_substances
+### Title: Retrieve Substances from PubChem
+### Aliases: get_substances
+
+### ** Examples
+
+
+
+
+
+cleanEx()
+nameEx("get_synonyms")
+### * get_synonyms
+
+flush(stderr()); flush(stdout())
+
+### Name: get_synonyms
+### Title: Retrieve Synonyms from PubChem
+### Aliases: get_synonyms
+
+### ** Examples
+
+
+
+
+cleanEx()
+nameEx("instance")
+### * instance
+
+flush(stderr()); flush(stdout())
+
+### Name: instance
+### Title: Retrieve Information for Requested Instances
+### Aliases: instance instance.PubChemInstanceList
+
+### ** Examples
+
+
+
+
+cleanEx()
+nameEx("pc_api")
+### * pc_api
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_api
+### Title: Next-Generation PubChemR API
+### Aliases: pc_api pc_config pc_cache_clear pc_cache_info pc_request
+###   pc_response pc_compound pc_substance pc_assay pc_property
+###   pc_feature_table pc_identifier_map pc_batch pc_benchmark pc_submit
+###   pc_poll pc_collect print.PubChemResult print.PubChemBatchResult
+###   as_tibble.PubChemResult as_tibble.PubChemRecord
+###   as_tibble.PubChemIdMap as_tibble.PubChemBatchResult
+
+### ** Examples
+
+
+
+
+cleanEx()
+nameEx("pc_phase3")
+### * pc_phase3
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_phase3
+### Title: Phase 3 Analytical and Integration API
+### Aliases: pc_phase3 pc_profile pc_similarity_search pc_activity_matrix
+###   pc_cross_domain_join pc_model_matrix pc_to_rcdk pc_to_chemminer
+###   pc_lifecycle_policy print.PubChemModelMatrix
+
+### ** Examples
+
+
+
+
+cleanEx()
+nameEx("pubChemData")
+### * pubChemData
+
+flush(stderr()); flush(stdout())
+
+### Name: pubChemData
+### Title: Retrieve Raw Data from PUG REST Object
+### Aliases: pubChemData pubChemData.PugRestInstance
+
+### ** Examples
+
+
+
+
+
+cleanEx()
+nameEx("request_args")
+### * request_args
+
+flush(stderr()); flush(stdout())
+
+### Name: request_args
+### Title: Retrieve Function Inputs
+### Aliases: request_args
+
+### ** Examples
+
+
+
+
+
+cleanEx()
+nameEx("retrieve")
+### * retrieve
+
+flush(stderr()); flush(stdout())
+
+### Name: retrieve
+### Title: Retrieve Information from PubChem Instances
+### Aliases: retrieve retrieve.PubChemInstance retrieve.PubChemInstanceList
+###   retrieve.PC_Substance retrieve.PugViewInstance
+###   retrieve.PugViewSection
+
+### ** Examples
+
+
+
+
+
+cleanEx()
+nameEx("section")
+### * section
+
+flush(stderr()); flush(stdout())
+
+### Name: section
+### Title: Extract Sections from Pug View Request
+### Aliases: section section.PugViewInstance section.PugViewSectionList
+###   section.PugViewSection
+
+### ** Examples
+
+
+
+
+cleanEx()
+nameEx("sectionList")
+### * sectionList
+
+flush(stderr()); flush(stdout())
+
+### Name: sectionList
+### Title: List Available Section/Subsections
+### Aliases: sectionList sectionList.PugViewInstance
+###   sectionList.PugViewSectionList sectionList.PugViewSection
+
+### ** Examples
+
+
+
+
+cleanEx()
+nameEx("synonyms")
+### * synonyms
+
+flush(stderr()); flush(stdout())
+
+### Name: synonyms
+### Title: Getter function for 'Synonyms'
+### Aliases: synonyms synonyms.PubChemInstance_Synonyms
+
+### ** Examples
+
+
+
+
+
+### * <FOOTER>
+###
+cleanEx()
+options(digits = 7L)
+base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
+grDevices::dev.off()
+###
+### Local variables: ***
+### mode: outline-minor ***
+### outline-regexp: "\\(> \\)?### [*]+" ***
+### End: ***
+quit('no')
