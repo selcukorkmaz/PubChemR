@@ -1,0 +1,125 @@
+---
+title: "Phase 4 Analysis Layer: Similarity to Model-Ready Export"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Phase 4 Analysis Layer: Similarity to Model-Ready Export}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+This vignette demonstrates the first true analysis-layer workflow in PubChemR:
+
+1. Similarity retrieval around a seed compound.
+2. Assay activity extraction in long format.
+3. Activity matrix construction.
+4. Feature retrieval and model-matrix assembly.
+5. Model-ready export.
+
+```{r setup}
+library(PubChemR)
+library(dplyr)
+library(tibble)
+```
+
+## 1) Similar compounds from a seed structure
+
+```{r eval=FALSE}
+# Aspirin SMILES as seed
+seed_smiles <- "CC(=O)OC1=CC=CC=C1C(=O)O"
+
+sim <- pc_similarity_search(
+  identifier = seed_smiles,
+  namespace = "smiles",
+  threshold = 90,
+  max_records = 200,
+  cache = TRUE
+)
+
+sim_tbl <- as_tibble(sim) %>%
+  filter(!is.na(CID)) %>%
+  mutate(CID = as.character(CID)) %>%
+  distinct(CID)
+
+sim_tbl
+```
+
+## 2) Fetch assay activity in long format
+
+```{r eval=FALSE}
+assay_long <- pc_assay_activity_long(
+  identifier = sim_tbl$CID,
+  namespace = "cid",
+  chunk_size = 25,
+  cache = TRUE
+)
+
+assay_long %>%
+  select(CID, AID, ActivityOutcome, ActivityValue_uM) %>%
+  head()
+```
+
+## 3) Build activity matrix (compound x assay)
+
+```{r eval=FALSE}
+activity_mat <- pc_activity_matrix(
+  assay_long,
+  cid_col = "CID",
+  aid_col = "AID",
+  outcome_col = "ActivityOutcome",
+  aggregate = "max",
+  fill = NA_real_
+)
+
+activity_mat
+```
+
+## 4) Add chemical features and prepare model matrix
+
+```{r eval=FALSE}
+feature_tbl <- pc_feature_table(
+  identifier = sim_tbl$CID,
+  properties = c(
+    "MolecularWeight",
+    "XLogP",
+    "TPSA",
+    "HBondDonorCount",
+    "HBondAcceptorCount"
+  ),
+  namespace = "cid",
+  cache = TRUE
+) %>%
+  mutate(CID = as.character(CID))
+
+model_tbl <- feature_tbl %>%
+  left_join(activity_mat, by = "CID")
+
+mm <- pc_model_matrix(
+  x = model_tbl,
+  id_cols = "CID",
+  na_fill = 0,
+  scale = TRUE
+)
+
+mm
+```
+
+## 5) Export model-ready artifact
+
+```{r eval=FALSE}
+out_csv <- file.path(tempdir(), "phase4_similarity_activity_model.csv")
+out_rds <- file.path(tempdir(), "phase4_similarity_activity_model.rds")
+
+pc_export_model_data(mm, path = out_csv, format = "csv")
+pc_export_model_data(mm, path = out_rds, format = "rds")
+
+out_csv
+out_rds
+```
+
+This workflow is intended for reproducible discovery pipelines where
+structure-driven retrieval, bioactivity reshaping, and model preparation are
+performed within one package.

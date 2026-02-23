@@ -114,6 +114,8 @@ Rd files with duplicated alias 'pc_request':
   'pc_api.Rd' 'pc_request.Rd'
 Rd files with duplicated alias 'pc_response':
   'pc_api.Rd' 'pc_response.Rd'
+Rd files with duplicated alias 'pc_resume_batch':
+  'pc_api.Rd' 'pc_resume_batch.Rd'
 Rd files with duplicated alias 'pc_similarity_search':
   'pc_phase3.Rd' 'pc_similarity_search.Rd'
 Rd files with duplicated alias 'pc_submit':

@@ -1,5 +1,6 @@
 test_that("get_assays honors operation argument", {
   skip_on_cran()
+  skip_if_not_live_smoke()
   skip_if_offline()
 
   obj <- get_assays(identifier = 2244, namespace = "cid", operation = "summary")
@@ -8,6 +9,7 @@ test_that("get_assays honors operation argument", {
 
 test_that("identifier wrappers return aligned success/error vectors", {
   skip_on_cran()
+  skip_if_not_live_smoke()
   skip_if_offline()
 
   obj <- get_cids(

@@ -37,9 +37,12 @@ pc_activity_matrix(
   aid_col = "AID",
   outcome_col = "ActivityOutcome",
   value_map = c(Active = 1, Inactive = 0, Inconclusive = NA_real_),
+  strict_outcome = FALSE,
+  unknown_outcome = NA_real_,
   fill = NA_real_,
   prefix = "AID_",
-  aggregate = c("max", "mean", "first")
+  aggregate = c("max", "mean", "first"),
+  output = c("tibble", "sparse")
 )
 
 pc_cross_domain_join(
@@ -88,6 +91,10 @@ pc_lifecycle_policy()
 
 \item{fill}{Fill value for missing matrix cells in \code{pc_activity_matrix}.}
 
+\item{strict_outcome}{Logical. If \code{TRUE}, unknown outcome labels raise an error.}
+
+\item{unknown_outcome}{Numeric fallback for unknown labels when \code{strict_outcome = FALSE}.}
+
 \item{id_col}{Identifier column used to name converted molecule objects.}
 
 \item{id_cols}{Identifier columns excluded from predictor matrix construction.}
@@ -107,6 +114,8 @@ pc_lifecycle_policy()
 \item{outcome}{Optional outcome column name for supervised model datasets.}
 
 \item{outcome_col}{Column containing activity outcome values.}
+
+\item{output}{Output type for \code{pc_activity_matrix}: \code{"tibble"} or \code{"sparse"}.}
 
 \item{prefix}{Prefix applied to assay columns in wide activity output.}
 

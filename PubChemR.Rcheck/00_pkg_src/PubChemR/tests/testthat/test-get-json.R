@@ -1,5 +1,6 @@
 test_that("get_json returns structured faults without code execution", {
   skip_on_cran()
+  skip_if_not_live_smoke()
   skip_if_offline()
 
   out <- PubChemR:::get_json(
@@ -18,6 +19,7 @@ test_that("get_json returns structured faults without code execution", {
 
 test_that("get_json includes request args in failure objects", {
   skip_on_cran()
+  skip_if_not_live_smoke()
   skip_if_offline()
 
   out <- PubChemR:::get_json(

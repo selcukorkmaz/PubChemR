@@ -52,6 +52,93 @@ test_that("pc_benchmark returns scenario metrics", {
   expect_true(all(c("chunk_size", "elapsed_sec", "successful_chunks") %in% names(bm)))
 })
 
+test_that("pc_batch checkpoint manifest is created and resume can rerun failed chunks", {
+  td <- tempfile("pc-batch-checkpoint-")
+  dir.create(td, recursive = TRUE)
+
+  e <- new.env(parent = emptyenv())
+  e$calls <- 0L
+  e$fail_once <- TRUE
+
+  flaky <- function(ids) {
+    e$calls <- e$calls + 1L
+    if (as.integer(ids[[1]]) == 3L && isTRUE(e$fail_once)) {
+      e$fail_once <- FALSE
+      stop("transient chunk error")
+    }
+    pc_response('{"IdentifierList":{"CID":[2244]}}', request = list(identifier = ids))
+  }
+
+  b1 <- pc_batch(
+    ids = 1:5,
+    fn = flaky,
+    chunk_size = 2,
+    checkpoint_dir = td,
+    checkpoint_id = "resume_case"
+  )
+
+  expect_false(all(b1$success))
+  expect_true(file.exists(file.path(td, "pc_batch_resume_case_manifest.rds")))
+  expect_equal(e$calls, 3L)
+
+  b2 <- pc_resume_batch(
+    fn = flaky,
+    checkpoint_dir = td,
+    checkpoint_id = "resume_case"
+  )
+
+  expect_true(all(b2$success))
+  expect_true(isTRUE(b2$checkpoint$resumed))
+  expect_equal(e$calls, 4L)
+})
+
+test_that("pc_resume_batch does not rerun completed chunks", {
+  td <- tempfile("pc-batch-checkpoint-")
+  dir.create(td, recursive = TRUE)
+
+  e <- new.env(parent = emptyenv())
+  e$calls <- 0L
+
+  dummy <- function(ids) {
+    e$calls <- e$calls + 1L
+    pc_response('{"IdentifierList":{"CID":[2244]}}', request = list(identifier = ids))
+  }
+
+  b1 <- pc_batch(
+    ids = 1:4,
+    fn = dummy,
+    chunk_size = 2,
+    checkpoint_dir = td,
+    checkpoint_id = "no_rerun_case"
+  )
+
+  expect_true(all(b1$success))
+  calls_after_first <- e$calls
+
+  b2 <- pc_resume_batch(
+    fn = dummy,
+    checkpoint_dir = td,
+    checkpoint_id = "no_rerun_case"
+  )
+
+  expect_true(all(b2$success))
+  expect_equal(e$calls, calls_after_first)
+})
+
+test_that("pc_resume_batch errors when checkpoint manifest is missing", {
+  td <- tempfile("pc-batch-checkpoint-")
+  dir.create(td, recursive = TRUE)
+
+  expect_error(
+    pc_resume_batch(
+      fn = function(ids) ids,
+      checkpoint_dir = td,
+      checkpoint_id = "missing_case"
+    ),
+    "No checkpoint manifest found"
+  )
+})
+
 test_that("pc_request cache flag can mark cache hit", {
   skip_on_cran()
   skip_if_not_live_smoke()

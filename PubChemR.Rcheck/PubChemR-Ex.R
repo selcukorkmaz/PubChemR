@@ -86,6 +86,21 @@ flush(stderr()); flush(stdout())
 
 
 cleanEx()
+nameEx("get_biological_test_results")
+### * get_biological_test_results
+
+flush(stderr()); flush(stdout())
+
+### Name: get_biological_test_results
+### Title: Retrieve "Biological Test Results" Section from PubChem Contents
+### Aliases: get_biological_test_results
+
+### ** Examples
+
+
+
+
+cleanEx()
 nameEx("get_cids")
 ### * get_cids
 
@@ -274,6 +289,21 @@ flush(stderr()); flush(stdout())
 ### Aliases: pc_phase3 pc_profile pc_similarity_search pc_activity_matrix
 ###   pc_cross_domain_join pc_model_matrix pc_to_rcdk pc_to_chemminer
 ###   pc_lifecycle_policy print.PubChemModelMatrix
+
+### ** Examples
+
+
+
+
+cleanEx()
+nameEx("pc_phase4")
+### * pc_phase4
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_phase4
+### Title: Phase 4 Analysis-Layer Helpers
+### Aliases: pc_phase4 pc_assay_activity_long pc_export_model_data
 
 ### ** Examples
 

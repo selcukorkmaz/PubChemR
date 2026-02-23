@@ -268,10 +268,11 @@ flush(stderr()); flush(stdout())
 ### Title: Next-Generation PubChemR API
 ### Aliases: pc_api pc_config pc_cache_clear pc_cache_info pc_request
 ###   pc_response pc_compound pc_substance pc_assay pc_property
-###   pc_feature_table pc_identifier_map pc_batch pc_benchmark pc_submit
-###   pc_poll pc_collect print.PubChemResult print.PubChemBatchResult
-###   as_tibble.PubChemResult as_tibble.PubChemRecord
-###   as_tibble.PubChemIdMap as_tibble.PubChemBatchResult
+###   pc_feature_table pc_identifier_map pc_batch pc_resume_batch
+###   pc_benchmark pc_submit pc_poll pc_collect print.PubChemResult
+###   print.PubChemBatchResult as_tibble.PubChemResult
+###   as_tibble.PubChemRecord as_tibble.PubChemIdMap
+###   as_tibble.PubChemBatchResult
 
 ### ** Examples
 
@@ -289,6 +290,21 @@ flush(stderr()); flush(stdout())
 ### Aliases: pc_phase3 pc_profile pc_similarity_search pc_activity_matrix
 ###   pc_cross_domain_join pc_model_matrix pc_to_rcdk pc_to_chemminer
 ###   pc_lifecycle_policy print.PubChemModelMatrix
+
+### ** Examples
+
+
+
+
+cleanEx()
+nameEx("pc_phase4")
+### * pc_phase4
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_phase4
+### Title: Phase 4 Analysis-Layer Helpers
+### Aliases: pc_phase4 pc_assay_activity_long pc_export_model_data
 
 ### ** Examples
 

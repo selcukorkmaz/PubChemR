@@ -4,7 +4,18 @@
 \alias{pc_batch}
 \title{Batch-Orchestrate PubChem Workflows}
 \usage{
-pc_batch(ids, fn, chunk_size = 100, parallel = FALSE, workers = NULL, ...)
+pc_batch(
+  ids,
+  fn,
+  chunk_size = 100,
+  parallel = FALSE,
+  workers = NULL,
+  checkpoint_dir = NULL,
+  checkpoint_id = NULL,
+  resume = FALSE,
+  rerun_failed = TRUE,
+  ...
+)
 }
 \arguments{
 \item{ids}{Identifier vector.}
@@ -16,6 +27,14 @@ pc_batch(ids, fn, chunk_size = 100, parallel = FALSE, workers = NULL, ...)
 \item{parallel}{Logical; use parallel execution.}
 
 \item{workers}{Number of workers.}
+
+\item{checkpoint_dir}{Optional directory to persist per-chunk checkpoint files.}
+
+\item{checkpoint_id}{Optional checkpoint run id. If \code{NULL}, a deterministic id is generated.}
+
+\item{resume}{Logical; resume from an existing checkpoint manifest.}
+
+\item{rerun_failed}{Logical; when resuming, rerun chunks previously marked as failed.}
 
 \item{...}{Additional arguments passed into `fn`.}
 }

@@ -119,6 +119,73 @@ pc_as_tibble_input <- function(x) {
   stop("'x' must be a data.frame/tibble or a PubChemResult object.")
 }
 
+#' Harmonize Activity Outcome Labels
+#'
+#' Maps textual activity outcomes (for example, `Active`/`Inactive`) to
+#' numeric values for modeling workflows.
+#'
+#' @param values Outcome values (character/factor/numeric).
+#' @param map Optional named numeric map. Names are matched
+#'   case-insensitively after trimming.
+#' @param strict Logical. If `TRUE`, unknown non-empty labels raise an error.
+#' @param unknown Numeric value assigned to unknown labels when
+#'   `strict = FALSE`.
+#'
+#' @return Numeric vector aligned with `values`.
+#' @export
+pc_activity_outcome_map <- function(values,
+                                    map = NULL,
+                                    strict = FALSE,
+                                    unknown = NA_real_) {
+  if (is.numeric(values)) {
+    return(as.numeric(values))
+  }
+
+  default_map <- c(
+    Active = 1,
+    Inactive = 0,
+    Inconclusive = NA_real_,
+    Unknown = NA_real_,
+    Unspecified = NA_real_,
+    "Not Tested" = NA_real_,
+    Hit = 1,
+    "Non-Hit" = 0
+  )
+
+  if (is.null(map)) {
+    map_use <- default_map
+  } else {
+    if (is.null(names(map)) || any(names(map) == "")) {
+      stop("'map' must be a named numeric vector.")
+    }
+    map_use <- default_map
+    map_use[names(map)] <- as.numeric(map)
+  }
+
+  vals <- as.character(values)
+  keys <- trimws(tolower(vals))
+  key_map <- trimws(tolower(names(map_use)))
+
+  idx <- match(keys, key_map)
+  out <- as.numeric(unname(map_use[idx]))
+
+  # Preserve explicit NA inputs.
+  out[is.na(vals)] <- NA_real_
+
+  unknown_mask <- is.na(idx) & !is.na(vals) & nzchar(trimws(vals))
+  if (isTRUE(strict) && any(unknown_mask)) {
+    bad <- unique(vals[unknown_mask])
+    stop(
+      "Unknown activity outcome label(s): ",
+      paste(bad, collapse = ", "),
+      ". Provide 'map' entries or set strict = FALSE."
+    )
+  }
+
+  out[unknown_mask] <- as.numeric(unknown)
+  out
+}
+
 pc_scale_matrix <- function(x) {
   means <- colMeans(x, na.rm = TRUE)
   sds <- apply(x, 2, function(v) {
@@ -138,21 +205,29 @@ pc_scale_matrix <- function(x) {
 #' @param aid_col Column name containing assay identifiers.
 #' @param outcome_col Column name containing activity outcome values.
 #' @param value_map Named numeric mapping for character outcomes.
+#' @param strict_outcome Logical. If `TRUE`, unknown outcome labels raise an error.
+#' @param unknown_outcome Numeric fallback for unknown labels when `strict_outcome = FALSE`.
 #' @param fill Fill value for missing matrix cells.
 #' @param prefix Prefix used for assay columns in wide format output.
 #' @param aggregate Aggregation method for repeated CID/AID pairs.
+#' @param output Output type: `"tibble"` (default dense table) or `"sparse"` (Matrix backend).
 #'
-#' @return A wide tibble where each row is a compound and each assay is a feature column.
+#' @return A wide tibble (`output = "tibble"`) or a sparse matrix wrapper
+#'   object of class `PubChemSparseActivityMatrix` (`output = "sparse"`).
 #' @export
 pc_activity_matrix <- function(x,
                                cid_col = "CID",
                                aid_col = "AID",
                                outcome_col = "ActivityOutcome",
                                value_map = c(Active = 1, Inactive = 0, Inconclusive = NA_real_),
+                               strict_outcome = FALSE,
+                               unknown_outcome = NA_real_,
                                fill = NA_real_,
                                prefix = "AID_",
-                               aggregate = c("max", "mean", "first")) {
+                               aggregate = c("max", "mean", "first"),
+                               output = c("tibble", "sparse")) {
   aggregate <- match.arg(aggregate)
+  output <- match.arg(output)
   tbl <- pc_as_tibble_input(x)
 
   required_cols <- c(cid_col, aid_col, outcome_col)
@@ -168,8 +243,12 @@ pc_activity_matrix <- function(x,
   if (is.numeric(values_raw)) {
     values <- as.numeric(values_raw)
   } else {
-    key <- as.character(values_raw)
-    values <- unname(value_map[key])
+    values <- pc_activity_outcome_map(
+      values_raw,
+      map = value_map,
+      strict = strict_outcome,
+      unknown = unknown_outcome
+    )
   }
 
   pair_key <- paste(cid, aid, sep = "\r")
@@ -201,7 +280,35 @@ pc_activity_matrix <- function(x,
 
   row_idx <- match(agg_cid, cid_levels)
   col_idx <- match(agg_aid, aid_levels)
-  mat[cbind(row_idx, col_idx)] <- agg_values
+  good <- !is.na(row_idx) & !is.na(col_idx)
+  mat[cbind(row_idx[good], col_idx[good])] <- agg_values[good]
+
+  if (identical(output, "sparse")) {
+    if (!requireNamespace("Matrix", quietly = TRUE)) {
+      stop("Package 'Matrix' is required for output = 'sparse'.")
+    }
+
+    if (!isTRUE(is.na(fill)) && !isTRUE(all.equal(fill, 0))) {
+      warning(
+        "Sparse output has implicit zero fill in Matrix format. ",
+        "Original 'fill' is retained in metadata as 'implicit_fill'."
+      )
+    }
+
+    sparse <- Matrix::Matrix(mat, sparse = TRUE)
+    out_sparse <- structure(
+      list(
+        x = sparse,
+        row_ids = cid_levels,
+        col_ids = aid_levels,
+        colnames_prefixed = paste0(prefix, aid_levels),
+        implicit_fill = fill,
+        outcome_col = outcome_col
+      ),
+      class = "PubChemSparseActivityMatrix"
+    )
+    return(out_sparse)
+  }
 
   out <- tibble::as_tibble(
     data.frame(CID = cid_levels, mat, check.names = FALSE, stringsAsFactors = FALSE),
@@ -428,5 +535,16 @@ print.PubChemModelMatrix <- function(x, ...) {
   cat("  - Rows: ", nrow(x$x), "\n", sep = "")
   cat("  - Features: ", ncol(x$x), "\n", sep = "")
   cat("  - Outcome: ", ifelse(is.null(x$y), "None", "Provided"), "\n", sep = "")
+  invisible(x)
+}
+
+#' @export
+print.PubChemSparseActivityMatrix <- function(x, ...) {
+  cat("\n")
+  cat(" PubChemSparseActivityMatrix", "\n\n")
+  cat("  - Rows (compounds): ", nrow(x$x), "\n", sep = "")
+  cat("  - Columns (assays): ", ncol(x$x), "\n", sep = "")
+  cat("  - Non-zero entries: ", length(x$x@x), "\n", sep = "")
+  cat("  - Implicit fill: ", ifelse(is.na(x$implicit_fill), "NA", as.character(x$implicit_fill)), "\n", sep = "")
   invisible(x)
 }

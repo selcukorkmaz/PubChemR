@@ -1,5 +1,7 @@
-# PubChemR 2.1.9 (development)
+# PubChemR 3.0.0 (Major Release)
 
+- Major release introducing a next-generation, typed, fault-tolerant PubChem
+  workflow engine with analysis-layer capabilities.
 - Refactored internal request/result collection logic for all identifier-based wrappers
   to enforce consistent `result` / `success` / `error` contracts.
 - Added a new `pc_*` API layer including:
@@ -27,6 +29,23 @@
 - Updated `get_assays()` to respect the user-provided `operation` argument.
 - Added `get_biological_test_results()` to directly extract
   `CONTENTS -> Biological Test Results` from PubChem PUG View records.
+- Added Phase 4 analysis-layer helpers:
+  `pc_assay_activity_long()` for normalized assay-summary long tables and
+  `pc_export_model_data()` for model-ready CSV/RDS exports.
+- Added long-term hardening foundations:
+  sparse backend option in `pc_activity_matrix(output = "sparse")` and
+  standardized outcome harmonization via `pc_activity_outcome_map()`.
+- Added resumable checkpointed batching:
+  `pc_batch(..., checkpoint_dir, checkpoint_id, resume)` and
+  `pc_resume_batch()` for recovery of interrupted/high-throughput runs.
+- Added benchmark harness for scale/regression monitoring:
+  `pc_benchmark_harness()` with default 10/1k/100k scenarios,
+  threshold pass/fail gating, and Markdown/CSV/RDS report artifacts.
+- Added nightly live benchmark CI integration with artifact publishing and
+  threshold-gate enforcement (`live-pubchem-smoke.yml`), plus rolling
+  threshold calibration scripts under `scripts/ci/`.
+- Added end-to-end analysis vignette:
+  `phase4-analysis-layer-workflow.Rmd` (similarity -> assay matrix -> model export).
 - Added initial `testthat` suite and multiple workflow vignettes.
 - Updated README examples, license text, and citation metadata for consistency.
 

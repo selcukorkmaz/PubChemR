@@ -44,6 +44,42 @@ test_that("pc_activity_matrix creates wide CID x AID matrix", {
   expect_equal(mat$AID_10[mat$CID == "2"], 0)
 })
 
+test_that("pc_activity_outcome_map harmonizes labels", {
+  vals <- c("Active", "inactive", "Inconclusive", "Hit", "Non-Hit", "UnknownLabel", NA)
+  mapped <- pc_activity_outcome_map(vals, strict = FALSE, unknown = -1)
+
+  expect_equal(mapped[1], 1)
+  expect_equal(mapped[2], 0)
+  expect_true(is.na(mapped[3]))
+  expect_equal(mapped[4], 1)
+  expect_equal(mapped[5], 0)
+  expect_equal(mapped[6], -1)
+  expect_true(is.na(mapped[7]))
+})
+
+test_that("pc_activity_outcome_map strict mode errors on unknown labels", {
+  expect_error(
+    pc_activity_outcome_map(c("Active", "mystery-state"), strict = TRUE),
+    "Unknown activity outcome label"
+  )
+})
+
+test_that("pc_activity_matrix can return sparse backend object", {
+  skip_if_not_installed("Matrix")
+
+  dat <- tibble::tibble(
+    CID = c(1, 1, 2, 3),
+    AID = c(10, 10, 10, 11),
+    ActivityOutcome = c("Inactive", "Active", "Inactive", "Active")
+  )
+
+  sp <- pc_activity_matrix(dat, output = "sparse")
+  expect_s3_class(sp, "PubChemSparseActivityMatrix")
+  expect_true("dgCMatrix" %in% class(sp$x))
+  expect_equal(nrow(sp$x), 3)
+  expect_equal(ncol(sp$x), 2)
+})
+
 test_that("pc_cross_domain_join composes domain tables", {
   compounds <- tibble::tibble(CID = c("1", "2"), Name = c("A", "B"))
   substances <- tibble::tibble(CID = c("1", "2"), SID = c("S1", "S2"))

@@ -1,0 +1,4 @@
+scenario_size,elapsed_sec,failed_chunk_ratio
+10,30,0
+1000,300,0.01
+100000,3600,0.05

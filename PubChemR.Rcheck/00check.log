@@ -20,7 +20,6 @@
 * checking for portable file names ... OK
 * checking whether package 'PubChemR' can be installed ... OK
 * checking package directory ... OK
-* checking 'build' directory ... OK
 * checking DESCRIPTION meta-information ... OK
 * checking top-level files ... OK
 * checking for left-over files ... OK
@@ -34,27 +33,85 @@
 * checking whether the namespace can be loaded with stated dependencies ... OK
 * checking whether the namespace can be unloaded cleanly ... OK
 * checking loading without being on the library search path ... OK
-* checking dependencies in R code ... OK
+* checking dependencies in R code ... WARNING
+'::' or ':::' import not declared from: 'Matrix'
+'loadNamespace' or 'requireNamespace' call not declared from: 'Matrix'
 * checking S3 generic/method consistency ... OK
 * checking replacement functions ... OK
 * checking foreign function calls ... OK
 * checking R code for possible problems ... OK
 * checking Rd files ... OK
-* checking Rd metadata ... OK
+* checking Rd metadata ... WARNING
+Rd files with duplicated alias 'pc_activity_matrix':
+  'pc_activity_matrix.Rd' 'pc_phase3.Rd'
+Rd files with duplicated alias 'pc_assay':
+  'pc_api.Rd' 'pc_assay.Rd'
+Rd files with duplicated alias 'pc_batch':
+  'pc_api.Rd' 'pc_batch.Rd'
+Rd files with duplicated alias 'pc_benchmark':
+  'pc_api.Rd' 'pc_benchmark.Rd'
+Rd files with duplicated alias 'pc_cache_clear':
+  'pc_api.Rd' 'pc_cache_clear.Rd'
+Rd files with duplicated alias 'pc_cache_info':
+  'pc_api.Rd' 'pc_cache_info.Rd'
+Rd files with duplicated alias 'pc_collect':
+  'pc_api.Rd' 'pc_collect.Rd'
+Rd files with duplicated alias 'pc_compound':
+  'pc_api.Rd' 'pc_compound.Rd'
+Rd files with duplicated alias 'pc_config':
+  'pc_api.Rd' 'pc_config.Rd'
+Rd files with duplicated alias 'pc_cross_domain_join':
+  'pc_cross_domain_join.Rd' 'pc_phase3.Rd'
+Rd files with duplicated alias 'pc_feature_table':
+  'pc_api.Rd' 'pc_feature_table.Rd'
+Rd files with duplicated alias 'pc_identifier_map':
+  'pc_api.Rd' 'pc_identifier_map.Rd'
+Rd files with duplicated alias 'pc_lifecycle_policy':
+  'pc_lifecycle_policy.Rd' 'pc_phase3.Rd'
+Rd files with duplicated alias 'pc_model_matrix':
+  'pc_model_matrix.Rd' 'pc_phase3.Rd'
+Rd files with duplicated alias 'pc_poll':
+  'pc_api.Rd' 'pc_poll.Rd'
+Rd files with duplicated alias 'pc_profile':
+  'pc_phase3.Rd' 'pc_profile.Rd'
+Rd files with duplicated alias 'pc_property':
+  'pc_api.Rd' 'pc_property.Rd'
+Rd files with duplicated alias 'pc_request':
+  'pc_api.Rd' 'pc_request.Rd'
+Rd files with duplicated alias 'pc_response':
+  'pc_api.Rd' 'pc_response.Rd'
+Rd files with duplicated alias 'pc_similarity_search':
+  'pc_phase3.Rd' 'pc_similarity_search.Rd'
+Rd files with duplicated alias 'pc_submit':
+  'pc_api.Rd' 'pc_submit.Rd'
+Rd files with duplicated alias 'pc_substance':
+  'pc_api.Rd' 'pc_substance.Rd'
+Rd files with duplicated alias 'pc_to_chemminer':
+  'pc_phase3.Rd' 'pc_to_chemminer.Rd'
+Rd files with duplicated alias 'pc_to_rcdk':
+  'pc_phase3.Rd' 'pc_to_rcdk.Rd'
 * checking Rd cross-references ... OK
 * checking for missing documentation entries ... OK
 * checking for code/documentation mismatches ... OK
 * checking Rd \usage sections ... OK
 * checking Rd contents ... OK
 * checking for unstated dependencies in examples ... OK
-* checking installed files from 'inst/doc' ... OK
-* checking files in 'vignettes' ... OK
+* checking files in 'vignettes' ... WARNING
+Files in the 'vignettes' directory but no files in 'inst/doc':
+  'compound-to-assay-workflow.Rmd' 'phase4-analysis-layer-workflow.Rmd'
+  'pubchemr-workflow.Rmd' 'reproducible-cached-workflow.Rmd'
 * checking examples ... OK
 * checking for unstated dependencies in 'tests' ... OK
 * checking tests ... OK
   Running 'testthat.R'
 * checking for unstated dependencies in vignettes ... OK
-* checking package vignettes ... OK
+* checking package vignettes ... WARNING
+Directory 'inst/doc' does not exist.
+Package vignettes without corresponding single PDF/HTML:
+  'compound-to-assay-workflow.Rmd'
+  'phase4-analysis-layer-workflow.Rmd'
+  'pubchemr-workflow.Rmd'
+  'reproducible-cached-workflow.Rmd'
 * checking re-building of vignette outputs ... OK
 * DONE
-Status: OK
+Status: 4 WARNINGs

@@ -105,6 +105,21 @@ Type 'q()' to quit R.
 > 
 > 
 > cleanEx()
+> nameEx("get_biological_test_results")
+> ### * get_biological_test_results
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: get_biological_test_results
+> ### Title: Retrieve "Biological Test Results" Section from PubChem Contents
+> ### Aliases: get_biological_test_results
+> 
+> ### ** Examples
+> 
+> 
+> 
+> 
+> cleanEx()
 > nameEx("get_cids")
 > ### * get_cids
 > 
@@ -300,6 +315,21 @@ Type 'q()' to quit R.
 > 
 > 
 > cleanEx()
+> nameEx("pc_phase4")
+> ### * pc_phase4
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: pc_phase4
+> ### Title: Phase 4 Analysis-Layer Helpers
+> ### Aliases: pc_phase4 pc_assay_activity_long pc_export_model_data
+> 
+> ### ** Examples
+> 
+> 
+> 
+> 
+> cleanEx()
 > nameEx("pubChemData")
 > ### * pubChemData
 > 
@@ -402,7 +432,7 @@ Type 'q()' to quit R.
 > cleanEx()
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  0.6 0.07 0.5 NA NA 
+Time elapsed:  0.63 0.23 0.66 NA NA 
 > grDevices::dev.off()
 null device 
           1 

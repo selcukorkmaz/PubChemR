@@ -1,0 +1,404 @@
+{
+  "issues": [
+    {
+      "id": "P4B-01",
+      "title": "[P4B-01] Add sparse activity matrix backend",
+      "milestone": "P4B Analysis Hardening",
+      "sprint": "S01",
+      "estimate_points": 8,
+      "labels": ["phase-4b", "analysis-layer", "ml", "priority-high"],
+      "depends_on": [],
+      "objective": "Enable memory-safe activity matrix generation for high-dimensional assay spaces.",
+      "tasks": [
+        "Add sparse output mode to pc_activity_matrix()",
+        "Support Matrix::dgCMatrix as optional output type",
+        "Add coercion helper to dense tibble for downstream compatibility"
+      ],
+      "acceptance_tests": [
+        "10k compounds x 5k assays builds without out-of-memory on CI benchmark profile",
+        "Sparse and dense outputs have identical non-missing values on a shared fixture",
+        "Existing dense output contract remains backward-compatible"
+      ]
+    },
+    {
+      "id": "P4B-02",
+      "title": "[P4B-02] Implement activity outcome harmonization",
+      "milestone": "P4B Analysis Hardening",
+      "sprint": "S01",
+      "estimate_points": 5,
+      "labels": ["phase-4b", "analysis-layer", "ml", "priority-high"],
+      "depends_on": [],
+      "objective": "Standardize assay activity outcome labels to stable numeric encodings.",
+      "tasks": [
+        "Add pc_activity_outcome_map() with default controlled vocabulary",
+        "Allow user-defined overrides and strict mode",
+        "Integrate mapping in pc_assay_activity_long() and pc_activity_matrix()"
+      ],
+      "acceptance_tests": [
+        "Known synonyms of Active/Inactive/Inconclusive map deterministically",
+        "Strict mode fails with explicit error on unknown labels",
+        "Custom maps override defaults without side effects"
+      ]
+    },
+    {
+      "id": "P4B-03",
+      "title": "[P4B-03] Add resumable batch checkpoints",
+      "milestone": "P4B Analysis Hardening",
+      "sprint": "S02",
+      "estimate_points": 8,
+      "labels": ["phase-4b", "analysis-layer", "reliability", "priority-high"],
+      "depends_on": ["P4B-01"],
+      "objective": "Resume interrupted high-throughput jobs without re-fetching completed chunks.",
+      "tasks": [
+        "Implement checkpoint manifest for pc_batch() runs",
+        "Add pc_resume_batch() helper",
+        "Attach run metadata and failure summaries"
+      ],
+      "acceptance_tests": [
+        "Interrupted run resumes and completes only pending chunks",
+        "Checkpoint replay yields same outputs as uninterrupted execution",
+        "Corrupt checkpoint detection returns actionable error message"
+      ]
+    },
+    {
+      "id": "P4B-04",
+      "title": "[P4B-04] Add benchmark harness for 10/1k/100k scale tests",
+      "milestone": "P4B Analysis Hardening",
+      "sprint": "S02",
+      "estimate_points": 5,
+      "labels": ["phase-4b", "analysis-layer", "reliability", "priority-medium"],
+      "depends_on": ["P4B-01", "P4B-03"],
+      "objective": "Provide repeatable performance and memory benchmarks for core workflows.",
+      "tasks": [
+        "Add benchmark fixture generator and reporting utility",
+        "Persist benchmark snapshots in CI artifacts",
+        "Document pass/fail thresholds"
+      ],
+      "acceptance_tests": [
+        "Benchmark suite emits latency/memory summary for each scenario",
+        "Regression threshold breach fails benchmark job",
+        "Benchmark output can be consumed in markdown report"
+      ]
+    },
+    {
+      "id": "P5-01",
+      "title": "[P5-01] Implement cross-domain graph schema and edge builders",
+      "milestone": "P5 Cross-Domain Graph",
+      "sprint": "S03",
+      "estimate_points": 8,
+      "labels": ["phase-5", "graph", "priority-high"],
+      "depends_on": ["P4B-02"],
+      "objective": "Represent CID/SID/AID/Target relations as explicit graph entities and edges.",
+      "tasks": [
+        "Add pc_graph_build() with typed node and edge tables",
+        "Add pc_graph_edges() selectors by edge type",
+        "Include namespace and source metadata on each edge"
+      ],
+      "acceptance_tests": [
+        "Graph contains expected node/edge counts on fixture dataset",
+        "Edge tables preserve input identifiers and namespaces",
+        "Graph build is deterministic across repeated runs"
+      ]
+    },
+    {
+      "id": "P5-02",
+      "title": "[P5-02] Add provenance-aware cross-domain joins",
+      "milestone": "P5 Cross-Domain Graph",
+      "sprint": "S03",
+      "estimate_points": 5,
+      "labels": ["phase-5", "graph", "reliability", "priority-high"],
+      "depends_on": ["P5-01"],
+      "objective": "Ensure every joined record exposes auditable lineage metadata.",
+      "tasks": [
+        "Extend pc_cross_domain_join() with provenance columns",
+        "Add source endpoint, timestamp, and transform metadata",
+        "Implement conflict policy options for many-to-many merges"
+      ],
+      "acceptance_tests": [
+        "Output rows include required provenance fields",
+        "Conflict policies produce documented and tested behavior",
+        "Join invariants validated by snapshot tests"
+      ]
+    },
+    {
+      "id": "P5-03",
+      "title": "[P5-03] Build target-centric activity profile helper",
+      "milestone": "P5 Cross-Domain Graph",
+      "sprint": "S04",
+      "estimate_points": 5,
+      "labels": ["phase-5", "graph", "analysis-layer", "priority-medium"],
+      "depends_on": ["P5-01", "P5-02"],
+      "objective": "Provide target-level summaries over compound bioactivity.",
+      "tasks": [
+        "Add pc_target_activity_profile()",
+        "Support aggregation by target gene/protein accession",
+        "Return tidy summary with activity statistics and counts"
+      ],
+      "acceptance_tests": [
+        "Profiles return stable summary columns across fixtures",
+        "Aggregations match hand-verified expected values",
+        "Function handles missing target metadata gracefully"
+      ]
+    },
+    {
+      "id": "P5-04",
+      "title": "[P5-04] Implement paged/async graph query planner",
+      "milestone": "P5 Cross-Domain Graph",
+      "sprint": "S04",
+      "estimate_points": 8,
+      "labels": ["phase-5", "graph", "reliability", "priority-medium"],
+      "depends_on": ["P4B-03", "P5-01"],
+      "objective": "Plan and execute staged graph retrieval with async/listkey support.",
+      "tasks": [
+        "Add query plan object for cross-domain traversal",
+        "Integrate pc_submit()/pc_poll()/pc_collect() where needed",
+        "Add resumable execution with per-stage checkpoints"
+      ],
+      "acceptance_tests": [
+        "Planner executes staged retrieval with equivalent results to direct retrieval",
+        "Async stages recover from transient failure using retries",
+        "Plan object can be serialized and resumed"
+      ]
+    },
+    {
+      "id": "P6-01",
+      "title": "[P6-01] Harden rcdk bridge with validation contract",
+      "milestone": "P6 Interop + ML Contracts",
+      "sprint": "S05",
+      "estimate_points": 5,
+      "labels": ["phase-6", "interop", "priority-medium"],
+      "depends_on": ["P4B-02"],
+      "objective": "Stabilize molecular conversion behavior for rcdk integration.",
+      "tasks": [
+        "Add schema validation before conversion",
+        "Capture conversion diagnostics and failures per row",
+        "Document conversion expectations and edge cases"
+      ],
+      "acceptance_tests": [
+        "Valid SMILES rows convert successfully with retained IDs",
+        "Invalid rows return structured diagnostics without aborting batch",
+        "Conversion output is deterministic on fixture inputs"
+      ]
+    },
+    {
+      "id": "P6-02",
+      "title": "[P6-02] Harden ChemmineR bridge with validation contract",
+      "milestone": "P6 Interop + ML Contracts",
+      "sprint": "S05",
+      "estimate_points": 5,
+      "labels": ["phase-6", "interop", "priority-medium"],
+      "depends_on": ["P6-01"],
+      "objective": "Stabilize SDF conversion behavior for ChemmineR workflows.",
+      "tasks": [
+        "Add pre-flight checks for required fields",
+        "Add partial-failure mode and diagnostics table",
+        "Add tests for missing/invalid optional dependency behavior"
+      ],
+      "acceptance_tests": [
+        "Conversion succeeds on valid fixture and fails clearly on invalid rows",
+        "Partial-failure mode preserves successful rows",
+        "Dependency-missing path is tested and documented"
+      ]
+    },
+    {
+      "id": "P6-03",
+      "title": "[P6-03] Add Bioconductor container bridge",
+      "milestone": "P6 Interop + ML Contracts",
+      "sprint": "S06",
+      "estimate_points": 8,
+      "labels": ["phase-6", "interop", "ml", "priority-high"],
+      "depends_on": ["P5-02"],
+      "objective": "Enable export to Bioconductor-compatible assay containers.",
+      "tasks": [
+        "Add converter to SummarizedExperiment-like structure",
+        "Map feature matrix, sample metadata, and provenance fields",
+        "Add round-trip consistency tests"
+      ],
+      "acceptance_tests": [
+        "Converted container dimensions match source matrix and metadata",
+        "Provenance is present in row/column metadata",
+        "Round-trip export/import preserves key identifiers"
+      ]
+    },
+    {
+      "id": "P6-04",
+      "title": "[P6-04] Add ML recipe and feature schema validators",
+      "milestone": "P6 Interop + ML Contracts",
+      "sprint": "S06",
+      "estimate_points": 8,
+      "labels": ["phase-6", "ml", "reliability", "priority-high"],
+      "depends_on": ["P4B-02"],
+      "objective": "Guarantee stable model input schemas across pipeline runs.",
+      "tasks": [
+        "Add pc_feature_schema_validate() for type and name checks",
+        "Add pc_ml_recipe() helper for common preprocessing pipeline",
+        "Add schema drift detection report between runs"
+      ],
+      "acceptance_tests": [
+        "Schema validator catches missing/renamed feature columns",
+        "Recipe helper emits deterministic output on fixture",
+        "Drift report highlights added/removed/type-changed columns"
+      ]
+    },
+    {
+      "id": "P7-01",
+      "title": "[P7-01] Build Shiny workflow builder MVP",
+      "milestone": "P7 Productization Layer",
+      "sprint": "S07",
+      "estimate_points": 8,
+      "labels": ["phase-7", "analysis-layer", "priority-medium"],
+      "depends_on": ["P4B-03", "P6-04"],
+      "objective": "Expose key retrieval-to-model pipeline steps through a minimal Shiny interface.",
+      "tasks": [
+        "Create modular UI for query, matrix build, and export",
+        "Bind UI actions to pc_* pipeline functions",
+        "Add session-level run log and download artifacts"
+      ],
+      "acceptance_tests": [
+        "User can run similarity -> matrix -> export workflow from UI",
+        "UI handles API failure with structured error messages",
+        "Exported artifacts match scripted pipeline outputs"
+      ]
+    },
+    {
+      "id": "P7-02",
+      "title": "[P7-02] Implement cloud execution profile v2",
+      "milestone": "P7 Productization Layer",
+      "sprint": "S07",
+      "estimate_points": 5,
+      "labels": ["phase-7", "cloud", "reliability", "priority-high"],
+      "depends_on": ["P4B-04"],
+      "objective": "Provide stable defaults for high-latency and distributed execution contexts.",
+      "tasks": [
+        "Refine pc_profile('cloud') with tested defaults",
+        "Add timeout/retry/rate presets for queue environments",
+        "Document profile behavior and intended constraints"
+      ],
+      "acceptance_tests": [
+        "Cloud profile has lower failure rate under injected latency",
+        "Profile values are versioned and snapshot tested",
+        "Local and cloud profiles produce equivalent data outputs"
+      ]
+    },
+    {
+      "id": "P7-03",
+      "title": "[P7-03] Add pluggable cache provider interface",
+      "milestone": "P7 Productization Layer",
+      "sprint": "S08",
+      "estimate_points": 8,
+      "labels": ["phase-7", "cloud", "reliability", "priority-high"],
+      "depends_on": ["P4B-03"],
+      "objective": "Allow memory/disk/remote cache providers under a common contract.",
+      "tasks": [
+        "Define cache provider interface (get/set/clear/info)",
+        "Implement local default provider adapter",
+        "Add stub adapter for remote/object-store style caches"
+      ],
+      "acceptance_tests": [
+        "All providers satisfy common contract tests",
+        "Cache keys remain deterministic across providers",
+        "Offline replay works through provider abstraction"
+      ]
+    },
+    {
+      "id": "P7-04",
+      "title": "[P7-04] Add run telemetry and audit report",
+      "milestone": "P7 Productization Layer",
+      "sprint": "S08",
+      "estimate_points": 5,
+      "labels": ["phase-7", "reliability", "analysis-layer", "priority-medium"],
+      "depends_on": ["P7-02", "P7-03"],
+      "objective": "Capture reproducibility and reliability metadata for every pipeline run.",
+      "tasks": [
+        "Add PubChemRunReport object",
+        "Record request counts, retries, failures, cache hit ratio, duration",
+        "Expose summary printer and export helper"
+      ],
+      "acceptance_tests": [
+        "Run report includes required metrics for each execution",
+        "Report export is machine-readable and reproducible",
+        "Telemetry does not change core data outputs"
+      ]
+    },
+    {
+      "id": "P8-01",
+      "title": "[P8-01] Publish lifecycle and deprecation policy",
+      "milestone": "P8 Governance + v3 Release",
+      "sprint": "S09",
+      "estimate_points": 3,
+      "labels": ["phase-8", "reliability", "priority-high"],
+      "depends_on": [],
+      "objective": "Define enforceable API stability and deprecation windows.",
+      "tasks": [
+        "Finalize lifecycle policy document",
+        "Add deprecation helper with standardized warnings",
+        "Map each public API to a stability tier"
+      ],
+      "acceptance_tests": [
+        "All public functions have explicit lifecycle tags",
+        "Deprecation warnings follow documented format",
+        "Policy document is linked from README and NEWS"
+      ]
+    },
+    {
+      "id": "P8-02",
+      "title": "[P8-02] Add compatibility matrix and migration guides",
+      "milestone": "P8 Governance + v3 Release",
+      "sprint": "S09",
+      "estimate_points": 5,
+      "labels": ["phase-8", "interop", "priority-medium"],
+      "depends_on": ["P8-01"],
+      "objective": "Provide versioned compatibility guarantees and upgrade playbooks.",
+      "tasks": [
+        "Publish compatibility matrix for core integrations",
+        "Write migration guides for legacy to next-gen API users",
+        "Add breaking-change tracker for v3 preparation"
+      ],
+      "acceptance_tests": [
+        "Matrix covers supported R versions and key package integrations",
+        "Migration examples execute successfully on CI",
+        "Breaking-change tracker is complete for open roadmap items"
+      ]
+    },
+    {
+      "id": "P8-03",
+      "title": "[P8-03] Add API contract snapshot test suite",
+      "milestone": "P8 Governance + v3 Release",
+      "sprint": "S10",
+      "estimate_points": 8,
+      "labels": ["phase-8", "reliability", "priority-high"],
+      "depends_on": ["P6-04"],
+      "objective": "Prevent undocumented contract drift for public APIs.",
+      "tasks": [
+        "Create snapshot fixtures for key public outputs",
+        "Add schema assertions for metadata and class contracts",
+        "Gate merges on contract test stability"
+      ],
+      "acceptance_tests": [
+        "Contract tests fail on intentional schema drift",
+        "Approved contract updates require explicit snapshot refresh",
+        "Coverage includes retrieval, batch, matrix, export, and graph APIs"
+      ]
+    },
+    {
+      "id": "P8-04",
+      "title": "[P8-04] Prepare v3.0 release dossier and checklist",
+      "milestone": "P8 Governance + v3 Release",
+      "sprint": "S10",
+      "estimate_points": 5,
+      "labels": ["phase-8", "priority-high", "reliability"],
+      "depends_on": ["P8-01", "P8-02", "P8-03"],
+      "objective": "Assemble release-quality evidence for a flagship v3 launch.",
+      "tasks": [
+        "Create v3 release checklist with pass/fail gates",
+        "Assemble reproducibility dossier and benchmark summary",
+        "Draft release notes and migration highlights"
+      ],
+      "acceptance_tests": [
+        "All release gates have pass evidence linked",
+        "Dossier reproduces key workflows on clean environment",
+        "Release notes enumerate all user-impacting changes"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "labels": [
+    {
+      "name": "phase-4b",
+      "color": "0E8A16",
+      "description": "Phase 4B analysis-layer hardening"
+    },
+    {
+      "name": "phase-5",
+      "color": "1D76DB",
+      "description": "Phase 5 cross-domain graph"
+    },
+    {
+      "name": "phase-6",
+      "color": "5319E7",
+      "description": "Phase 6 interop and ML contracts"
+    },
+    {
+      "name": "phase-7",
+      "color": "B60205",
+      "description": "Phase 7 productization"
+    },
+    {
+      "name": "phase-8",
+      "color": "FBCA04",
+      "description": "Phase 8 governance and release"
+    },
+    {
+      "name": "analysis-layer",
+      "color": "006B75",
+      "description": "High-level analysis workflow work"
+    },
+    {
+      "name": "graph",
+      "color": "0052CC",
+      "description": "Cross-domain graph and lineage"
+    },
+    {
+      "name": "interop",
+      "color": "5319E7",
+      "description": "Interoperability bridges"
+    },
+    {
+      "name": "ml",
+      "color": "C2E0C6",
+      "description": "Modeling and feature contract work"
+    },
+    {
+      "name": "cloud",
+      "color": "D4C5F9",
+      "description": "Cloud execution and scalability"
+    },
+    {
+      "name": "reliability",
+      "color": "D93F0B",
+      "description": "Fault tolerance, retries, drift resilience"
+    },
+    {
+      "name": "priority-high",
+      "color": "B60205",
+      "description": "Top-priority roadmap item"
+    },
+    {
+      "name": "priority-medium",
+      "color": "FBCA04",
+      "description": "Medium-priority roadmap item"
+    },
+    {
+      "name": "priority-low",
+      "color": "0E8A16",
+      "description": "Lower-priority roadmap item"
+    }
+  ]
+}

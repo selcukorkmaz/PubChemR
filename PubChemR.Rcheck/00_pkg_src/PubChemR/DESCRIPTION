@@ -18,7 +18,7 @@ Description: Provides an interface to the 'PubChem' database via the PUG REST <h
             Functions are available to retrieve data in different formats, perform searches, and access detailed annotations.
 License: GPL (>= 2)
 Encoding: UTF-8
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 URL: https://selcukorkmaz.github.io/pubchemr-tutorial/,
         https://github.com/selcukorkmaz/PubChemR
 BugReports: https://github.com/selcukorkmaz/PubChemR/issues
@@ -28,4 +28,4 @@ Suggests: testthat (>= 3.0.0), knitr, rmarkdown
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 NeedsCompilation: no
-Packaged: 2026-02-23 09:12:30 UTC; selcuk
+Packaged: 2026-02-23 13:17:06 UTC; selcuk

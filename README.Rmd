@@ -110,11 +110,52 @@ Phase 2 introduces typed, workflow-oriented functions:
 
 `pc_request()`, `pc_response()`, `pc_compound()`, `pc_substance()`,
 `pc_assay()`, `pc_property()`, `pc_identifier_map()`, `pc_batch()`,
-`pc_submit()`, `pc_poll()`, `pc_collect()`, `pc_benchmark()`,
+`pc_resume_batch()`, `pc_submit()`, `pc_poll()`, `pc_collect()`, `pc_benchmark()`,
 `pc_cache_info()`, `pc_feature_table()`, `pc_profile()`,
-`pc_similarity_search()`, `pc_activity_matrix()`,
+`pc_similarity_search()`, `pc_activity_matrix()`, `pc_activity_outcome_map()`,
 `pc_cross_domain_join()`, `pc_model_matrix()`,
+`pc_assay_activity_long()`, `pc_export_model_data()`,
 `pc_to_rcdk()`, `pc_to_chemminer()`, and `pc_lifecycle_policy()`.
+
+**Benchmark Harness (10/1k/100k + Threshold Gates)**
+
+Use `pc_benchmark_harness()` to run scale scenarios with explicit pass/fail thresholds and optional report output.
+
+```r
+thresholds <- list(
+  elapsed_sec = c(`10` = 30, `1000` = 300, `100000` = 3600),
+  failed_chunk_ratio = c(`10` = 0, `1000` = 0.01, `100000` = 0.05)
+)
+
+probe <- function(ids) {
+  pc_request(
+    domain = "compound",
+    namespace = "cid",
+    identifier = 2244,
+    operation = "property/MolecularWeight",
+    output = "JSON",
+    cache = FALSE
+  )
+}
+
+bench <- pc_benchmark_harness(
+  fn = probe,
+  ids = rep(2244, 100000),
+  scenario_sizes = c(10, 1000, 100000),
+  chunk_sizes = 1000,
+  thresholds = thresholds,
+  report_path = file.path(tempdir(), "pubchemr-benchmark.md"),
+  report_format = "markdown"
+)
+
+bench$summary
+```
+
+CI integration is available in `.github/workflows/live-pubchem-smoke.yml`, which:
+1. Runs the live harness nightly.
+2. Fails on threshold breaches.
+3. Uploads benchmark reports/history artifacts.
+4. Re-calibrates rolling thresholds from accumulated live history.
 
 **Output Formats**
 

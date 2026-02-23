@@ -21,6 +21,8 @@ get_substances          Retrieve Substances from PubChem
 get_synonyms            Retrieve Synonyms from PubChem
 instance                Retrieve Information for Requested Instances
 pc_activity_matrix      Build an Assay Activity Matrix
+pc_activity_outcome_map
+                        Harmonize Activity Outcome Labels
 pc_api                  Next-Generation PubChemR API
 pc_assay                Query Assay Records via the Next-Generation API
 pc_batch                Batch-Orchestrate PubChem Workflows
@@ -38,6 +40,7 @@ pc_identifier_map       Map Identifiers via the Next-Generation API
 pc_lifecycle_policy     Versioning and Deprecation Policy
 pc_model_matrix         Convert Feature Tables to Model Matrix Form
 pc_phase3               Phase 3 Analytical and Integration API
+pc_phase4               Phase 4 Analysis-Layer Helpers
 pc_poll                 Poll an Asynchronous PubChem ListKey
 pc_profile              Apply a Predefined Execution Profile
 pc_property             Query Compound Properties via the
@@ -45,6 +48,7 @@ pc_property             Query Compound Properties via the
 pc_request              Unified Transport Layer for PubChem Requests
 pc_response             Normalize an HTTP Response Into a Typed PubChem
                         Result
+pc_resume_batch         Resume a Checkpointed Batch Workflow
 pc_similarity_search    Similarity-Driven Identifier Search
 pc_submit               Submit an Asynchronous PubChem Query
 pc_substance            Query Substance Records via the Next-Generation

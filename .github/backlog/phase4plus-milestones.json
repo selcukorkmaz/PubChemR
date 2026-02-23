@@ -1,0 +1,29 @@
+{
+  "milestones": [
+    {
+      "title": "P4B Analysis Hardening",
+      "due_on": "2026-04-30T23:59:59Z",
+      "description": "Stabilize the new analysis layer with sparse matrix outputs, outcome harmonization, resumability, and scale benchmarks."
+    },
+    {
+      "title": "P5 Cross-Domain Graph",
+      "due_on": "2026-07-31T23:59:59Z",
+      "description": "Build compound-substance-assay-target graph workflows with provenance and deterministic cross-domain joins."
+    },
+    {
+      "title": "P6 Interop + ML Contracts",
+      "due_on": "2026-10-31T23:59:59Z",
+      "description": "Harden ecosystem bridges (rcdk/ChemmineR/Bioconductor) and schema-stable ML pipeline contracts."
+    },
+    {
+      "title": "P7 Productization Layer",
+      "due_on": "2027-01-31T23:59:59Z",
+      "description": "Deliver Shiny/cloud execution profiles, pluggable cache backends, and run telemetry."
+    },
+    {
+      "title": "P8 Governance + v3 Release",
+      "due_on": "2027-03-31T23:59:59Z",
+      "description": "Finalize lifecycle/deprecation policy, compatibility matrix, API contract snapshots, and v3.0 release readiness."
+    }
+  ]
+}

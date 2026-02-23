@@ -13,6 +13,7 @@
 \alias{pc_feature_table}
 \alias{pc_identifier_map}
 \alias{pc_batch}
+\alias{pc_resume_batch}
 \alias{pc_benchmark}
 \alias{pc_submit}
 \alias{pc_poll}
@@ -128,6 +129,20 @@ pc_batch(
   chunk_size = 100,
   parallel = FALSE,
   workers = NULL,
+  checkpoint_dir = NULL,
+  checkpoint_id = NULL,
+  resume = FALSE,
+  rerun_failed = TRUE,
+  ...
+)
+
+pc_resume_batch(
+  fn,
+  checkpoint_dir,
+  checkpoint_id,
+  parallel = FALSE,
+  workers = NULL,
+  rerun_failed = TRUE,
   ...
 )
 
@@ -175,6 +190,10 @@ pc_collect(x, ...)
 
 \item{body}{Optional POST body payload for \code{pc_request(method = "POST")}.}
 
+\item{checkpoint_dir}{Optional directory to persist per-chunk checkpoint files.}
+
+\item{checkpoint_id}{Optional checkpoint run id for \code{pc_batch}; required for \code{pc_resume_batch}.}
+
 \item{disk}{Logical; clear disk cache in \code{pc_cache_clear}.}
 
 \item{domain}{PubChem domain such as \code{compound}, \code{substance}, or \code{assay}.}
@@ -210,6 +229,10 @@ pc_collect(x, ...)
 \item{parallel}{Logical; enable parallel chunk processing in \code{pc_batch}.}
 
 \item{parallel_options}{Logical vector of parallel settings tested by \code{pc_benchmark}.}
+
+\item{resume}{Logical; resume \code{pc_batch} from an existing checkpoint manifest.}
+
+\item{rerun_failed}{Logical; when resuming, rerun chunks previously marked as failed.}
 
 \item{pause_base}{Retry pause base for \code{httr::RETRY}.}
 

@@ -26,15 +26,18 @@ Error in readRDS(file) : unknown input format
 Error in readRDS(file) : unknown input format
 Error in readRDS(file) : unknown input format
 Error in readRDS(file) : unknown input format
-[ FAIL 0 | WARN 0 | SKIP 7 | PASS 54 ]
+[ FAIL 0 | WARN 0 | SKIP 14 | PASS 92 ]
 
-══ Skipped tests (7) ═══════════════════════════════════════════════════════════
-• On CRAN (7): 'test-get-json.R:2:3', 'test-get-json.R:20:3',
-  'test-get-pug-view.R:2:3', 'test-pc-api.R:56:3', 'test-pc-api.R:107:3',
-  'test-wrapper-contracts.R:2:3', 'test-wrapper-contracts.R:10:3'
+══ Skipped tests (14) ══════════════════════════════════════════════════════════
+• On CRAN (14): 'test-get-biological-test-results.R:55:3',
+  'test-get-json.R:2:3', 'test-get-json.R:21:3', 'test-get-pug-view.R:2:3',
+  'test-live-smoke.R:2:3', 'test-live-smoke.R:12:3', 'test-live-smoke.R:29:3',
+  'test-live-smoke.R:39:3', 'test-live-smoke.R:50:3', 'test-pc-api.R:56:3',
+  'test-pc-api.R:108:3', 'test-pc-phase4.R:79:3',
+  'test-wrapper-contracts.R:2:3', 'test-wrapper-contracts.R:11:3'
 
-[ FAIL 0 | WARN 0 | SKIP 7 | PASS 54 ]
+[ FAIL 0 | WARN 0 | SKIP 14 | PASS 92 ]
 > 
 > proc.time()
    user  system elapsed 
-   1.37    1.50    1.37 
+   2.96    2.42    2.73 

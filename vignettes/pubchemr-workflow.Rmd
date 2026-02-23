@@ -71,5 +71,40 @@ mm <- pc_model_matrix(
 mm
 ```
 
+## 5) Benchmark harness for scale and CI gates
+
+```{r eval=FALSE}
+thresholds <- list(
+  elapsed_sec = c(`10` = 30, `1000` = 300, `100000` = 3600),
+  failed_chunk_ratio = c(`10` = 0, `1000` = 0.01, `100000` = 0.05)
+)
+
+probe <- function(ids) {
+  pc_request(
+    domain = "compound",
+    namespace = "cid",
+    identifier = 2244,
+    operation = "property/MolecularWeight",
+    output = "JSON",
+    cache = FALSE
+  )
+}
+
+bench <- pc_benchmark_harness(
+  fn = probe,
+  ids = rep(2244, 100000),
+  scenario_sizes = c(10, 1000, 100000),
+  chunk_sizes = 1000,
+  thresholds = thresholds,
+  report_path = file.path(tempdir(), "pubchemr-benchmark.md"),
+  report_format = "markdown"
+)
+
+bench$summary
+```
+
+The nightly workflow `live-pubchem-smoke.yml` runs this harness against live PubChem,
+publishes artifacts, and maintains calibrated threshold recommendations from rolling history.
+
 For high-throughput workflows, combine this pattern with deterministic identifier sets
 and saved intermediate outputs for reproducibility.

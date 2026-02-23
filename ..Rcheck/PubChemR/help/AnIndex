@@ -25,9 +25,11 @@ instance	instance
 instance.PubChemInstanceList	instance
 pc_activity_matrix	pc_activity_matrix
 pc_activity_matrix	pc_phase3
+pc_activity_outcome_map	pc_activity_outcome_map
 pc_api	pc_api
 pc_assay	pc_api
 pc_assay	pc_assay
+pc_assay_activity_long	pc_phase4
 pc_batch	pc_api
 pc_batch	pc_batch
 pc_benchmark	pc_api
@@ -44,6 +46,7 @@ pc_config	pc_api
 pc_config	pc_config
 pc_cross_domain_join	pc_cross_domain_join
 pc_cross_domain_join	pc_phase3
+pc_export_model_data	pc_phase4
 pc_feature_table	pc_api
 pc_feature_table	pc_feature_table
 pc_identifier_map	pc_api
@@ -53,6 +56,7 @@ pc_lifecycle_policy	pc_phase3
 pc_model_matrix	pc_model_matrix
 pc_model_matrix	pc_phase3
 pc_phase3	pc_phase3
+pc_phase4	pc_phase4
 pc_poll	pc_api
 pc_poll	pc_poll
 pc_profile	pc_phase3
@@ -63,6 +67,8 @@ pc_request	pc_api
 pc_request	pc_request
 pc_response	pc_api
 pc_response	pc_response
+pc_resume_batch	pc_api
+pc_resume_batch	pc_resume_batch
 pc_similarity_search	pc_phase3
 pc_similarity_search	pc_similarity_search
 pc_submit	pc_api

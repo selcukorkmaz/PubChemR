@@ -1,5 +1,6 @@
 test_that("get_pug_view allows NULL identifier for annotations + heading", {
   skip_on_cran()
+  skip_if_not_live_smoke()
   skip_if_offline()
 
   out <- get_pug_view(

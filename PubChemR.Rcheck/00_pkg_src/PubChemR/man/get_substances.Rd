@@ -7,67 +7,13 @@
 get_substances(identifier, namespace = "sid", operation = NULL, options = NULL)
 }
 \arguments{
-\item{identifier}{A vector of substance identifiers, either numeric or character.
-The type of identifier depends on the \code{namespace} parameter.
-**Note**: \code{identifier} must be provided; it cannot be \code{NULL}.}
+\item{identifier}{A vector of substance identifiers, either numeric or character.}
 
-\item{namespace}{A character string specifying the namespace of the identifier.
+\item{namespace}{A character string specifying the namespace of the identifier.}
 
-                 Possible values include:
+\item{operation}{A character string specifying the operation to perform.}
 
-                 - \code{sid}: PubChem Substance Identifier (default)
-
-                 - \code{sourceid/<source id>}: Source-specific substance ID
-
-                 - \code{sourceall/<source name>}: Source name
-
-                 - \code{name}: Substance name
-
-                 - \code{<xref>}: Cross-reference
-
-                 - \code{listkey}: A list key obtained from a previous query
-
-                 For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Input}{Input} section of the PUG REST API.}
-
-\item{operation}{A character string specifying the operation to perform.
-
-                 Possible values include:
-
-                 - \code{record}: Retrieve the full substance record (default)
-
-                 - \code{synonyms}: Retrieve synonyms for the substances
-
-                 - \code{sids}: Retrieve Substance IDs
-
-                 - \code{cids}: Retrieve Compound IDs related to the substances
-
-                 - \code{aids}: Retrieve Assay IDs related to the substances
-
-                 - \code{assaysummary}: Retrieve assay summary
-
-                 - \code{classification}: Retrieve substance classification
-
-                 - \code{<xrefs>}: Retrieve cross-references
-
-                 - \code{description}: Retrieve substance descriptions
-
-                 If \code{NULL} (default), the operation defaults to \code{record}.
-
-                 For a full list of operations, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Operation}{Operations} section of the PUG REST API.}
-
-\item{options}{A list of additional options for the request.
-
-               Available options depend on the specific request and the API.
-
-               Examples include:
-
-               - For similarity searches: \code{list(Threshold = 95)}
-
-               - For substructure searches: \code{list(MaxRecords = 100)}
-
-               If \code{NULL} (default), no additional options are included.
-
-               For more details, see the \href{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest#section=Structure-Search-Operations}{Structure Search Operations} section of the PUG REST API.}
+\item{options}{A list of additional options for the request.}
 }
 \value{
 An object of class 'PubChemInstanceList' containing all the substance information of requested compounds.

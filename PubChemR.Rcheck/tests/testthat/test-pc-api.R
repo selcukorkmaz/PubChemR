@@ -54,6 +54,7 @@ test_that("pc_benchmark returns scenario metrics", {
 
 test_that("pc_request cache flag can mark cache hit", {
   skip_on_cran()
+  skip_if_not_live_smoke()
   skip_if_offline()
 
   pc_cache_clear()
@@ -105,6 +106,7 @@ test_that("pc_cache_info returns a diagnostics tibble", {
 
 test_that("pc_feature_table produces a tabular feature set", {
   skip_on_cran()
+  skip_if_not_live_smoke()
   skip_if_offline()
 
   tbl <- pc_feature_table(
