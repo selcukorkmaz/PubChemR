@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head><title>R: Interface to the 'PubChem' Database for Chemical Data Retrieval</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+<h1> Interface to the 'PubChem' Database for Chemical Data Retrieval
+<img class="toplogo" src="../../../doc/html/Rlogo.svg" alt="[R logo]" />
+</h1>
+<hr/>
+<div style="text-align: center;">
+<a href="../../../doc/html/packages.html"><img class="arrow" src="../../../doc/html/left.jpg" alt="[Up]" /></a>
+<a href="../../../doc/html/index.html"><img class="arrow" src="../../../doc/html/up.jpg" alt="[Top]" /></a>
+</div><h2>Documentation for package &lsquo;PubChemR&rsquo; version 2.1.8</h2>
+
+<ul><li><a href="../DESCRIPTION" type="text/plain; charset=utf-8">DESCRIPTION file</a>.</li>
+<li><a href="../doc/index.html">User guides, package vignettes and other documentation.</a></li>
+</ul>
+
+<h2>Help Pages</h2>
+
+
+<table style="width: 100%;">
+<tr><td style="width: 25%;"><a href="AIDs-SIDs-CIDs.html">AIDs</a></td>
+<td>Assay, Compound, and Substance Identifiers</td></tr>
+<tr><td style="width: 25%;"><a href="AIDs-SIDs-CIDs.html">AIDs-SIDs-CIDs</a></td>
+<td>Assay, Compound, and Substance Identifiers</td></tr>
+<tr><td style="width: 25%;"><a href="AIDs-SIDs-CIDs.html">AIDs.PubChemInstance_AIDs</a></td>
+<td>Assay, Compound, and Substance Identifiers</td></tr>
+<tr><td style="width: 25%;"><a href="pc_api.html">as_tibble.PubChemBatchResult</a></td>
+<td>Next-Generation PubChemR API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_api.html">as_tibble.PubChemIdMap</a></td>
+<td>Next-Generation PubChemR API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_api.html">as_tibble.PubChemRecord</a></td>
+<td>Next-Generation PubChemR API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_api.html">as_tibble.PubChemResult</a></td>
+<td>Next-Generation PubChemR API</td></tr>
+<tr><td style="width: 25%;"><a href="AIDs-SIDs-CIDs.html">CIDs</a></td>
+<td>Assay, Compound, and Substance Identifiers</td></tr>
+<tr><td style="width: 25%;"><a href="AIDs-SIDs-CIDs.html">CIDs.PubChemInstance_CIDs</a></td>
+<td>Assay, Compound, and Substance Identifiers</td></tr>
+<tr><td style="width: 25%;"><a href="download.html">download</a></td>
+<td>Download Content from PubChem and Save to a File</td></tr>
+<tr><td style="width: 25%;"><a href="get_aids.html">get_aids</a></td>
+<td>Retrieve Assay IDs (AIDs) from PubChem</td></tr>
+<tr><td style="width: 25%;"><a href="get_all_sources.html">get_all_sources</a></td>
+<td>Retrieve All Sources from PubChem</td></tr>
+<tr><td style="width: 25%;"><a href="get_assays.html">get_assays</a></td>
+<td>Retrieve Assays from PubChem</td></tr>
+<tr><td style="width: 25%;"><a href="get_cids.html">get_cids</a></td>
+<td>Retrieve Compound IDs (CIDs) from PubChem</td></tr>
+<tr><td style="width: 25%;"><a href="get_compounds.html">get_compounds</a></td>
+<td>Retrieve Compounds from PubChem</td></tr>
+<tr><td style="width: 25%;"><a href="get_properties.html">get_properties</a></td>
+<td>Retrieve Compound Properties from PubChem</td></tr>
+<tr><td style="width: 25%;"><a href="get_pug_rest.html">get_pug_rest</a></td>
+<td>Retrieve Data from PubChem PUG REST API</td></tr>
+<tr><td style="width: 25%;"><a href="get_pug_view.html">get_pug_view</a></td>
+<td>Retrieve PUG View Data from PubChem</td></tr>
+<tr><td style="width: 25%;"><a href="get_sdf.html">get_sdf</a></td>
+<td>Retrieve/Save SDF Data from PubChem</td></tr>
+<tr><td style="width: 25%;"><a href="get_sids.html">get_sids</a></td>
+<td>Retrieve Substance IDs (SIDs) from PubChem</td></tr>
+<tr><td style="width: 25%;"><a href="get_substances.html">get_substances</a></td>
+<td>Retrieve Substances from PubChem</td></tr>
+<tr><td style="width: 25%;"><a href="get_synonyms.html">get_synonyms</a></td>
+<td>Retrieve Synonyms from PubChem</td></tr>
+<tr><td style="width: 25%;"><a href="instance.html">instance</a></td>
+<td>Retrieve Information for Requested Instances</td></tr>
+<tr><td style="width: 25%;"><a href="instance.html">instance.PubChemInstanceList</a></td>
+<td>Retrieve Information for Requested Instances</td></tr>
+<tr><td style="width: 25%;"><a href="pc_phase3.html">pc_activity_matrix</a></td>
+<td>Phase 3 Analytical and Integration API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_api.html">pc_api</a></td>
+<td>Next-Generation PubChemR API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_api.html">pc_assay</a></td>
+<td>Next-Generation PubChemR API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_api.html">pc_batch</a></td>
+<td>Next-Generation PubChemR API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_api.html">pc_benchmark</a></td>
+<td>Next-Generation PubChemR API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_api.html">pc_cache_clear</a></td>
+<td>Next-Generation PubChemR API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_api.html">pc_cache_info</a></td>
+<td>Next-Generation PubChemR API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_api.html">pc_collect</a></td>
+<td>Next-Generation PubChemR API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_api.html">pc_compound</a></td>
+<td>Next-Generation PubChemR API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_api.html">pc_config</a></td>
+<td>Next-Generation PubChemR API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_phase3.html">pc_cross_domain_join</a></td>
+<td>Phase 3 Analytical and Integration API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_api.html">pc_feature_table</a></td>
+<td>Next-Generation PubChemR API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_api.html">pc_identifier_map</a></td>
+<td>Next-Generation PubChemR API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_phase3.html">pc_lifecycle_policy</a></td>
+<td>Phase 3 Analytical and Integration API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_phase3.html">pc_model_matrix</a></td>
+<td>Phase 3 Analytical and Integration API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_phase3.html">pc_phase3</a></td>
+<td>Phase 3 Analytical and Integration API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_api.html">pc_poll</a></td>
+<td>Next-Generation PubChemR API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_phase3.html">pc_profile</a></td>
+<td>Phase 3 Analytical and Integration API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_api.html">pc_property</a></td>
+<td>Next-Generation PubChemR API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_api.html">pc_request</a></td>
+<td>Next-Generation PubChemR API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_api.html">pc_response</a></td>
+<td>Next-Generation PubChemR API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_phase3.html">pc_similarity_search</a></td>
+<td>Phase 3 Analytical and Integration API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_api.html">pc_submit</a></td>
+<td>Next-Generation PubChemR API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_api.html">pc_substance</a></td>
+<td>Next-Generation PubChemR API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_phase3.html">pc_to_chemminer</a></td>
+<td>Phase 3 Analytical and Integration API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_phase3.html">pc_to_rcdk</a></td>
+<td>Phase 3 Analytical and Integration API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_api.html">print.PubChemBatchResult</a></td>
+<td>Next-Generation PubChemR API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_phase3.html">print.PubChemModelMatrix</a></td>
+<td>Phase 3 Analytical and Integration API</td></tr>
+<tr><td style="width: 25%;"><a href="pc_api.html">print.PubChemResult</a></td>
+<td>Next-Generation PubChemR API</td></tr>
+<tr><td style="width: 25%;"><a href="get_properties.html">property_map</a></td>
+<td>Retrieve Compound Properties from PubChem</td></tr>
+<tr><td style="width: 25%;"><a href="pubChemData.html">pubChemData</a></td>
+<td>Retrieve Raw Data from PUG REST Object</td></tr>
+<tr><td style="width: 25%;"><a href="pubChemData.html">pubChemData.PugRestInstance</a></td>
+<td>Retrieve Raw Data from PUG REST Object</td></tr>
+<tr><td style="width: 25%;"><a href="PubChemR-classes.html">PubChemR-classes</a></td>
+<td>'PubChemInstanceList' and 'PubChemInstance' Classes</td></tr>
+<tr><td style="width: 25%;"><a href="PugView-classes.html">PugView-classes</a></td>
+<td>Classes for Pug View Request</td></tr>
+<tr><td style="width: 25%;"><a href="request_args.html">request_args</a></td>
+<td>Retrieve Function Inputs</td></tr>
+<tr><td style="width: 25%;"><a href="retrieve.html">retrieve</a></td>
+<td>Retrieve Information from PubChem Instances</td></tr>
+<tr><td style="width: 25%;"><a href="retrieve.html">retrieve.PC_Substance</a></td>
+<td>Retrieve Information from PubChem Instances</td></tr>
+<tr><td style="width: 25%;"><a href="retrieve.html">retrieve.PubChemInstance</a></td>
+<td>Retrieve Information from PubChem Instances</td></tr>
+<tr><td style="width: 25%;"><a href="retrieve.html">retrieve.PubChemInstanceList</a></td>
+<td>Retrieve Information from PubChem Instances</td></tr>
+<tr><td style="width: 25%;"><a href="retrieve.html">retrieve.PugViewInstance</a></td>
+<td>Retrieve Information from PubChem Instances</td></tr>
+<tr><td style="width: 25%;"><a href="retrieve.html">retrieve.PugViewSection</a></td>
+<td>Retrieve Information from PubChem Instances</td></tr>
+<tr><td style="width: 25%;"><a href="section.html">section</a></td>
+<td>Extract Sections from Pug View Request</td></tr>
+<tr><td style="width: 25%;"><a href="section.html">section.PugViewInstance</a></td>
+<td>Extract Sections from Pug View Request</td></tr>
+<tr><td style="width: 25%;"><a href="section.html">section.PugViewSection</a></td>
+<td>Extract Sections from Pug View Request</td></tr>
+<tr><td style="width: 25%;"><a href="section.html">section.PugViewSectionList</a></td>
+<td>Extract Sections from Pug View Request</td></tr>
+<tr><td style="width: 25%;"><a href="sectionList.html">sectionList</a></td>
+<td>List Available Section/Subsections</td></tr>
+<tr><td style="width: 25%;"><a href="sectionList.html">sectionList.PugViewInstance</a></td>
+<td>List Available Section/Subsections</td></tr>
+<tr><td style="width: 25%;"><a href="sectionList.html">sectionList.PugViewSection</a></td>
+<td>List Available Section/Subsections</td></tr>
+<tr><td style="width: 25%;"><a href="sectionList.html">sectionList.PugViewSectionList</a></td>
+<td>List Available Section/Subsections</td></tr>
+<tr><td style="width: 25%;"><a href="AIDs-SIDs-CIDs.html">SIDs</a></td>
+<td>Assay, Compound, and Substance Identifiers</td></tr>
+<tr><td style="width: 25%;"><a href="AIDs-SIDs-CIDs.html">SIDs.PubChemInstance_SIDs</a></td>
+<td>Assay, Compound, and Substance Identifiers</td></tr>
+<tr><td style="width: 25%;"><a href="synonyms.html">synonyms</a></td>
+<td>Getter function for 'Synonyms'</td></tr>
+<tr><td style="width: 25%;"><a href="synonyms.html">synonyms.PubChemInstance_Synonyms</a></td>
+<td>Getter function for 'Synonyms'</td></tr>
+</table>
+</div></body></html>

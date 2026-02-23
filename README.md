@@ -73,7 +73,15 @@ assay_info <- get_aids(c(2551, 1000))
 Download chemical structures in different formats:
 
 ``` r
-download("SDF", "aspirin.sdf", 2244)
+download(
+  filename = "aspirin",
+  outformat = "sdf",
+  path = tempdir(),
+  identifier = 2244,
+  namespace = "cid",
+  domain = "compound",
+  overwrite = TRUE
+)
 ```
 
 **Functions**
@@ -85,10 +93,23 @@ Get compound identifiers for given names or other identifiers.
 `get_aids()`: Obtain assay information for given assay identifiers.
 `get_sids()`: Get substance identifiers related to compounds.
 `get_properties()`: Retrieve specific properties of compounds.
+`get_biological_test_results()`: Retrieve the `CONTENTS -> Biological Test Results` section from PUG View records.
 `get_json()`: General function to retrieve data in JSON format.
 `download()`: Download chemical structures and other data. Each function
 is documented with details on its parameters and return values. Use
 ?function_name in R to access the help page for a specific function.
+
+**Next-Generation API (`pc_*`)**
+
+Phase 2 introduces typed, workflow-oriented functions:
+
+`pc_request()`, `pc_response()`, `pc_compound()`, `pc_substance()`,
+`pc_assay()`, `pc_property()`, `pc_identifier_map()`, `pc_batch()`,
+`pc_submit()`, `pc_poll()`, `pc_collect()`, `pc_benchmark()`,
+`pc_cache_info()`, `pc_feature_table()`, `pc_profile()`,
+`pc_similarity_search()`, `pc_activity_matrix()`,
+`pc_cross_domain_join()`, `pc_model_matrix()`,
+`pc_to_rcdk()`, `pc_to_chemminer()`, and `pc_lifecycle_policy()`.
 
 **Output Formats**
 
@@ -107,8 +128,7 @@ CONTRIBUTING.md file for guidelines.
 
 **License**
 
-PubChemR is released under the MIT License. See the LICENSE file for
-more details.
+PubChemR is released under the GPL (>= 2) License. See the package metadata for details.
 
 **Contact**
 
@@ -119,18 +139,20 @@ repository issue tracker.
 
 If you use PubChemR in your research, please cite it as follows:
 
-Korkmaz S, Yamasan BE, Goksuluk D (2023). *PubChemR: Interface to the
-‘PubChem’ Database for Chemical Data Retrieval*. R package version
-0.99-1, <https://CRAN.R-project.org/package=PubChemR>.
+Korkmaz S, Yamasan BE, Goksuluk D (2024). *PubChemR: An R Package for
+Accessing Chemical Data from PubChem*. The R Journal, 16(3), 150-185.
+<https://journal.r-project.org/articles/RJ-2024-031/RJ-2024-031.pdf>.
 
 A BibTeX entry for LaTeX users is:
 
 ``` r
 @Manual{,
-  title = {PubChemR: Interface to the 'PubChem' Database for Chemical Data Retrieval},
+  title = {PubChemR: An R Package for Accessing Chemical Data from PubChem},
   author = {Selcuk Korkmaz and Bilge Eren Yamasan and Dincer Goksuluk},
-  year = {2023},
-  note = {R package version 0.99-1},
-  url = {https://CRAN.R-project.org/package=PubChemR},
+  year = {2024},
+  note = {R Journal, 16(3), 150-185},
+  url = {https://journal.r-project.org/articles/RJ-2024-031/RJ-2024-031.pdf},
 }
 ```
+
+

@@ -1,0 +1,18 @@
+citHeader("To cite PubChemR in publications use:")
+
+bibentry(
+  bibtype = "Article",
+  title   = "PubChemR: An R Package for Accessing Chemical Data from PubChem.",
+  author  = c(
+    person("Selcuk", "Korkmaz"),
+    person("Bilge Eren", "Yamasan"),
+    person("Dincer", "Goksuluk")
+  ),
+  journal = "The R Journal",
+  year    = "2024",
+  volume  = "16",
+  number  = "3",
+  pages   = "150--185",
+  url     = "https://journal.r-project.org/articles/RJ-2024-031/RJ-2024-031.pdf",
+  textVersion = "Korkmaz S, Yamasan BE, Goksuluk D. PubChemR: An R Package for Accessing Chemical Data from PubChem. The R Journal. 2024; 16(3):150-185."
+)

@@ -1,0 +1,27 @@
+AIDs-SIDs-CIDs          Assay, Compound, and Substance Identifiers
+PubChemR-classes        'PubChemInstanceList' and 'PubChemInstance'
+                        Classes
+PugView-classes         Classes for Pug View Request
+download                Download Content from PubChem and Save to a
+                        File
+get_aids                Retrieve Assay IDs (AIDs) from PubChem
+get_all_sources         Retrieve All Sources from PubChem
+get_assays              Retrieve Assays from PubChem
+get_cids                Retrieve Compound IDs (CIDs) from PubChem
+get_compounds           Retrieve Compounds from PubChem
+get_properties          Retrieve Compound Properties from PubChem
+get_pug_rest            Retrieve Data from PubChem PUG REST API
+get_pug_view            Retrieve PUG View Data from PubChem
+get_sdf                 Retrieve/Save SDF Data from PubChem
+get_sids                Retrieve Substance IDs (SIDs) from PubChem
+get_substances          Retrieve Substances from PubChem
+get_synonyms            Retrieve Synonyms from PubChem
+instance                Retrieve Information for Requested Instances
+pc_api                  Next-Generation PubChemR API
+pc_phase3               Phase 3 Analytical and Integration API
+pubChemData             Retrieve Raw Data from PUG REST Object
+request_args            Retrieve Function Inputs
+retrieve                Retrieve Information from PubChem Instances
+section                 Extract Sections from Pug View Request
+sectionList             List Available Section/Subsections
+synonyms                Getter function for 'Synonyms'

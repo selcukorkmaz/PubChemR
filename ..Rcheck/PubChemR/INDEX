@@ -1,0 +1,59 @@
+AIDs-SIDs-CIDs          Assay, Compound, and Substance Identifiers
+PubChemR-classes        'PubChemInstanceList' and 'PubChemInstance'
+                        Classes
+PugView-classes         Classes for Pug View Request
+download                Download Content from PubChem and Save to a
+                        File
+get_aids                Retrieve Assay IDs (AIDs) from PubChem
+get_all_sources         Retrieve All Sources from PubChem
+get_assays              Retrieve Assays from PubChem
+get_biological_test_results
+                        Retrieve "Biological Test Results" Section from
+                        PubChem Contents
+get_cids                Retrieve Compound IDs (CIDs) from PubChem
+get_compounds           Retrieve Compounds from PubChem
+get_properties          Retrieve Compound Properties from PubChem
+get_pug_rest            Retrieve Data from PubChem PUG REST API
+get_pug_view            Retrieve PUG View Data from PubChem
+get_sdf                 Retrieve/Save SDF Data from PubChem
+get_sids                Retrieve Substance IDs (SIDs) from PubChem
+get_substances          Retrieve Substances from PubChem
+get_synonyms            Retrieve Synonyms from PubChem
+instance                Retrieve Information for Requested Instances
+pc_activity_matrix      Build an Assay Activity Matrix
+pc_api                  Next-Generation PubChemR API
+pc_assay                Query Assay Records via the Next-Generation API
+pc_batch                Batch-Orchestrate PubChem Workflows
+pc_benchmark            Benchmark Chunked PubChem Workflows
+pc_cache_clear          Clear PubChemR Request Cache
+pc_cache_info           Cache Diagnostics for PubChemR
+pc_collect              Collect Results From an Async PubChem Query
+pc_compound             Query Compound Records via the Next-Generation
+                        API
+pc_config               Configure PubChemR Next-Gen API Defaults
+pc_cross_domain_join    Join Compound, Substance, Assay, and Target
+                        Tables
+pc_feature_table        Build a Modeling-Ready Feature Table
+pc_identifier_map       Map Identifiers via the Next-Generation API
+pc_lifecycle_policy     Versioning and Deprecation Policy
+pc_model_matrix         Convert Feature Tables to Model Matrix Form
+pc_phase3               Phase 3 Analytical and Integration API
+pc_poll                 Poll an Asynchronous PubChem ListKey
+pc_profile              Apply a Predefined Execution Profile
+pc_property             Query Compound Properties via the
+                        Next-Generation API
+pc_request              Unified Transport Layer for PubChem Requests
+pc_response             Normalize an HTTP Response Into a Typed PubChem
+                        Result
+pc_similarity_search    Similarity-Driven Identifier Search
+pc_submit               Submit an Asynchronous PubChem Query
+pc_substance            Query Substance Records via the Next-Generation
+                        API
+pc_to_chemminer         Convert PubChem Tables to ChemmineR SDF Objects
+pc_to_rcdk              Convert PubChem Tables to rcdk Molecules
+pubChemData             Retrieve Raw Data from PUG REST Object
+request_args            Retrieve Function Inputs
+retrieve                Retrieve Information from PubChem Instances
+section                 Extract Sections from Pug View Request
+sectionList             List Available Section/Subsections
+synonyms                Getter function for 'Synonyms'

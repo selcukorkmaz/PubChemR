@@ -1,0 +1,75 @@
+---
+title: "PubChemR Workflow: Retrieval to Modeling Table"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{PubChemR Workflow: Retrieval to Modeling Table}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette demonstrates a reproducible pattern for working with PubChem data:
+
+1. Identify compounds.
+2. Retrieve selected properties.
+3. Build a model-ready table.
+4. Convert to a modeling matrix.
+
+```{r setup}
+library(PubChemR)
+library(dplyr)
+```
+
+## 1) Resolve CIDs from names
+
+```{r eval=FALSE}
+ids <- get_cids(c("aspirin", "ibuprofen", "caffeine"), namespace = "name")
+CIDs(ids)
+```
+
+## 2) Retrieve a compact property panel
+
+```{r eval=FALSE}
+props <- get_properties(
+  properties = c("MolecularWeight", "MolecularFormula", "XLogP", "TPSA"),
+  identifier = c("aspirin", "ibuprofen", "caffeine"),
+  namespace = "name"
+)
+
+prop_tbl <- retrieve(props, .combine.all = TRUE, .to.data.frame = TRUE)
+prop_tbl
+```
+
+## 3) Prepare a modeling-ready table
+
+```{r eval=FALSE}
+model_tbl <- prop_tbl %>%
+  mutate(
+    MolecularWeight = as.numeric(MolecularWeight),
+    XLogP = as.numeric(XLogP),
+    TPSA = as.numeric(TPSA)
+  )
+
+model_tbl
+```
+
+## 4) Convert to model matrix form
+
+```{r eval=FALSE}
+mm <- pc_model_matrix(
+  model_tbl,
+  id_cols = c("CID"),
+  na_fill = 0
+)
+
+mm
+```
+
+For high-throughput workflows, combine this pattern with deterministic identifier sets
+and saved intermediate outputs for reproducibility.
