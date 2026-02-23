@@ -28,14 +28,14 @@ library(dplyr)
 
 ## 1) Resolve CIDs from names
 
-```{r eval=FALSE}
+```{r eval=TRUE}
 ids <- get_cids(c("aspirin", "ibuprofen", "caffeine"), namespace = "name")
 CIDs(ids)
 ```
 
 ## 2) Retrieve a compact property panel
 
-```{r eval=FALSE}
+```{r eval=TRUE}
 props <- get_properties(
   properties = c("MolecularWeight", "MolecularFormula", "XLogP", "TPSA"),
   identifier = c("aspirin", "ibuprofen", "caffeine"),
@@ -48,7 +48,7 @@ prop_tbl
 
 ## 3) Prepare a modeling-ready table
 
-```{r eval=FALSE}
+```{r eval=TRUE}
 model_tbl <- prop_tbl %>%
   mutate(
     MolecularWeight = as.numeric(MolecularWeight),
@@ -61,7 +61,7 @@ model_tbl
 
 ## 4) Convert to model matrix form
 
-```{r eval=FALSE}
+```{r eval=TRUE}
 mm <- pc_model_matrix(
   model_tbl,
   id_cols = c("CID"),
