@@ -25,7 +25,7 @@ library(tibble)
 
 ## Step 1: Name to CID
 
-```{r eval=FALSE}
+```{r eval=TRUE}
 cid_map <- pc_identifier_map(
   identifier = c("aspirin", "ibuprofen", "caffeine"),
   namespace = "name",
@@ -39,7 +39,7 @@ as_tibble(cid_map)
 
 ## Step 2: CID to AID
 
-```{r eval=FALSE}
+```{r eval=TRUE}
 aid_map <- pc_identifier_map(
   identifier = c(2244, 3672, 2519),
   namespace = "cid",
@@ -54,7 +54,7 @@ aid_tbl
 
 ## Step 3: Assay summary retrieval
 
-```{r eval=FALSE}
+```{r eval=TRUE}
 # Select a subset of AIDs for demonstration
 sel_aids <- unique(na.omit(unlist(aid_tbl$AID)))
 sel_aids <- head(sel_aids, 10)
