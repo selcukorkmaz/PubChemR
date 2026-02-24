@@ -132,7 +132,7 @@ get_properties <- function(properties = NULL, identifier, namespace = 'cid', sea
                            propertyMatch = list(.ignore.case = FALSE, type = "contain")) {
 
   # Check if properties is a single string, and split it into a vector if needed
-  if (is.character(properties) && length(properties) == 1 && !grepl(",", properties)) {
+  if (is.character(properties) && length(properties) == 1 && grepl(",", properties)) {
     properties <- strsplit(properties, ",")[[1]]
   }
 
@@ -175,5 +175,4 @@ get_properties <- function(properties = NULL, identifier, namespace = 'cid', sea
     class = c("PubChemInstanceList")
   )
 }
-
 

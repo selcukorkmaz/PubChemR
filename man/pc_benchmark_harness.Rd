@@ -2,38 +2,31 @@
 % Please edit documentation in R/pc_api.R
 \name{pc_benchmark_harness}
 \alias{pc_benchmark_harness}
-\alias{print.PubChemBenchmarkReport}
 \title{Benchmark Harness for Scale Scenarios}
 \usage{
 pc_benchmark_harness(
   fn,
   ids = NULL,
-  scenario_sizes = c(10L, 1000L, 1e+05L),
+  scenario_sizes = c(10L, 1000L, 100000L),
   id_generator = NULL,
   chunk_sizes = c(25L, 100L, 1000L),
   parallel_options = c(FALSE),
   workers = NULL,
-  thresholds = list(
-    elapsed_sec = c(`10` = 30, `1000` = 300, `100000` = 3600),
-    failed_chunk_ratio = c(`10` = 0, `1000` = 0.01, `100000` = 0.05)
-  ),
+  thresholds = pc_default_benchmark_thresholds(),
   report_path = NULL,
   report_format = c("markdown", "csv", "rds"),
   ...
 )
-
-\method{print}{PubChemBenchmarkReport}(x, ...)
 }
 \arguments{
-\item{fn}{Function applied by \code{pc_batch()}/\code{pc_benchmark()}.}
+\item{fn}{Function applied by `pc_batch()`/`pc_benchmark()`.}
 
 \item{ids}{Optional base identifier vector. If shorter than a scenario size,
 identifiers are recycled.}
 
 \item{scenario_sizes}{Integer vector of benchmark scenario sizes.}
 
-\item{id_generator}{Optional function \code{function(n)} returning \code{n}
-identifiers.}
+\item{id_generator}{Optional function `function(n)` returning `n` identifiers.}
 
 \item{chunk_sizes}{Integer vector of chunk sizes evaluated per scenario.}
 
@@ -41,22 +34,19 @@ identifiers.}
 
 \item{workers}{Number of workers used when parallel is enabled.}
 
-\item{thresholds}{Named list with optional elements \code{elapsed_sec} and
-\code{failed_chunk_ratio}. Each can be scalar or a named numeric vector keyed by
+\item{thresholds}{Named list with optional elements `elapsed_sec` and
+`failed_chunk_ratio`. Each can be scalar or a named numeric vector keyed by
 scenario size.}
 
 \item{report_path}{Optional path to write report output.}
 
-\item{report_format}{One of \code{"markdown"}, \code{"csv"}, or \code{"rds"}.}
+\item{report_format}{One of `"markdown"`, `"csv"`, or `"rds"`.}
 
-\item{...}{Additional arguments passed to \code{fn}.}
-
-\item{x}{A \code{PubChemBenchmarkReport} object.}
+\item{...}{Additional arguments passed to `fn`.}
 }
 \value{
-\code{pc_benchmark_harness()} returns an object of class
-\code{PubChemBenchmarkReport} containing \code{details} and \code{summary}
-tibbles.
+An object of class `PubChemBenchmarkReport` containing
+  `details` and `summary` tibbles.
 }
 \description{
 Executes benchmark scenarios (defaults: 10, 1000, 100000 identifiers),

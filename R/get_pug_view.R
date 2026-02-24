@@ -81,12 +81,7 @@
 #' }
 #'
 #' @importFrom RJSONIO fromJSON
-#' @importFrom httr GET status_code
-#' @importFrom magick image_read
-#' @importFrom rsvg rsvg_png
-#' @importFrom RCurl getURLContent
-#' @importFrom png readPNG
-#' @importFrom httr content
+#' @importFrom httr GET status_code content
 #'
 #' @export
 get_pug_view <- function(annotation = "data", identifier = NULL, domain = 'compound',
@@ -195,14 +190,27 @@ get_pug_view <- function(annotation = "data", identifier = NULL, domain = 'compo
       }
       parsed_content
     } else if (!is.null(output) && output == "SVG" && domain != "key") {
+      if (!requireNamespace("magick", quietly = TRUE)) {
+        stop("The 'magick' package is required for SVG output. Please install it using install.packages('magick').")
+      }
       svg_content <- charToRaw(content(response, as = "text", encoding = "UTF-8"))
-      img_content <- image_read(svg_content)
+      img_content <- magick::image_read(svg_content)
       if (save) {
-        rsvg_png(svg = svg_content, file = paste0(identifier, ".png"))
+        if (!requireNamespace("rsvg", quietly = TRUE)) {
+          stop("The 'rsvg' package is required to save SVG as PNG. Please install it using install.packages('rsvg').")
+        }
+        rsvg::rsvg_png(svg = svg_content, file = paste0(identifier, ".png"))
       }
       img_content
     } else if (domain == "key") {
-      img_content <- image_read(readPNG(getURLContent(apiurl)))
+      if (!requireNamespace("magick", quietly = TRUE)) {
+        stop("The 'magick' package is required for image output. Please install it using install.packages('magick').")
+      }
+      if (!requireNamespace("png", quietly = TRUE)) {
+        stop("The 'png' package is required for image output. Please install it using install.packages('png').")
+      }
+      raw_content <- httr::content(httr::GET(apiurl), "raw")
+      img_content <- magick::image_read(png::readPNG(raw_content))
       img_content
     } else {
       content(response, "text", encoding = "UTF-8")

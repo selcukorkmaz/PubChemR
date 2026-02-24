@@ -40,10 +40,7 @@ pc_assay_activity_long <- function(identifier = NULL,
 
     ids <- as.character(identifier)
     if (!is.null(chunk_size)) {
-      if (!is.numeric(chunk_size) || chunk_size <= 0) {
-        stop("'chunk_size' must be a positive integer when provided.")
-      }
-      chunk_size <- as.integer(chunk_size)
+      chunk_size <- pc_validate_positive_integer_scalar(chunk_size, "'chunk_size'")
     }
 
     if (!is.null(chunk_size) && length(ids) > chunk_size) {
@@ -62,6 +59,37 @@ pc_assay_activity_long <- function(identifier = NULL,
         chunk_size = chunk_size,
         ...
       )
+
+      success_flags <- as.logical(b$success)
+      success_flags[is.na(success_flags)] <- FALSE
+      failed_idx <- which(!success_flags)
+      if (length(failed_idx) > 0) {
+        failed_msgs <- vapply(failed_idx, function(i) {
+          msg <- b$error[[i]] %||% ""
+          if (!nzchar(msg) && inherits(b$results[[i]], "PubChemResult")) {
+            msg <- b$results[[i]]$error$message %||% ""
+          }
+          if (!nzchar(msg)) {
+            msg <- "Unknown error"
+          }
+          paste0("chunk ", i, ": ", msg)
+        }, character(1))
+
+        extra <- ""
+        if (length(failed_msgs) > 3) {
+          extra <- paste0(" (showing first 3 of ", length(failed_msgs), " failures)")
+        }
+
+        stop(
+          "Assay summary chunked request failed for ",
+          length(failed_idx),
+          " of ",
+          length(b$chunks),
+          " chunk(s): ",
+          paste(utils::head(failed_msgs, 3), collapse = " | "),
+          extra
+        )
+      }
 
       parts <- lapply(b$results, function(res) {
         if (inherits(res, "PubChemResult") && isTRUE(res$success)) {

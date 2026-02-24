@@ -1,5 +1,7 @@
-# PubChemR 2.1.9 (development)
+# PubChemR 3.0.0 (Major Release)
 
+- Major release introducing a next-generation, typed, fault-tolerant PubChem
+  workflow engine with analysis-layer capabilities.
 - Refactored internal request/result collection logic for all identifier-based wrappers
   to enforce consistent `result` / `success` / `error` contracts.
 - Added a new `pc_*` API layer including:
@@ -36,6 +38,12 @@
 - Added resumable checkpointed batching:
   `pc_batch(..., checkpoint_dir, checkpoint_id, resume)` and
   `pc_resume_batch()` for recovery of interrupted/high-throughput runs.
+- Added benchmark harness for scale/regression monitoring:
+  `pc_benchmark_harness()` with default 10/1k/100k scenarios,
+  threshold pass/fail gating, and Markdown/CSV/RDS report artifacts.
+- Added nightly live benchmark CI integration with artifact publishing and
+  threshold-gate enforcement (`live-pubchem-smoke.yml`), plus rolling
+  threshold calibration scripts under `scripts/ci/`.
 - Added end-to-end analysis vignette:
   `phase4-analysis-layer-workflow.Rmd` (similarity -> assay matrix -> model export).
 - Added initial `testthat` suite and multiple workflow vignettes.

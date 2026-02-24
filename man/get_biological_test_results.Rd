@@ -36,13 +36,13 @@ and returns it invisibly.}
 }
 \value{
 A \code{PugViewSection} object (default) or \code{PugViewSectionList}
-when \code{.all = TRUE}. If no section is found, a failed
-\code{PugViewSection} object is returned with error details.
+  when \code{.all = TRUE}. If no section is found, a failed
+  \code{PugViewSection} object is returned with error details.
 }
 \description{
 This helper fetches a PUG View record and extracts section(s) with heading
-\code{"Biological Test Results"} (or a custom heading) from the PubChem
-\code{CONTENTS} structure.
+`"Biological Test Results"` (or a custom heading) from the PubChem
+`CONTENTS` structure.
 }
 \examples{
 \donttest{
@@ -57,4 +57,5 @@ bio_all <- get_biological_test_results(
 )
 bio_all
 }
+
 }

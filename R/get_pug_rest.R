@@ -161,11 +161,8 @@
 #' }
 #'
 #'
-#' @importFrom httr GET RETRY
+#' @importFrom httr GET POST RETRY
 #' @importFrom RJSONIO fromJSON
-#' @importFrom magick image_read
-#' @importFrom png readPNG writePNG
-#' @importFrom RCurl getURLContent curlEscape url.exists
 #' @importFrom utils read.csv write.csv read.table write.table
 #' @importFrom stringr str_split
 #'
@@ -281,47 +278,30 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
     file_details <- NULL
   }
 
-  # Construct the base URL for PUG REST
-  base_url <- "https://pubchem.ncbi.nlm.nih.gov/rest/pug"
-  apiurl <- paste(base_url, domain, sep = "/")
+  # Construct the API URL using the shared builder.
+  # For namespaces like smiles/inchi/sdf/smarts, the identifier is sent via
+  # POST body to avoid URL-encoding issues with / and \ characters.
+  use_post <- pc_use_post(namespace)
+  apiurl <- pc_build_url(
+    domain = domain,
+    namespace = namespace,
+    identifier = if (use_post) NULL else identifier,
+    operation = operation,
+    output = output,
+    searchtype = searchtype,
+    options = options,
+    property = property
+  )
 
-  # Add searchtype, namespace, identifier, operation, and property to URL as needed
-  if (!is.null(searchtype)) {
-    apiurl <- paste(apiurl, searchtype, sep = "/")
-  }
-
-  if (!is.null(namespace)) {
-    apiurl <- paste(apiurl, namespace, sep = "/")
-  }
-
-  if (!is.null(identifier)) {
-    # Convert identifier to character vector
-    identifier <- as.character(identifier)
-    encoded_identifier <- URLencode(identifier, reserved = TRUE)
-    apiurl <- paste(apiurl, paste(encoded_identifier, collapse = ","), sep = "/")
-  }
-
-  if (!is.null(operation)) {
-    apiurl <- paste(apiurl, paste(operation, collapse = "/"), sep = "/")
-  }
-
-  if (!is.null(property)) {
-    apiurl <- paste(apiurl, "property", paste(property, collapse = ","), sep = "/")
-  }
-
-  # Append the output format to the URL
-  apiurl <- paste(apiurl, output, sep = "/")
-
-  # Add options as query parameters
-  if (!is.null(options)) {
-    query_params <- paste(names(options), unlist(options), sep = "=", collapse = "&")
-    options_query <- paste0("?", query_params)
-    apiurl <- paste0(apiurl, options_query)
-  }
-
-  # Perform the HTTP GET request within a tryCatch block
+  # Perform the HTTP request within a tryCatch block
   response <- tryCatch({
-    RETRY("GET", apiurl, times = 3, pause_min = 1, pause_base = 2)
+    if (use_post) {
+      post_body <- stats::setNames(list(as.character(identifier)), tolower(namespace))
+      RETRY("POST", apiurl, body = post_body, encode = "form",
+            times = 3, pause_min = 1, pause_base = 2)
+    } else {
+      RETRY("GET", apiurl, times = 3, pause_min = 1, pause_base = 2)
+    }
   }, error = function(e) {
     return(createPugRestObject(
       success = FALSE,
@@ -371,9 +351,9 @@ get_pug_rest <- function(identifier = NULL, namespace = 'cid', domain = 'compoun
     switch(output,
            "PNG" = {
              img_content_raw <- content(response, "raw")
-             img_content <- readPNG(img_content_raw)
+             img_content <- png::readPNG(img_content_raw)
              if (save) {
-               writePNG(img_content, target = file.path(path, file_name))
+               png::writePNG(img_content, target = file.path(path, file_name))
              }
              img_content
            },

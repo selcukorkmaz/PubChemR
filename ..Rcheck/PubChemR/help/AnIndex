@@ -29,11 +29,13 @@ pc_activity_outcome_map	pc_activity_outcome_map
 pc_api	pc_api
 pc_assay	pc_api
 pc_assay	pc_assay
+pc_assay_activity_long	pc_assay_activity_long
 pc_assay_activity_long	pc_phase4
 pc_batch	pc_api
 pc_batch	pc_batch
 pc_benchmark	pc_api
 pc_benchmark	pc_benchmark
+pc_benchmark_harness	pc_benchmark_harness
 pc_cache_clear	pc_api
 pc_cache_clear	pc_cache_clear
 pc_cache_info	pc_api
@@ -46,6 +48,7 @@ pc_config	pc_api
 pc_config	pc_config
 pc_cross_domain_join	pc_cross_domain_join
 pc_cross_domain_join	pc_phase3
+pc_export_model_data	pc_export_model_data
 pc_export_model_data	pc_phase4
 pc_feature_table	pc_api
 pc_feature_table	pc_feature_table

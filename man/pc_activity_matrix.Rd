@@ -43,7 +43,7 @@ pc_activity_matrix(
 }
 \value{
 A wide tibble (`output = "tibble"`) or a sparse matrix wrapper
-object of class `PubChemSparseActivityMatrix` (`output = "sparse"`).
+  object of class `PubChemSparseActivityMatrix` (`output = "sparse"`).
 }
 \description{
 Build an Assay Activity Matrix

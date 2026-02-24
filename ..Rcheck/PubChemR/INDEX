@@ -1,7 +1,4 @@
 AIDs-SIDs-CIDs          Assay, Compound, and Substance Identifiers
-PubChemR-classes        'PubChemInstanceList' and 'PubChemInstance'
-                        Classes
-PugView-classes         Classes for Pug View Request
 download                Download Content from PubChem and Save to a
                         File
 get_aids                Retrieve Assay IDs (AIDs) from PubChem
@@ -25,8 +22,12 @@ pc_activity_outcome_map
                         Harmonize Activity Outcome Labels
 pc_api                  Next-Generation PubChemR API
 pc_assay                Query Assay Records via the Next-Generation API
+pc_assay_activity_long
+                        Convert PubChem Assay Summary to Long Activity
+                        Table
 pc_batch                Batch-Orchestrate PubChem Workflows
 pc_benchmark            Benchmark Chunked PubChem Workflows
+pc_benchmark_harness    Benchmark Harness for Scale Scenarios
 pc_cache_clear          Clear PubChemR Request Cache
 pc_cache_info           Cache Diagnostics for PubChemR
 pc_collect              Collect Results From an Async PubChem Query
@@ -35,6 +36,7 @@ pc_compound             Query Compound Records via the Next-Generation
 pc_config               Configure PubChemR Next-Gen API Defaults
 pc_cross_domain_join    Join Compound, Substance, Assay, and Target
                         Tables
+pc_export_model_data    Export Model-Ready Data
 pc_feature_table        Build a Modeling-Ready Feature Table
 pc_identifier_map       Map Identifiers via the Next-Generation API
 pc_lifecycle_policy     Versioning and Deprecation Policy
@@ -56,6 +58,9 @@ pc_substance            Query Substance Records via the Next-Generation
 pc_to_chemminer         Convert PubChem Tables to ChemmineR SDF Objects
 pc_to_rcdk              Convert PubChem Tables to rcdk Molecules
 pubChemData             Retrieve Raw Data from PUG REST Object
+PubChemR-classes        'PubChemInstanceList' and 'PubChemInstance'
+                        Classes
+PugView-classes         Classes for Pug View Request
 request_args            Retrieve Function Inputs
 retrieve                Retrieve Information from PubChem Instances
 section                 Extract Sections from Pug View Request

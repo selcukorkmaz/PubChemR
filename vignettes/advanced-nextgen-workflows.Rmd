@@ -1,0 +1,401 @@
+---
+title: "Advanced Next-Generation Workflows in PubChemR"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Advanced Next-Generation Workflows in PubChemR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+This vignette covers advanced features that are not the focus of the legacy
+`get_*`/PUG REST/PUG View tutorials. It focuses on resilient, typed, and
+high-throughput `pc_*` workflows:
+
+1. Typed result contracts and error handling.
+2. Unified request layer and endpoint wrappers.
+3. Caching, offline replay, and runtime policy control.
+4. Async listkey workflows.
+5. Checkpointed batching and resume patterns.
+6. Benchmark harness and threshold-gated performance checks.
+7. Analysis-layer helpers, sparse matrices, and model export.
+8. Optional cheminformatics bridges and lifecycle policy.
+
+```{r setup}
+library(PubChemR)
+library(dplyr)
+library(tibble)
+```
+
+## 1) Typed result contract
+
+The `pc_*` layer returns structured objects (`PubChemResult`,
+`PubChemBatchResult`, `PubChemBenchmarkReport`) with explicit
+`success`/`error` fields.
+
+```{r}
+# Deterministic local payload -> typed successful result:
+ok_text <- '{"PropertyTable":{"Properties":[{"CID":2244,"MolecularWeight":180.16}]}}'
+res <- pc_response(
+  ok_text,
+  request = list(
+    domain = "compound",
+    namespace = "cid",
+    identifier = 2244,
+    operation = "property/MolecularWeight",
+    output = "JSON"
+  )
+)
+
+res$success
+as_tibble(res)
+```
+
+You can also normalize raw payload text into the same typed structure:
+
+```{r}
+fault_text <- '{"Fault":{"Code":"PUGREST.BadRequest","Message":"Invalid request"}}'
+fault_res <- pc_response(fault_text, request = list(url = "https://example.org"))
+fault_res$success
+fault_res$error$code
+```
+
+## 2) Runtime policy and transport controls
+
+Use `pc_profile()` for common policies, then override with `pc_config()`.
+
+```{r}
+pc_profile("default")
+cfg <- pc_config(
+  rate_limit = 5,
+  timeout = 60,
+  retries = 3,
+  pause_base = 1,
+  pause_cap = 8,
+  cache_ttl = 24 * 60 * 60
+)
+cfg
+```
+
+Input validation is strict for chunk sizes, worker counts, and numeric controls.
+
+```{r}
+try(pc_config(rate_limit = 0), silent = TRUE)
+try(pc_request(cache_ttl = Inf, offline = TRUE), silent = TRUE)
+```
+
+## 3) Unified request layer and typed wrappers
+
+`pc_request()` is the generic entry point. Wrappers provide typed intent.
+
+```{r eval=FALSE}
+# Generic request
+r0 <- pc_request(
+  domain = "compound",
+  namespace = "cid",
+  identifier = 2244,
+  operation = "property/MolecularWeight,XLogP",
+  output = "JSON"
+)
+
+# Domain-oriented wrappers
+cmp <- pc_compound(identifier = 2244, namespace = "cid", operation = "record")
+sub <- pc_substance(identifier = 2244, namespace = "cid", operation = "record")
+asy <- pc_assay(identifier = 1000, namespace = "aid", operation = "summary")
+prp <- pc_property(identifier = c(2244, 3672), properties = c("MolecularWeight", "XLogP"))
+idm <- pc_identifier_map(identifier = "aspirin", namespace = "name", to = "cids")
+
+as_tibble(prp)
+as_tibble(idm)
+```
+
+## 4) Caching and offline replay
+
+PubChemR supports memory+disk caching, diagnostics, and cache-only replay mode.
+
+```{r eval=FALSE}
+pc_cache_clear()
+
+first <- pc_property(
+  identifier = 2244,
+  properties = c("MolecularWeight", "XLogP"),
+  namespace = "cid",
+  cache = TRUE
+)
+
+second <- pc_property(
+  identifier = 2244,
+  properties = c("MolecularWeight", "XLogP"),
+  namespace = "cid",
+  cache = TRUE
+)
+
+second$from_cache
+pc_cache_info()
+```
+
+Offline replay mode is useful for deterministic pipelines:
+
+```{r}
+offline_miss <- pc_request(
+  domain = "compound",
+  namespace = "cid",
+  identifier = 2244,
+  output = "JSON",
+  cache = TRUE,
+  offline = TRUE
+)
+
+offline_miss$success
+offline_miss$error$code
+```
+
+## 5) Async listkey workflows (`pc_submit` -> `pc_poll` -> `pc_collect`)
+
+For asynchronous queries, use:
+
+```{r eval=FALSE}
+q <- pc_submit(
+  domain = "compound",
+  namespace = "name",
+  identifier = "aspirin",
+  searchtype = "similarity",
+  operation = "cids",
+  output = "JSON",
+  options = list(Threshold = 95, MaxRecords = 200)
+)
+
+# Option A: explicit polling
+final_a <- pc_poll(q, interval = 1.5, max_attempts = 20)
+
+# Option B: convenience collector
+final_b <- pc_collect(q, interval = 1.5, max_attempts = 20)
+
+as_tibble(final_b)
+```
+
+## 6) Checkpointed batching and resume
+
+`pc_batch()` supports chunking, optional parallelism, and resumable checkpoints.
+
+```{r eval=FALSE}
+ids <- c("aspirin", "ibuprofen", "caffeine", "acetaminophen", "naproxen")
+cp_dir <- file.path(tempdir(), "pc_batch_checkpoint")
+
+batch <- pc_batch(
+  ids = ids,
+  fn = function(chunk_ids) {
+    pc_identifier_map(
+      identifier = chunk_ids,
+      namespace = "name",
+      to = "cids",
+      domain = "compound",
+      cache = TRUE
+    )
+  },
+  chunk_size = 2,
+  checkpoint_dir = cp_dir,
+  checkpoint_id = "name_to_cid_demo"
+)
+
+batch
+as_tibble(batch)
+```
+
+Resume from existing checkpoint state:
+
+```{r eval=FALSE}
+resumed <- pc_resume_batch(
+  fn = function(chunk_ids) {
+    pc_identifier_map(
+      identifier = chunk_ids,
+      namespace = "name",
+      to = "cids",
+      domain = "compound",
+      cache = TRUE
+    )
+  },
+  checkpoint_dir = cp_dir,
+  checkpoint_id = "name_to_cid_demo"
+)
+
+resumed$checkpoint$resumed
+as_tibble(resumed)
+```
+
+## 7) Benchmarking and threshold gates
+
+`pc_benchmark()` compares chunk and parallel scenarios.  
+`pc_benchmark_harness()` scales this into scenario gates (10/1k/100k by default).
+
+```{r eval=FALSE}
+probe <- function(ids) {
+  pc_request(
+    domain = "compound",
+    namespace = "cid",
+    identifier = ids,
+    operation = "property/MolecularWeight",
+    output = "JSON",
+    cache = FALSE
+  )
+}
+
+bm <- pc_benchmark(
+  ids = rep(2244, 200),
+  fn = probe,
+  chunk_sizes = c(25, 50, 100),
+  parallel_options = c(FALSE)
+)
+bm
+```
+
+```{r eval=FALSE}
+thresholds <- list(
+  elapsed_sec = c(`10` = 30, `1000` = 300, `100000` = 3600),
+  failed_chunk_ratio = c(`10` = 0, `1000` = 0.01, `100000` = 0.05)
+)
+
+h <- pc_benchmark_harness(
+  fn = probe,
+  ids = rep(2244, 100000),
+  scenario_sizes = c(10L, 1000L, 100000L),
+  chunk_sizes = c(100L, 1000L),
+  thresholds = thresholds,
+  report_path = file.path(tempdir(), "pubchemr-benchmark.md"),
+  report_format = "markdown"
+)
+
+h$summary
+```
+
+## 8) Analysis-layer helpers for assay modeling
+
+### 8.1 Similarity retrieval and long assay activity table
+
+```{r eval=FALSE}
+sim <- pc_similarity_search(
+  identifier = "CC(=O)OC1=CC=CC=C1C(=O)O",
+  namespace = "smiles",
+  threshold = 90,
+  max_records = 200,
+  cache = TRUE
+)
+
+sim_tbl <- as_tibble(sim) %>%
+  filter(!is.na(CID)) %>%
+  mutate(CID = as.character(CID)) %>%
+  distinct(CID)
+
+assay_long <- pc_assay_activity_long(
+  identifier = sim_tbl$CID,
+  namespace = "cid",
+  chunk_size = 25,
+  cache = TRUE
+)
+```
+
+`pc_assay_activity_long()` now fails explicitly if any chunk fails, instead of
+silently dropping failed chunks.
+
+### 8.2 Activity matrix (dense or sparse)
+
+```{r eval=FALSE}
+activity_dense <- pc_activity_matrix(
+  assay_long,
+  cid_col = "CID",
+  aid_col = "AID",
+  outcome_col = "ActivityOutcome",
+  aggregate = "max",
+  fill = NA_real_,
+  output = "tibble"
+)
+
+activity_sparse <- pc_activity_matrix(
+  assay_long,
+  cid_col = "CID",
+  aid_col = "AID",
+  outcome_col = "ActivityOutcome",
+  aggregate = "max",
+  fill = NA_real_,
+  output = "sparse"
+)
+
+activity_sparse
+```
+
+### 8.3 Feature table, matrix conversion, and export
+
+```{r eval=FALSE}
+feat <- pc_feature_table(
+  identifier = unique(assay_long$CID),
+  properties = c("MolecularWeight", "XLogP", "TPSA"),
+  namespace = "cid",
+  cache = TRUE
+)
+
+joined <- pc_cross_domain_join(
+  compounds = feat,
+  assays = assay_long %>% select(CID, AID, ActivityOutcome)
+)
+
+mm <- pc_model_matrix(
+  x = feat,
+  outcome = NULL,
+  id_cols = c("CID"),
+  na_fill = 0,
+  scale = TRUE
+)
+
+pc_export_model_data(mm, path = file.path(tempdir(), "pubchemr_model.csv"), format = "csv")
+pc_export_model_data(mm, path = file.path(tempdir(), "pubchemr_model.rds"), format = "rds")
+```
+
+## 9) Optional ecosystem bridges
+
+These helpers require optional packages:
+
+- `pc_to_rcdk()` requires `rcdk`
+- `pc_to_chemminer()` requires `ChemmineR`
+
+```{r eval=FALSE}
+# Example assumes a table with CanonicalSMILES column:
+mols <- pc_to_rcdk(feat, smiles_col = "CanonicalSMILES", id_col = "CID")
+sdf  <- pc_to_chemminer(feat, smiles_col = "CanonicalSMILES")
+```
+
+## 10) Targeted PUG View helper for bio test sections
+
+Besides generic `get_pug_view()`, `get_biological_test_results()` directly
+extracts the `"Biological Test Results"` section.
+
+```{r eval=FALSE}
+bio <- get_biological_test_results(
+  identifier = "2244",
+  domain = "compound",
+  heading = "Biological Test Results",
+  .all = TRUE
+)
+
+bio
+```
+
+## 11) Lifecycle policy (legacy vs nextgen)
+
+```{r}
+pc_lifecycle_policy()
+```
+
+## 12) Recommended production pattern
+
+For robust pipelines:
+
+1. Set policy with `pc_profile()`/`pc_config()`.
+2. Enable cache and inspect with `pc_cache_info()`.
+3. Use typed wrappers (`pc_property()`, `pc_identifier_map()`, etc.).
+4. Run heavy jobs through `pc_batch()` with checkpoints.
+5. Use `pc_resume_batch()` for interruptions.
+6. Gate performance with `pc_benchmark_harness()`.
+7. Export model-ready artifacts with `pc_export_model_data()`.

@@ -69,11 +69,20 @@ download <- function(filename = NULL, outformat, path, identifier, namespace = '
     stop(paste(full_path, "already exists. Use 'overwrite=TRUE' to overwrite it."))
   }
 
+  payload <- if (is.raw(response_content)) {
+    response_content
+  } else {
+    if (!is.atomic(response_content) || length(response_content) == 0) {
+      stop("Unsupported response type for download().")
+    }
+    txt <- paste(as.character(response_content), collapse = "\n")
+    charToRaw(enc2utf8(txt))
+  }
+
   # Write the content to the specified path
-  writeBin(charToRaw(response_content), full_path)
+  writeBin(payload, full_path)
   message(paste0("The file has been saved to ", "'", full_path, "'"))
 
   # Return the full path invisibly
   return(invisible(full_path))
 }
-

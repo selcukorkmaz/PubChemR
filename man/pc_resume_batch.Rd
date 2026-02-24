@@ -27,12 +27,11 @@ pc_resume_batch(
 
 \item{rerun_failed}{Logical; rerun chunks previously marked as failed.}
 
-\item{...}{Additional arguments passed into \code{fn}.}
+\item{...}{Additional arguments passed into `fn`.}
 }
 \value{
-A typed \code{PubChemBatchResult} object.
+A typed `PubChemBatchResult` object.
 }
 \description{
-Resume a checkpointed batch workflow from an existing manifest produced by
-\code{pc_batch(..., checkpoint_dir = ..., checkpoint_id = ...)}.
+Resume a Checkpointed Batch Workflow
 }

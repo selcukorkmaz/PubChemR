@@ -271,17 +271,9 @@ pc_activity_matrix <- function(x,
 
   cid_levels <- unique(cid)
   aid_levels <- unique(aid)
-  mat <- matrix(
-    fill,
-    nrow = length(cid_levels),
-    ncol = length(aid_levels),
-    dimnames = list(cid_levels, paste0(prefix, aid_levels))
-  )
-
   row_idx <- match(agg_cid, cid_levels)
   col_idx <- match(agg_aid, aid_levels)
   good <- !is.na(row_idx) & !is.na(col_idx)
-  mat[cbind(row_idx[good], col_idx[good])] <- agg_values[good]
 
   if (identical(output, "sparse")) {
     if (!requireNamespace("Matrix", quietly = TRUE)) {
@@ -295,7 +287,14 @@ pc_activity_matrix <- function(x,
       )
     }
 
-    sparse <- Matrix::Matrix(mat, sparse = TRUE)
+    sparse <- Matrix::sparseMatrix(
+      i = as.integer(row_idx[good]),
+      j = as.integer(col_idx[good]),
+      x = as.numeric(agg_values[good]),
+      dims = c(length(cid_levels), length(aid_levels)),
+      dimnames = list(cid_levels, paste0(prefix, aid_levels)),
+      giveCsparse = TRUE
+    )
     out_sparse <- structure(
       list(
         x = sparse,
@@ -309,6 +308,14 @@ pc_activity_matrix <- function(x,
     )
     return(out_sparse)
   }
+
+  mat <- matrix(
+    fill,
+    nrow = length(cid_levels),
+    ncol = length(aid_levels),
+    dimnames = list(cid_levels, paste0(prefix, aid_levels))
+  )
+  mat[cbind(row_idx[good], col_idx[good])] <- agg_values[good]
 
   out <- tibble::as_tibble(
     data.frame(CID = cid_levels, mat, check.names = FALSE, stringsAsFactors = FALSE),

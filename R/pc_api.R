@@ -21,6 +21,79 @@
   if (is.null(x)) y else x
 }
 
+pc_validate_positive_integer_scalar <- function(x, arg_name, allow_null = FALSE) {
+  if (is.null(x)) {
+    if (isTRUE(allow_null)) {
+      return(NULL)
+    }
+    stop(arg_name, " must be a positive integer.")
+  }
+
+  if (!is.numeric(x) ||
+      length(x) != 1 ||
+      is.na(x) ||
+      !is.finite(x) ||
+      x <= 0 ||
+      x != floor(x) ||
+      x > .Machine$integer.max) {
+    stop(arg_name, " must be a positive integer.")
+  }
+
+  as.integer(x)
+}
+
+pc_validate_positive_integer_vector <- function(x, arg_name) {
+  if (!is.numeric(x) ||
+      length(x) == 0 ||
+      any(is.na(x)) ||
+      any(!is.finite(x)) ||
+      any(x <= 0) ||
+      any(x != floor(x)) ||
+      any(x > .Machine$integer.max)) {
+    stop(arg_name, " must contain positive integers.")
+  }
+
+  as.integer(x)
+}
+
+pc_validate_positive_finite_numeric_scalar <- function(x, arg_name, allow_null = FALSE) {
+  if (is.null(x)) {
+    if (isTRUE(allow_null)) {
+      return(NULL)
+    }
+    stop(arg_name, " must be a finite numeric scalar > 0.")
+  }
+
+  if (!is.numeric(x) ||
+      length(x) != 1 ||
+      is.na(x) ||
+      !is.finite(x) ||
+      x <= 0) {
+    stop(arg_name, " must be a finite numeric scalar > 0.")
+  }
+
+  as.numeric(x)
+}
+
+pc_validate_nonnegative_finite_numeric_scalar <- function(x, arg_name, allow_null = FALSE) {
+  if (is.null(x)) {
+    if (isTRUE(allow_null)) {
+      return(NULL)
+    }
+    stop(arg_name, " must be a finite numeric scalar >= 0.")
+  }
+
+  if (!is.numeric(x) ||
+      length(x) != 1 ||
+      is.na(x) ||
+      !is.finite(x) ||
+      x < 0) {
+    stop(arg_name, " must be a finite numeric scalar >= 0.")
+  }
+
+  as.numeric(x)
+}
+
 pc_hash_text <- function(x) {
   tf <- tempfile(fileext = ".txt")
   on.exit(unlink(tf), add = TRUE)
@@ -38,13 +111,19 @@ pc_build_url <- function(domain = "compound",
                          operation = NULL,
                          output = "JSON",
                          searchtype = NULL,
-                         options = NULL) {
+                         options = NULL,
+                         property = NULL) {
   if (is.null(domain)) {
     stop("'domain' cannot be NULL.")
   }
 
   if (!is.null(operation) && length(operation) > 1) {
     operation <- paste(operation, collapse = "/")
+  }
+
+  # Handle sourceid namespace: replace "/" with "." in identifiers
+  if (!is.null(namespace) && namespace == "sourceid" && !is.null(identifier)) {
+    identifier <- gsub("/", ".", as.character(identifier))
   }
 
   id_part <- NULL
@@ -54,9 +133,15 @@ pc_build_url <- function(domain = "compound",
     id_part <- paste(ids, collapse = ",")
   }
 
+  # Build property segment if provided
+  prop_part <- NULL
+  if (!is.null(property)) {
+    prop_part <- paste0("property/", paste(property, collapse = ","))
+  }
+
   comps <- Filter(
     Negate(is.null),
-    list("https://pubchem.ncbi.nlm.nih.gov/rest/pug", domain, searchtype, namespace, id_part, operation, output)
+    list("https://pubchem.ncbi.nlm.nih.gov/rest/pug", domain, searchtype, namespace, id_part, operation, prop_part, output)
   )
   url <- paste(comps, collapse = "/")
 
@@ -84,9 +169,11 @@ pc_throttle <- function(rate_limit = TRUE) {
     rl <- .pc_state$config$rate_limit
   }
 
-  if (isFALSE(rate_limit) || is.null(rl) || !is.numeric(rl) || rl <= 0) {
+  if (isFALSE(rate_limit)) {
     return(invisible(NULL))
   }
+
+  rl <- pc_validate_positive_finite_numeric_scalar(rl, "'rate_limit'")
 
   min_interval <- 1 / rl
   now <- as.numeric(Sys.time())
@@ -166,7 +253,13 @@ pc_config <- function(...) {
   }
 
   for (nm in names(dots)) {
-    .pc_state$config[[nm]] <- dots[[nm]]
+    val <- dots[[nm]]
+    if (nm == "rate_limit") {
+      val <- pc_validate_positive_finite_numeric_scalar(val, "'rate_limit'")
+    } else if (nm == "cache_ttl") {
+      val <- pc_validate_nonnegative_finite_numeric_scalar(val, "'cache_ttl'")
+    }
+    .pc_state$config[[nm]] <- val
   }
 
   .pc_state$config
@@ -419,6 +512,13 @@ pc_request <- function(domain = "compound",
   cache_dir <- cache_dir %||% .pc_state$config$cache_dir
   cache_ttl <- cache_ttl %||% .pc_state$config$cache_ttl
   offline <- offline %||% .pc_state$config$offline
+  cache_ttl <- pc_validate_nonnegative_finite_numeric_scalar(cache_ttl, "'cache_ttl'")
+
+  if (isTRUE(rate_limit)) {
+    pc_validate_positive_finite_numeric_scalar(.pc_state$config$rate_limit, "'rate_limit'")
+  } else if (!isFALSE(rate_limit)) {
+    rate_limit <- pc_validate_positive_finite_numeric_scalar(rate_limit, "'rate_limit'")
+  }
 
   url <- pc_build_url(
     domain = domain,
@@ -806,11 +906,20 @@ pc_parallel_apply <- function(x, fn, parallel = FALSE, workers = NULL) {
     return(lapply(x, fn))
   }
 
+  workers <- pc_validate_positive_integer_scalar(workers, "'workers'", allow_null = TRUE)
+
   if (.Platform$OS.type == "windows") {
     warning("Parallel batching on Windows currently falls back to sequential execution.")
     lapply(x, fn)
   } else {
-    workers <- workers %||% max(1, parallel::detectCores() - 1)
+    default_workers <- suppressWarnings(as.integer(parallel::detectCores()))
+    if (is.na(default_workers) || default_workers <= 1L) {
+      default_workers <- 1L
+    } else {
+      default_workers <- default_workers - 1L
+    }
+    workers <- workers %||% default_workers
+    workers <- pc_validate_positive_integer_scalar(workers, "'workers'")
     parallel::mclapply(x, fn, mc.cores = workers)
   }
 }
@@ -846,17 +955,16 @@ pc_batch <- function(ids,
   if (!is.function(fn)) {
     stop("'fn' must be a function.")
   }
-  if (!is.numeric(chunk_size) || chunk_size <= 0) {
-    stop("'chunk_size' must be a positive integer.")
-  }
+  chunk_size <- pc_validate_positive_integer_scalar(chunk_size, "'chunk_size'")
+  workers <- pc_validate_positive_integer_scalar(workers, "'workers'", allow_null = TRUE)
 
-  idx <- ceiling(seq_along(ids) / as.integer(chunk_size))
+  idx <- ceiling(seq_along(ids) / chunk_size)
   chunks <- split(ids, idx)
 
   checkpoint_enabled <- !is.null(checkpoint_dir)
   checkpoint_id <- checkpoint_id %||% paste0(
     "batch_",
-    pc_hash_text(pc_stable_string(list(ids = as.character(ids), chunk_size = as.integer(chunk_size))))
+    pc_hash_text(pc_stable_string(list(ids = as.character(ids), chunk_size = chunk_size)))
   )
 
   checkpoint_manifest_path <- if (checkpoint_enabled) {
@@ -896,7 +1004,7 @@ pc_batch <- function(ids,
       checkpoint_dir = checkpoint_dir,
       ids = as.character(ids),
       chunks = lapply(chunks, as.character),
-      chunk_size = as.integer(chunk_size),
+      chunk_size = chunk_size,
       chunk_status = as.character(chunk_status),
       error = as.character(errors),
       chunk_files = vapply(seq_along(chunks), checkpoint_chunk_path, character(1)),
@@ -929,7 +1037,7 @@ pc_batch <- function(ids,
       if (!identical(as.character(manifest$ids), as.character(ids))) {
         stop("Checkpoint manifest IDs do not match the provided 'ids'.")
       }
-      if (!identical(as.integer(manifest$chunk_size), as.integer(chunk_size))) {
+      if (!identical(as.integer(manifest$chunk_size), chunk_size)) {
         stop("Checkpoint manifest chunk_size does not match provided 'chunk_size'.")
       }
       if (length(manifest$chunks) != n_chunks) {
@@ -1151,9 +1259,14 @@ pc_benchmark <- function(ids,
   if (!is.function(fn)) {
     stop("'fn' must be a function.")
   }
+  chunk_sizes <- pc_validate_positive_integer_vector(chunk_sizes, "'chunk_sizes'")
+  workers <- pc_validate_positive_integer_scalar(workers, "'workers'", allow_null = TRUE)
+  if (!is.logical(parallel_options) || length(parallel_options) == 0 || any(is.na(parallel_options))) {
+    stop("'parallel_options' must contain at least one logical value.")
+  }
 
   scenarios <- expand.grid(
-    chunk_size = as.integer(chunk_sizes),
+    chunk_size = chunk_sizes,
     parallel = as.logical(parallel_options),
     stringsAsFactors = FALSE
   )
@@ -1357,12 +1470,11 @@ pc_benchmark_harness <- function(fn,
   if (!is.function(fn)) {
     stop("'fn' must be a function.")
   }
-  if (!is.numeric(chunk_sizes) || length(chunk_sizes) == 0 || any(is.na(chunk_sizes)) || any(chunk_sizes <= 0)) {
-    stop("'chunk_sizes' must contain positive integers.")
-  }
-  if (!is.logical(parallel_options) || length(parallel_options) == 0) {
+  chunk_sizes <- pc_validate_positive_integer_vector(chunk_sizes, "'chunk_sizes'")
+  if (!is.logical(parallel_options) || length(parallel_options) == 0 || any(is.na(parallel_options))) {
     stop("'parallel_options' must contain at least one logical value.")
   }
+  workers <- pc_validate_positive_integer_scalar(workers, "'workers'", allow_null = TRUE)
   if (!is.null(id_generator) && !is.function(id_generator)) {
     stop("'id_generator' must be a function when provided.")
   }
@@ -1370,10 +1482,7 @@ pc_benchmark_harness <- function(fn,
     stop("'thresholds' must be a list.")
   }
 
-  scenario_sizes <- as.integer(scenario_sizes)
-  if (length(scenario_sizes) == 0 || any(is.na(scenario_sizes)) || any(scenario_sizes <= 0)) {
-    stop("'scenario_sizes' must contain positive integers.")
-  }
+  scenario_sizes <- pc_validate_positive_integer_vector(scenario_sizes, "'scenario_sizes'")
 
   report_format <- match.arg(report_format)
 
@@ -1382,7 +1491,7 @@ pc_benchmark_harness <- function(fn,
     bm <- pc_benchmark(
       ids = ids_n,
       fn = fn,
-      chunk_sizes = as.integer(chunk_sizes),
+      chunk_sizes = chunk_sizes,
       parallel_options = parallel_options,
       workers = workers,
       ...

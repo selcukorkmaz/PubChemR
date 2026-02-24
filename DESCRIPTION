@@ -18,7 +18,6 @@ Description: Provides an interface to the 'PubChem' database via the PUG REST <h
             Functions are available to retrieve data in different formats, perform searches, and access detailed annotations.
 License: GPL (>= 2)
 Encoding: UTF-8
-LazyData: true
 RoxygenNote: 7.3.3
 URL: https://selcukorkmaz.github.io/pubchemr-tutorial/, https://github.com/selcukorkmaz/PubChemR
 BugReports: https://github.com/selcukorkmaz/PubChemR/issues
@@ -30,12 +29,11 @@ Imports:
   tidyr,
   RJSONIO,
   httr,
-  utils,
-  RCurl,
+  utils
+Suggests:
   magick,
   rsvg,
-  png
-Suggests:
+  png,
   testthat (>= 3.0.0),
   Matrix,
   knitr,

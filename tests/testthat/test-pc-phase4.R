@@ -75,6 +75,47 @@ test_that("pc_export_model_data exports csv and rds", {
   expect_equal(nrow(rds_tbl), 3)
 })
 
+test_that("pc_assay_activity_long fails explicitly when chunked requests fail", {
+  ok_res <- pc_make_result(
+    success = TRUE,
+    request = list(identifier = "2244"),
+    data = mock_assaysummary_payload(),
+    status = 200
+  )
+  fail_res <- pc_make_result(
+    success = FALSE,
+    request = list(identifier = "3672"),
+    data = NULL,
+    error = pc_make_error("TransportError", "synthetic chunk failure"),
+    status = 500
+  )
+
+  local_mocked_bindings(
+    pc_batch = function(ids, fn, chunk_size, ...) {
+      structure(
+        list(
+          ids = ids,
+          chunks = list(ids[[1]], ids[[2]]),
+          results = list(ok_res, fail_res),
+          success = c(TRUE, FALSE),
+          error = c("", "synthetic chunk failure")
+        ),
+        class = "PubChemBatchResult"
+      )
+    },
+    .package = "PubChemR"
+  )
+
+  expect_error(
+    pc_assay_activity_long(
+      identifier = c("2244", "3672"),
+      namespace = "cid",
+      chunk_size = 1L
+    ),
+    "chunked request failed"
+  )
+})
+
 test_that("pc_assay_activity_long live smoke on assaysummary", {
   skip_on_cran()
   skip_if_not_live_smoke()

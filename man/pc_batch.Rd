@@ -30,7 +30,7 @@ pc_batch(
 
 \item{checkpoint_dir}{Optional directory to persist per-chunk checkpoint files.}
 
-\item{checkpoint_id}{Optional checkpoint run id. If \code{NULL}, a deterministic id is generated.}
+\item{checkpoint_id}{Optional checkpoint run id. If `NULL`, a deterministic id is generated.}
 
 \item{resume}{Logical; resume from an existing checkpoint manifest.}
 

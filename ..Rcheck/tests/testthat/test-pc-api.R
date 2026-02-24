@@ -52,6 +52,188 @@ test_that("pc_benchmark returns scenario metrics", {
   expect_true(all(c("chunk_size", "elapsed_sec", "successful_chunks") %in% names(bm)))
 })
 
+test_that("pc_benchmark_harness supports 10/1000/100000 scenarios", {
+  dummy <- function(ids) {
+    pc_response('{"IdentifierList":{"CID":[2244]}}', request = list(identifier = ids))
+  }
+
+  out <- pc_benchmark_harness(
+    fn = dummy,
+    ids = 1:10,
+    scenario_sizes = c(10L, 1000L, 100000L),
+    chunk_sizes = 100000L,
+    parallel_options = FALSE,
+    thresholds = list(
+      elapsed_sec = Inf,
+      failed_chunk_ratio = 0
+    )
+  )
+
+  expect_s3_class(out, "PubChemBenchmarkReport")
+  expect_s3_class(out$details, "tbl_df")
+  expect_s3_class(out$summary, "tbl_df")
+  expect_equal(sort(unique(out$details$scenario_size)), c(10L, 1000L, 100000L))
+  expect_equal(nrow(out$summary), 3)
+  expect_true(all(out$summary$all_runs_pass))
+})
+
+test_that("pc_benchmark_harness enforces threshold gates", {
+  dummy <- function(ids) {
+    pc_response('{"IdentifierList":{"CID":[2244]}}', request = list(identifier = ids))
+  }
+
+  elapsed_fail <- pc_benchmark_harness(
+    fn = dummy,
+    ids = 1:10,
+    scenario_sizes = 10L,
+    chunk_sizes = 10L,
+    thresholds = list(
+      elapsed_sec = -1,
+      failed_chunk_ratio = 1
+    )
+  )
+
+  expect_false(elapsed_fail$details$run_pass[[1]])
+  expect_false(elapsed_fail$summary$all_runs_pass[[1]])
+
+  flaky <- function(ids) {
+    if (as.integer(ids[[1]]) == 6L) {
+      stop("synthetic chunk failure")
+    }
+    pc_response('{"IdentifierList":{"CID":[2244]}}', request = list(identifier = ids))
+  }
+
+  ratio_fail <- pc_benchmark_harness(
+    fn = flaky,
+    ids = 1:10,
+    scenario_sizes = 10L,
+    chunk_sizes = 5L,
+    thresholds = list(
+      elapsed_sec = Inf,
+      failed_chunk_ratio = 0.4
+    )
+  )
+
+  expect_equal(ratio_fail$details$failed_chunks[[1]], 1)
+  expect_gt(ratio_fail$details$failed_chunk_ratio[[1]], 0.4)
+  expect_false(ratio_fail$details$run_pass[[1]])
+})
+
+test_that("pc_benchmark_harness writes markdown, csv, and rds reports", {
+  dummy <- function(ids) {
+    pc_response('{"IdentifierList":{"CID":[2244]}}', request = list(identifier = ids))
+  }
+
+  formats <- c(markdown = ".md", csv = ".csv", rds = ".rds")
+
+  for (fmt in names(formats)) {
+    path <- tempfile(fileext = formats[[fmt]])
+    out <- pc_benchmark_harness(
+      fn = dummy,
+      ids = 1:10,
+      scenario_sizes = 10L,
+      chunk_sizes = 10L,
+      thresholds = list(
+        elapsed_sec = Inf,
+        failed_chunk_ratio = 0
+      ),
+      report_path = path,
+      report_format = fmt
+    )
+
+    expect_true(file.exists(path))
+
+    if (fmt == "markdown") {
+      txt <- readLines(path, warn = FALSE)
+      expect_true(any(grepl("PubChem Benchmark Harness Report", txt, fixed = TRUE)))
+    } else if (fmt == "csv") {
+      csv <- utils::read.csv(path)
+      expect_true("scenario_size" %in% names(csv))
+    } else {
+      obj <- readRDS(path)
+      expect_s3_class(obj, "PubChemBenchmarkReport")
+      expect_s3_class(out, "PubChemBenchmarkReport")
+    }
+  }
+})
+
+test_that("pc_benchmark_harness validates key inputs", {
+  dummy <- function(ids) {
+    pc_response('{"IdentifierList":{"CID":[2244]}}', request = list(identifier = ids))
+  }
+
+  expect_error(
+    pc_benchmark_harness(
+      fn = dummy,
+      ids = 1:10,
+      scenario_sizes = 10L,
+      chunk_sizes = 0
+    ),
+    "chunk_sizes"
+  )
+
+  expect_error(
+    pc_benchmark_harness(
+      fn = dummy,
+      ids = 1:10,
+      scenario_sizes = 10L,
+      id_generator = 123
+    ),
+    "id_generator"
+  )
+
+  expect_error(
+    pc_benchmark_harness(
+      fn = dummy,
+      ids = 1:10,
+      scenario_sizes = 10L,
+      thresholds = 1
+    ),
+    "thresholds"
+  )
+})
+
+test_that("pc_calibrate_benchmark_thresholds applies quantile-based calibration floors", {
+  history <- data.frame(
+    scenario_size = c(10, 10, 10, 1000, 1000, 1000),
+    max_elapsed_sec = c(10, 12, 8, 200, 240, 260),
+    max_failed_chunk_ratio = c(0, 0.02, 0, 0.01, 0.03, 0.02),
+    stringsAsFactors = FALSE
+  )
+
+  calibrated <- pc_calibrate_benchmark_thresholds(
+    history = history,
+    baseline = list(
+      elapsed_sec = c(`10` = 30, `1000` = 300),
+      failed_chunk_ratio = c(`10` = 0, `1000` = 0.01)
+    ),
+    quantile_prob = 0.95,
+    elapsed_buffer = 1.25,
+    failed_ratio_buffer = 1.5,
+    min_runs = 3
+  )
+
+  expect_true(is.list(calibrated))
+  expect_true(all(c("elapsed_sec", "failed_chunk_ratio") %in% names(calibrated)))
+  expect_true(calibrated$elapsed_sec[["10"]] >= 30)
+  expect_true(calibrated$elapsed_sec[["1000"]] >= 300)
+  expect_true(calibrated$failed_chunk_ratio[["10"]] >= 0)
+  expect_true(calibrated$failed_chunk_ratio[["1000"]] >= 0.01)
+})
+
+test_that("pc_calibrate_benchmark_thresholds validates history schema", {
+  bad <- data.frame(
+    scenario_size = 10,
+    max_elapsed_sec = 1,
+    stringsAsFactors = FALSE
+  )
+
+  expect_error(
+    pc_calibrate_benchmark_thresholds(history = bad),
+    "history"
+  )
+})
+
 test_that("pc_batch checkpoint manifest is created and resume can rerun failed chunks", {
   td <- tempfile("pc-batch-checkpoint-")
   dir.create(td, recursive = TRUE)

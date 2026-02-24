@@ -76,7 +76,6 @@
 #' message indicating the file's location.
 #'
 #' @importFrom utils download.file
-#' @importFrom RCurl url.exists
 #' @export
 #'
 #' @examples
@@ -93,18 +92,10 @@ get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operatio
                     searchtype = NULL, path = NULL, file_name = NULL, options = NULL) {
 
   # Validate inputs
-  if (is.null(identifier)) {
+  if (is.null(identifier) || length(identifier) == 0) {
     stop("Error: 'identifier' cannot be NULL. Please provide a valid identifier.")
   }
-
-  # Generate file name if not provided
-  if (is.null(file_name)) {
-    # Generate a file name based on the identifier and timestamp to ensure uniqueness
-    file_name <- paste0(identifier, "_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".sdf")
-  } else {
-    # Append .sdf extension if not already present
-    file_name <- ifelse(grepl("\\.sdf$", file_name), file_name, paste0(file_name, ".sdf"))
-  }
+  ids <- as.character(identifier)
 
   # Handle file path and create directories if necessary
   if (is.null(path)) {
@@ -121,29 +112,69 @@ get_sdf <- function(identifier, namespace = 'cid', domain = 'compound', operatio
     }
   }
 
-  # Construct the full file path
-  full_path <- file.path(path, file_name)
-
-  # Try to download the SDF file
-  result <- tryCatch({
-    # Make the request to retrieve the SDF file URL using the 'request' function
-    response_sdf <- request(identifier, namespace, domain, operation, 'SDF', searchtype, options)
-
-    # Check if the response URL exists
-    if (url.exists(response_sdf)) {
-      # Download the SDF file to the specified path
-      download.file(response_sdf, full_path, quiet = TRUE)
-      message("SDF file saved successfully:\n  File Name: '", file_name, "'\n  Saved at: ", path)
-      return(invisible(full_path))
-    } else {
-      message("Error: Received no content to write to the SDF file. URL may be invalid or the content is missing.")
-      return(NULL)
+  if (!is.null(file_name)) {
+    if (!is.character(file_name) || length(file_name) == 0) {
+      stop("'file_name' must be NULL or a character vector.")
     }
-  }, error = function(e) {
-    message("Failed to download SDF file. Error:", conditionMessage(e))
-    return(NULL)  # Return NULL to indicate failure in the process
-  })
+    if (!(length(file_name) == 1 || length(file_name) == length(ids))) {
+      stop("'file_name' must have length 1 or match length(identifier).")
+    }
+  }
 
-  # Return the full path or NULL if an error occurred
-  return(result)
+  stamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
+  clean_id <- function(x) gsub("[^A-Za-z0-9._-]", "_", x)
+  make_name <- function(i) {
+    if (is.null(file_name)) {
+      nm <- paste0(clean_id(ids[[i]]), "_", stamp)
+    } else if (length(file_name) == 1 && length(ids) > 1) {
+      nm <- paste0(file_name[[1]], "_", clean_id(ids[[i]]))
+    } else {
+      nm <- file_name[[i]]
+    }
+
+    if (!grepl("\\.sdf$", nm, ignore.case = TRUE)) {
+      nm <- paste0(nm, ".sdf")
+    }
+    nm
+  }
+
+  saved <- character(0)
+  for (i in seq_along(ids)) {
+    id_i <- ids[[i]]
+    file_i <- make_name(i)
+    full_path <- file.path(path, file_i)
+
+    one <- tryCatch({
+      response_sdf <- request(id_i, namespace, domain, operation, 'SDF', searchtype, options)
+
+      sdf_check <- tryCatch(httr::HEAD(response_sdf), error = function(e) NULL)
+      if (!is.null(sdf_check) && httr::status_code(sdf_check) == 200) {
+        download.file(response_sdf, full_path, quiet = TRUE, mode = "wb")
+        message(
+          "SDF file saved successfully:\n  Identifier: '", id_i,
+          "'\n  File Name: '", file_i,
+          "'\n  Saved at: ", path
+        )
+        full_path
+      } else {
+        message("Error: Received no content for identifier '", id_i, "'. URL may be invalid or content is missing.")
+        NULL
+      }
+    }, error = function(e) {
+      message("Failed to download SDF file for identifier '", id_i, "'. Error: ", conditionMessage(e))
+      NULL
+    })
+
+    if (!is.null(one)) {
+      saved <- c(saved, one)
+    }
+  }
+
+  if (length(saved) == 0) {
+    return(NULL)
+  }
+  if (length(saved) == 1) {
+    return(invisible(saved[[1]]))
+  }
+  invisible(saved)
 }

@@ -1,7 +1,7 @@
 
-R version 4.5.1 (2025-06-13 ucrt) -- "Great Square Root"
+R version 4.5.2 (2025-10-31) -- "[Not] Part in a Rumble"
 Copyright (C) 2025 The R Foundation for Statistical Computing
-Platform: x86_64-w64-mingw32/x64
+Platform: aarch64-apple-darwin20
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -20,7 +20,6 @@ Type 'q()' to quit R.
 > pkgname <- "PubChemR"
 > source(file.path(R.home("share"), "R", "examples-header.R"))
 > options(warn = 1)
-> options(pager = "console")
 > library('PubChemR')
 > 
 > base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
@@ -115,6 +114,7 @@ Type 'q()' to quit R.
 > ### Aliases: get_biological_test_results
 > 
 > ### ** Examples
+> 
 > 
 > 
 > 
@@ -433,7 +433,7 @@ Type 'q()' to quit R.
 > cleanEx()
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  0.55 0.18 0.57 NA NA 
+Time elapsed:  0.275 0.018 0.296 0 0 
 > grDevices::dev.off()
 null device 
           1 

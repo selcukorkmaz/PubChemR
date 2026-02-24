@@ -20,57 +20,17 @@
 request <- function(identifier = NULL, namespace = 'cid', domain = 'compound',
                     operation = NULL, output = 'JSON', searchtype = NULL, options = NULL) {
 
-  # Check for missing identifier
   if (is.null(identifier)) {
     stop("identifier/cid cannot be NULL")
   }
 
-  if (is.numeric(identifier)) {
-    identifier <- as.character(identifier)
-  }
-
-  # If identifier is a list, join with commas into string
-  if (length(identifier) > 1) {
-    identifier <- paste(identifier, collapse = ',')
-  }
-
-  # Build API URL
-  urlid <- NULL
-  postdata <- NULL
-
-  if (!is.null(options)) {
-    if (!is.list(options) || is.null(names(options)) || any(names(options) == "")) {
-      stop("'options' must be a named list.")
-    }
-
-    option_values <- as.character(unlist(options, use.names = FALSE))
-    option_names <- as.character(names(options))
-    option_pairs <- paste0(
-      URLencode(option_names, reserved = TRUE),
-      "=",
-      URLencode(option_values, reserved = TRUE)
-    )
-    options <- paste0("?", paste(option_pairs, collapse = "&"))
-  }
-
-  if (!is.null(namespace) && namespace == 'sourceid') {
-    identifier <- gsub("/", ".", identifier)
-  }
-
-  api_base <- "https://pubchem.ncbi.nlm.nih.gov/rest/pug"
-
-  # Ensure the identifier is URL encoded
-  urlid <- URLencode(identifier, reserved = TRUE)
-
-  # Adjusting the logic for building the URL components
-  # The identifier now comes before the output format
-  comps <- Filter(Negate(is.null), list(api_base, domain, searchtype, namespace, urlid, operation, output))
-  apiurl <- paste0(paste(comps, collapse = '/'), options)
-
-  # if (length(params) > 0) {
-  #   apiurl <- paste0(apiurl, "?", paste(names(params), params, sep = "=", collapse = "&"))
-  # }
-
-  # Return the constructed URL
-  return(apiurl)
+  pc_build_url(
+    domain = domain,
+    namespace = namespace,
+    identifier = identifier,
+    operation = operation,
+    output = output,
+    searchtype = searchtype,
+    options = options
+  )
 }

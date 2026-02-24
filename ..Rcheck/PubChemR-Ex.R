@@ -1,7 +1,6 @@
 pkgname <- "PubChemR"
 source(file.path(R.home("share"), "R", "examples-header.R"))
 options(warn = 1)
-options(pager = "console")
 library('PubChemR')
 
 base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
@@ -96,6 +95,7 @@ flush(stderr()); flush(stdout())
 ### Aliases: get_biological_test_results
 
 ### ** Examples
+
 
 
 

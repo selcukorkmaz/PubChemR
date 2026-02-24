@@ -1,7 +1,7 @@
 
-R version 4.5.1 (2025-06-13 ucrt) -- "Great Square Root"
+R version 4.5.2 (2025-10-31) -- "[Not] Part in a Rumble"
 Copyright (C) 2025 The R Foundation for Statistical Computing
-Platform: x86_64-w64-mingw32/x64
+Platform: aarch64-apple-darwin20
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -16,28 +16,21 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 Type 'q()' to quit R.
 
 > library(testthat)
-Warning message:
-package 'testthat' was built under R version 4.5.2 
 > library(PubChemR)
 > 
 > test_check("PubChemR")
-Error in readRDS(file) : unknown input format
-Error in readRDS(file) : unknown input format
-Error in readRDS(file) : unknown input format
-Error in readRDS(file) : unknown input format
-Error in readRDS(file) : unknown input format
-[ FAIL 0 | WARN 0 | SKIP 14 | PASS 102 ]
+[ FAIL 0 | WARN 0 | SKIP 14 | PASS 130 ]
 
 ══ Skipped tests (14) ══════════════════════════════════════════════════════════
 • On CRAN (14): 'test-get-biological-test-results.R:55:3',
   'test-get-json.R:2:3', 'test-get-json.R:21:3', 'test-get-pug-view.R:2:3',
   'test-live-smoke.R:2:3', 'test-live-smoke.R:12:3', 'test-live-smoke.R:29:3',
-  'test-live-smoke.R:39:3', 'test-live-smoke.R:50:3', 'test-pc-api.R:143:3',
-  'test-pc-api.R:195:3', 'test-pc-phase4.R:79:3',
+  'test-live-smoke.R:39:3', 'test-live-smoke.R:50:3', 'test-pc-api.R:325:3',
+  'test-pc-api.R:377:3', 'test-pc-phase4.R:79:3',
   'test-wrapper-contracts.R:2:3', 'test-wrapper-contracts.R:11:3'
 
-[ FAIL 0 | WARN 0 | SKIP 14 | PASS 102 ]
+[ FAIL 0 | WARN 0 | SKIP 14 | PASS 130 ]
 > 
 > proc.time()
    user  system elapsed 
-   2.68    2.45    2.62 
+  1.181   0.155   1.375 

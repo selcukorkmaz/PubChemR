@@ -29,8 +29,8 @@
 #' }
 get_all_sources <- function(domain = 'substance') {
   # Validate the domain parameter
-  if (!domain %in% c("substance", "compound", "assay")) {
-    stop("Invalid domain specified. Please choose from 'substance', 'compound', or 'assay'.")
+  if (!domain %in% c("substance", "assay")) {
+    stop("Invalid domain specified. Please choose from 'substance' or 'assay'.")
   }
 
   # Attempt to retrieve the sources using the get_pubchem function
