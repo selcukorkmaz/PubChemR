@@ -27,7 +27,7 @@ library(tibble)
 
 ## 1) Similar compounds from a seed structure
 
-```{r eval=FALSE}
+```{r eval=TRUE}
 # Aspirin SMILES as seed
 seed_smiles <- "CC(=O)OC1=CC=CC=C1C(=O)O"
 
@@ -49,7 +49,7 @@ sim_tbl
 
 ## 2) Fetch assay activity in long format
 
-```{r eval=FALSE}
+```{r eval=TRUE}
 assay_long <- pc_assay_activity_long(
   identifier = sim_tbl$CID,
   namespace = "cid",
@@ -64,7 +64,7 @@ assay_long %>%
 
 ## 3) Build activity matrix (compound x assay)
 
-```{r eval=FALSE}
+```{r eval=TRUE}
 activity_mat <- pc_activity_matrix(
   assay_long,
   cid_col = "CID",
@@ -79,7 +79,7 @@ activity_mat
 
 ## 4) Add chemical features and prepare model matrix
 
-```{r eval=FALSE}
+```{r eval=TRUE}
 feature_tbl <- pc_feature_table(
   identifier = sim_tbl$CID,
   properties = c(
@@ -109,7 +109,7 @@ mm
 
 ## 5) Export model-ready artifact
 
-```{r eval=FALSE}
+```{r eval=TRUE}
 out_csv <- file.path(tempdir(), "phase4_similarity_activity_model.csv")
 out_rds <- file.path(tempdir(), "phase4_similarity_activity_model.rds")
 
