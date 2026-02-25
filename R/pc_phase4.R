@@ -282,3 +282,168 @@ pc_export_model_data <- function(x,
     cols = ncol(out_tbl)
   ))
 }
+
+#' Retrieve Full Biological Test Results from PubChem SDQ
+#'
+#' Queries the PubChem SDQ (Structured Data Query) agent to retrieve the full
+#' biological test results table for a compound. Uses the \code{download} query
+#' mode to return all available columns for each record. The number and names
+#' of columns vary by compound depending on available data (e.g. baid, aid,
+#' sid, cid, activityid, aidtypeid, aidname, targetname, cmpdname, acvalue,
+#' geneid, etc.).
+#'
+#' @param identifier A single compound identifier (CID, name, or InChIKey
+#'   depending on \code{namespace}).
+#' @param namespace Character. The namespace for \code{identifier}. Default
+#'   \code{"cid"}. If not \code{"cid"}, the identifier is first resolved to a
+#'   CID via \code{\link{pc_request}}.
+#' @param collection Character. SDQ collection to query. Default
+#'   \code{"bioactivity"}.
+#' @param limit Integer. Maximum number of rows to return. Default
+#'   \code{10000000L}.
+#' @param order Character. Column and direction for sorting results. Default
+#'   \code{"activity,asc"}.
+#' @param rate_limit Logical or numeric. If \code{TRUE} (default), applies
+#'   the global rate limit from \code{\link{pc_config}}. If numeric, uses that
+#'   value as requests per second.
+#' @param cache Logical. If \code{TRUE}, cache results to disk. Default
+#'   \code{FALSE}.
+#' @param cache_dir Character. Directory for disk cache. Defaults to the value
+#'   from \code{\link{pc_config}}.
+#' @param cache_ttl Numeric. Cache time-to-live in seconds. Defaults to the
+#'   value from \code{\link{pc_config}}.
+#' @param force_refresh Logical. If \code{TRUE}, bypass any cached result.
+#'   Default \code{FALSE}.
+#'
+#' @return A tibble of class \code{PubChemTable} containing the full
+#'   bioactivity results.
+#'
+#' @examples
+#' \dontrun{
+#'   # Retrieve bioactivity data for aspirin (CID 2244)
+#'   bio <- pc_sdq_bioactivity(2244)
+#'   head(bio)
+#' }
+#'
+#' @export
+pc_sdq_bioactivity <- function(identifier,
+                               namespace = "cid",
+                               collection = "bioactivity",
+                               limit = 10000000L,
+                               order = "activity,asc",
+                               rate_limit = TRUE,
+                               cache = FALSE,
+                               cache_dir = NULL,
+                               cache_ttl = NULL,
+                               force_refresh = FALSE) {
+  if (missing(identifier) || is.null(identifier) || length(identifier) == 0) {
+    stop("'identifier' is required.")
+  }
+
+  cache_dir <- cache_dir %||% .pc_state$config$cache_dir
+  cache_ttl <- cache_ttl %||% .pc_state$config$cache_ttl
+
+  # Resolve to CIDs if namespace is not "cid"
+  if (tolower(namespace) != "cid") {
+    res <- pc_request(
+      domain = "compound",
+      namespace = namespace,
+      identifier = as.character(identifier),
+      operation = "cids",
+      output = "JSON",
+      rate_limit = rate_limit
+    )
+    if (!isTRUE(res$success)) {
+      stop("Failed to resolve identifier to CID: ",
+           res$error$message %||% "Unknown error")
+    }
+    cids <- as.character(unlist(res$data$IdentifierList$CID))
+    if (length(cids) == 0) {
+      stop("No CIDs found for identifier '", identifier, "'.")
+    }
+  } else {
+    cids <- as.character(identifier)
+  }
+
+  sdq_base <- "https://pubchem.ncbi.nlm.nih.gov/sdq/sdqagent.cgi"
+
+  all_results <- lapply(cids, function(cid) {
+    query_list <- list(
+      download = "*",
+      collection = collection,
+      where = list(ands = list(list(cid = cid))),
+      order = list(order),
+      start = 1L,
+      limit = as.integer(limit)
+    )
+    query_json <- RJSONIO::toJSON(query_list)
+    url <- paste0(sdq_base, "?infmt=json&outfmt=json&query=",
+                  utils::URLencode(query_json, reserved = TRUE))
+
+    # Check cache
+    if (isTRUE(cache) && !isTRUE(force_refresh)) {
+      cache_key <- pc_cache_key(method = "GET", url = url)
+      cached <- pc_cache_get(cache_key, cache_dir = cache_dir, ttl = cache_ttl)
+      if (!is.null(cached)) {
+        return(cached)
+      }
+    }
+
+    # Rate limiting
+    pc_throttle(rate_limit)
+
+    resp <- httr::GET(url, httr::user_agent(
+      .pc_state$config$user_agent
+    ))
+
+    if (httr::status_code(resp) != 200L) {
+      stop("SDQ request failed with HTTP status ",
+           httr::status_code(resp), " for CID ", cid, ".")
+    }
+
+    text <- httr::content(resp, as = "text", encoding = "UTF-8")
+    parsed <- tryCatch(RJSONIO::fromJSON(text), error = function(e) NULL)
+
+    if (is.null(parsed)) {
+      stop("Failed to parse SDQ response for CID ", cid, ".")
+    }
+
+    # download mode returns a raw JSON array on success,
+    # or an SDQOutputSet wrapper on error
+    if (!is.null(names(parsed)) && "SDQOutputSet" %in% names(parsed)) {
+      output_set <- parsed$SDQOutputSet[[1]]
+      sdq_status <- output_set[["status"]]
+      err_code <- sdq_status[["code"]]
+      err_msg <- sdq_status[["error"]] %||% "Unknown SDQ error"
+      stop("SDQ query failed for CID ", cid, " (code ", err_code, "): ", err_msg)
+    }
+
+    # parsed is a list of named vectors (one per row)
+    if (length(parsed) == 0) {
+      tbl <- tibble::tibble()
+    } else {
+      tbl <- dplyr::bind_rows(lapply(parsed, function(r) {
+        tibble::as_tibble(as.list(r))
+      }))
+    }
+
+    # Cache the result
+    if (isTRUE(cache)) {
+      cache_key <- pc_cache_key(method = "GET", url = url)
+      pc_cache_set(cache_key, tbl, cache_dir = cache_dir)
+    }
+
+    tbl
+  })
+
+  out <- dplyr::bind_rows(all_results)
+
+  # Coerce ID columns to character for consistency
+  id_cols <- intersect(c("cid", "aid", "sid", "baid"), names(out))
+  for (col in id_cols) {
+    out[[col]] <- as.character(out[[col]])
+  }
+
+  class(out) <- unique(c("PubChemTable", class(out)))
+  out
+}
