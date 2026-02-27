@@ -125,12 +125,68 @@ pc_similarity_search <- function(identifier,
     domain = domain,
     namespace = namespace,
     identifier = identifier,
-    operation = to,
+    operation = NULL,
     searchtype = searchtype,
     output = "JSON",
     options = opt,
     ...
   )
+
+  if (isTRUE(out$success) && isTRUE(out$pending) && !is.null(out$listkey)) {
+    out <- pc_poll(
+      x = out$listkey,
+      domain = domain,
+      operation = "cids",
+      output = "JSON",
+      options = NULL,
+      interval = 1,
+      max_attempts = 60,
+      ...
+    )
+  }
+
+  if (isTRUE(out$success) && !identical(to, "cids")) {
+    dat <- out$data
+    cids <- character(0)
+
+    if (is.list(dat) && !is.null(dat$IdentifierList$CID)) {
+      cids <- as.character(dat$IdentifierList$CID)
+    } else if (is.list(dat) && !is.null(dat$InformationList$Information)) {
+      info <- dat$InformationList$Information
+      cids <- unique(as.character(unlist(lapply(info, `[[`, "CID"), use.names = FALSE)))
+    }
+
+    cids <- cids[!is.na(cids) & nzchar(cids)]
+    if (length(cids) > 0) {
+      out <- pc_identifier_map(
+        identifier = cids,
+        namespace = "cid",
+        to = to,
+        domain = domain,
+        ...
+      )
+    } else {
+      out <- pc_make_result(
+        success = FALSE,
+        request = out$request,
+        data = out$data,
+        error = pc_make_error(
+          code = "SimilarityMapError",
+          message = "Similarity search returned no CID values to map."
+        ),
+        status = out$status,
+        raw = out$raw,
+        headers = out$headers,
+        from_cache = out$from_cache %||% FALSE,
+        pending = out$pending %||% FALSE,
+        listkey = out$listkey %||% NULL
+      )
+    }
+  }
+
+  if (is.list(out$request)) {
+    out$request$to <- to
+  }
 
   class(out) <- unique(c("PubChemSimilarityResult", "PubChemIdMap", class(out)))
   out

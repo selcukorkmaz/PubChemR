@@ -47,6 +47,16 @@ test_that("pc_response creates PubChemResult from fault payload", {
   expect_match(res$error$code, "PUGREST")
 })
 
+test_that("pc_response handles non-list Waiting payloads without error", {
+  payload <- '{"Waiting":"queued"}'
+  res <- pc_response(payload, request = list(url = "https://example.org"))
+
+  expect_s3_class(res, "PubChemResult")
+  expect_true(res$success)
+  expect_false(isTRUE(res$pending))
+  expect_null(res$listkey)
+})
+
 test_that("pc_batch chunks and summarizes execution", {
   dummy <- function(ids) {
     pc_response('{"IdentifierList":{"CID":[2244]}}', request = list(identifier = ids))

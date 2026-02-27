@@ -26,8 +26,13 @@ test_that("pc_similarity_search builds similarity request metadata", {
   expect_false(out$success)
   expect_equal(out$error$code, "OfflineCacheMiss")
   expect_equal(out$request$searchtype, "similarity")
+  expect_null(out$request$operation)
+  expect_equal(out$request$to, "cids")
   expect_equal(out$request$options$Threshold, 88)
   expect_equal(out$request$options$MaxRecords, 25L)
+
+  tbl <- as_tibble(out)
+  expect_true("CID" %in% names(tbl))
 })
 
 test_that("pc_activity_matrix creates wide CID x AID matrix", {

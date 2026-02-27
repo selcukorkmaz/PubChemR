@@ -412,10 +412,19 @@ pc_parse_text_payload <- function(text) {
   if (is.null(parsed)) {
     return(list(data = text, fault = NULL, pending = FALSE, listkey = NULL))
   }
+  if (!is.list(parsed)) {
+    return(list(data = parsed, fault = NULL, pending = FALSE, listkey = NULL))
+  }
 
   fault <- parsed$Fault
-  pending <- !is.null(parsed$Waiting) && !is.null(parsed$Waiting$ListKey)
-  listkey <- if (pending) parsed$Waiting$ListKey else NULL
+  waiting <- parsed$Waiting
+  listkey <- NULL
+  if (is.list(waiting) && !is.null(waiting$ListKey)) {
+    listkey <- waiting$ListKey
+  } else if (!is.null(names(waiting)) && "ListKey" %in% names(waiting)) {
+    listkey <- unname(waiting[["ListKey"]])
+  }
+  pending <- !is.null(listkey) && nzchar(as.character(listkey[[1]]))
   list(data = parsed, fault = fault, pending = pending, listkey = listkey)
 }
 
@@ -616,8 +625,11 @@ pc_request <- function(domain = "compound",
   if (isTRUE(cache) && !isTRUE(force_refresh)) {
     cached <- pc_cache_get(cache_key, cache_dir = cache_dir, ttl = cache_ttl)
     if (!is.null(cached)) {
-      cached$from_cache <- TRUE
-      return(cached)
+      # Pending responses are transient and should never be replayed from cache.
+      if (!isTRUE(cached$pending)) {
+        cached$from_cache <- TRUE
+        return(cached)
+      }
     }
   }
 
@@ -678,7 +690,8 @@ pc_request <- function(domain = "compound",
 
   out <- pc_response(resp, request = request_meta)
 
-  if (isTRUE(cache) && isTRUE(out$success)) {
+  # Cache only terminal successful responses; skip transient pending payloads.
+  if (isTRUE(cache) && isTRUE(out$success) && !isTRUE(out$pending)) {
     pc_cache_set(cache_key, out, cache_dir = cache_dir)
   }
 
@@ -768,7 +781,29 @@ as_tibble.PubChemRecord <- function(x, ...) {
 
 #' @export
 as_tibble.PubChemIdMap <- function(x, ...) {
-  as_tibble.PubChemResult(x, ...)
+  out <- as_tibble.PubChemResult(x, ...)
+
+  to <- NULL
+  if (is.list(x$request)) {
+    to <- x$request$to %||% x$request$operation
+  }
+  to <- tolower(as.character(to %||% ""))
+
+  id_col <- if (identical(to, "cids")) {
+    "CID"
+  } else if (identical(to, "sids")) {
+    "SID"
+  } else if (identical(to, "aids")) {
+    "AID"
+  } else {
+    NULL
+  }
+
+  if (!is.null(id_col) && !(id_col %in% names(out))) {
+    out[[id_col]] <- rep(NA_character_, nrow(out))
+  }
+
+  out
 }
 
 #' @export
