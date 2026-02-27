@@ -236,9 +236,22 @@ pc_cache_set <- function(key, value, cache_dir) {
 
 #' Configure PubChemR Next-Gen API Defaults
 #'
+#' @description
+#' Reads or updates global defaults used by the next-generation PubChemR
+#' transport helpers (timeouts, retries, cache settings, and rate limits).
+#'
 #' @param ... Named configuration values to update.
 #'
+#' @details
+#' Call with no arguments to inspect the active configuration. Named arguments
+#' update only the provided keys and keep all other values unchanged.
+#'
 #' @return A named list of active configuration values.
+#'
+#' @examples
+#' cfg <- pc_config()
+#' names(cfg)
+#' pc_config(rate_limit = cfg$rate_limit)$rate_limit
 #' @export
 pc_config <- function(...) {
   dots <- list(...)
@@ -267,11 +280,24 @@ pc_config <- function(...) {
 
 #' Clear PubChemR Request Cache
 #'
+#' @description
+#' Clears request cache entries stored in memory and/or on disk.
+#'
 #' @param cache_dir Cache directory. If `NULL`, uses configured cache directory.
 #' @param memory Logical; clear in-memory cache.
 #' @param disk Logical; clear on-disk cache.
 #'
+#' @details
+#' Use this helper before reproducible reruns or after changing transport
+#' settings when you want to avoid stale cached responses.
+#'
 #' @return Invisibly returns `TRUE`.
+#'
+#' @examples
+#' tmp_dir <- tempdir()
+#' pc_cache_info(cache_dir = tmp_dir)
+#' pc_cache_clear(cache_dir = tmp_dir, memory = TRUE, disk = FALSE)
+#' pc_cache_info(cache_dir = tmp_dir)
 #' @export
 pc_cache_clear <- function(cache_dir = NULL, memory = TRUE, disk = TRUE) {
   cache_dir <- cache_dir %||% .pc_state$config$cache_dir
@@ -292,9 +318,19 @@ pc_cache_clear <- function(cache_dir = NULL, memory = TRUE, disk = TRUE) {
 
 #' Cache Diagnostics for PubChemR
 #'
+#' @description
+#' Reports the current number and size of cached items in memory and on disk.
+#'
 #' @param cache_dir Cache directory. If `NULL`, uses configured cache directory.
 #'
+#' @details
+#' This is a lightweight diagnostic utility for validating cache behavior in
+#' long-running workflows and CI jobs.
+#'
 #' @return A one-row tibble with memory and disk cache diagnostics.
+#'
+#' @examples
+#' pc_cache_info(cache_dir = tempdir())
 #' @export
 pc_cache_info <- function(cache_dir = NULL) {
   cache_dir <- cache_dir %||% .pc_state$config$cache_dir
@@ -385,10 +421,26 @@ pc_parse_text_payload <- function(text) {
 
 #' Normalize an HTTP Response Into a Typed PubChem Result
 #'
+#' @description
+#' Parses PubChem response payloads and standardizes them into a typed
+#' `PubChemResult` object with success, error, and metadata fields.
+#'
 #' @param response A `httr` response object or raw text.
 #' @param request Request metadata list.
 #'
+#' @details
+#' JSON and plain-text payloads are supported. Fault payloads and non-2xx HTTP
+#' statuses are normalized into structured error entries rather than raising
+#' immediate transport exceptions.
+#'
 #' @return An object of class `PubChemResult`.
+#'
+#' @examples
+#' ok <- pc_response('{"IdentifierList":{"CID":[2244]}}', request = list(domain = "compound"))
+#' ok$success
+#'
+#' fail <- pc_response('{"Fault":{"Code":"PUGREST.NotFound","Message":"Not found"}}')
+#' fail$success
 #' @export
 pc_response <- function(response, request = list()) {
   if (inherits(response, "response")) {
@@ -457,6 +509,10 @@ pc_response <- function(response, request = list()) {
 
 #' Unified Transport Layer for PubChem Requests
 #'
+#' @description
+#' Executes PubChem API calls with unified handling for URL construction,
+#' retries, throttling, and optional cache replay.
+#'
 #' @param domain PubChem domain.
 #' @param namespace PubChem namespace.
 #' @param identifier Identifier(s).
@@ -479,7 +535,21 @@ pc_response <- function(response, request = list()) {
 #' @param offline `TRUE` to use cache-only replay mode (no network calls).
 #' @param ... Additional arguments forwarded to `httr::RETRY`.
 #'
+#' @details
+#' `pc_request()` is the low-level engine behind higher-level `pc_*` helpers.
+#' When `offline = TRUE`, requests are served from cache only and return a
+#' structured failure object on cache misses.
+#'
 #' @return An object of class `PubChemResult`.
+#'
+#' @examples
+#' # Fast, network-free call: returns cache hit or structured cache-miss result.
+#' res <- pc_request(identifier = 2244, offline = TRUE)
+#' res$success
+#'
+#' \dontrun{
+#' pc_request(identifier = 2244)
+#' }
 #' @export
 pc_request <- function(domain = "compound",
                        namespace = "cid",
@@ -713,9 +783,25 @@ as_tibble.PubChemBatchResult <- function(x, ...) {
 
 #' Query Compound Records via the Next-Generation API
 #'
+#' @description
+#' Convenience wrapper around `pc_request()` for `compound` domain record
+#' retrieval.
+#'
 #' @inheritParams pc_request
 #'
+#' @details
+#' Returns a typed `PubChemRecord` object and preserves transport metadata such
+#' as `success`, `status`, and cache flags.
+#'
 #' @return A typed `PubChemRecord` object.
+#'
+#' @examples
+#' cmp <- pc_compound(2244, offline = TRUE)
+#' inherits(cmp, "PubChemRecord")
+#'
+#' \dontrun{
+#' pc_compound(2244)
+#' }
 #' @export
 pc_compound <- function(identifier,
                         namespace = "cid",
@@ -740,13 +826,29 @@ pc_compound <- function(identifier,
 
 #' Build a Modeling-Ready Feature Table
 #'
+#' @description
+#' Retrieves compound property fields and returns them in a flat table intended
+#' for feature engineering and modeling workflows.
+#'
 #' @param identifier Identifier vector for compound property retrieval.
 #' @param properties Compound property names.
 #' @param namespace Namespace for identifier.
 #' @param numeric_only If `TRUE`, coerce feature columns to numeric where possible.
 #' @param ... Additional arguments passed to `pc_property()`.
 #'
+#' @details
+#' Transport metadata columns are removed from the returned table. With
+#' `numeric_only = TRUE`, feature columns are opportunistically converted to
+#' numeric where conversion yields at least one finite value.
+#'
 #' @return A tibble of compound features suitable for downstream modeling workflows.
+#'
+#' @examples
+#' names(formals(pc_feature_table))
+#'
+#' \dontrun{
+#' pc_feature_table(2244, properties = c("MolecularWeight", "XLogP"))
+#' }
 #' @export
 pc_feature_table <- function(identifier,
                              properties = c("MolecularWeight", "XLogP", "TPSA", "HBondDonorCount", "HBondAcceptorCount"),
@@ -793,9 +895,24 @@ pc_feature_table <- function(identifier,
 
 #' Query Substance Records via the Next-Generation API
 #'
+#' @description
+#' Convenience wrapper around `pc_request()` for `substance` domain retrieval.
+#'
 #' @inheritParams pc_request
 #'
+#' @details
+#' The function returns a typed record object without altering payload shape,
+#' making it suitable for downstream custom parsers.
+#'
 #' @return A typed `PubChemRecord` object.
+#'
+#' @examples
+#' sub_rec <- pc_substance(5360534, offline = TRUE)
+#' inherits(sub_rec, "PubChemRecord")
+#'
+#' \dontrun{
+#' pc_substance(5360534)
+#' }
 #' @export
 pc_substance <- function(identifier,
                          namespace = "sid",
@@ -818,9 +935,24 @@ pc_substance <- function(identifier,
 
 #' Query Assay Records via the Next-Generation API
 #'
+#' @description
+#' Convenience wrapper around `pc_request()` for assay retrieval workflows.
+#'
 #' @inheritParams pc_request
 #'
+#' @details
+#' Defaults are tuned for assay description retrieval while preserving all
+#' transport controls via `...`.
+#'
 #' @return A typed `PubChemRecord` object.
+#'
+#' @examples
+#' assay_rec <- pc_assay(367, offline = TRUE)
+#' inherits(assay_rec, "PubChemRecord")
+#'
+#' \dontrun{
+#' pc_assay(367)
+#' }
 #' @export
 pc_assay <- function(identifier,
                      namespace = "aid",
@@ -843,10 +975,25 @@ pc_assay <- function(identifier,
 
 #' Query Compound Properties via the Next-Generation API
 #'
+#' @description
+#' Retrieves selected PubChem compound properties for one or more identifiers.
+#'
 #' @param properties Character vector of property names.
 #' @inheritParams pc_request
 #'
+#' @details
+#' `properties` is encoded into the PUG REST operation path. At least one
+#' property name is required.
+#'
 #' @return A typed `PubChemRecord` object.
+#'
+#' @examples
+#' prop_rec <- pc_property(2244, properties = c("MolecularWeight"), offline = TRUE)
+#' inherits(prop_rec, "PubChemRecord")
+#'
+#' \dontrun{
+#' pc_property(2244, properties = c("MolecularWeight", "XLogP"))
+#' }
 #' @export
 pc_property <- function(identifier,
                         properties,
@@ -874,10 +1021,26 @@ pc_property <- function(identifier,
 
 #' Map Identifiers via the Next-Generation API
 #'
+#' @description
+#' Converts one identifier type to another (`CID`, `SID`, `AID`) using PubChem
+#' identifier mapping endpoints.
+#'
 #' @param to Operation target; usually one of `"cids"`, `"sids"`, or `"aids"`.
 #' @inheritParams pc_request
 #'
+#' @details
+#' This is commonly used to bridge domains, for example mapping names to CIDs
+#' before downstream property or assay workflows.
+#'
 #' @return A typed `PubChemIdMap` object.
+#'
+#' @examples
+#' id_map <- pc_identifier_map("aspirin", namespace = "name", to = "cids", offline = TRUE)
+#' inherits(id_map, "PubChemIdMap")
+#'
+#' \dontrun{
+#' pc_identifier_map("aspirin", namespace = "name", to = "cids")
+#' }
 #' @export
 pc_identifier_map <- function(identifier,
                               namespace = "name",
@@ -926,6 +1089,10 @@ pc_parallel_apply <- function(x, fn, parallel = FALSE, workers = NULL) {
 
 #' Batch-Orchestrate PubChem Workflows
 #'
+#' @description
+#' Splits identifier vectors into chunks, applies a worker function per chunk,
+#' and records per-chunk success and error metadata.
+#'
 #' @param ids Identifier vector.
 #' @param fn Function to run on each chunk of `ids`.
 #' @param chunk_size Chunk size.
@@ -937,7 +1104,19 @@ pc_parallel_apply <- function(x, fn, parallel = FALSE, workers = NULL) {
 #' @param rerun_failed Logical; when resuming, rerun chunks previously marked as failed.
 #' @param ... Additional arguments passed into `fn`.
 #'
+#' @details
+#' Checkpoint files can be written to disk and resumed later. Parallel execution
+#' is available on supported platforms when checkpointing is disabled.
+#'
 #' @return A typed `PubChemBatchResult` object.
+#'
+#' @examples
+#' batch <- pc_batch(
+#'   ids = 1:6,
+#'   fn = function(chunk_ids, ...) sum(chunk_ids),
+#'   chunk_size = 2
+#' )
+#' length(batch$results)
 #' @export
 pc_batch <- function(ids,
                      fn,
@@ -1183,6 +1362,10 @@ pc_batch <- function(ids,
 
 #' Resume a Checkpointed Batch Workflow
 #'
+#' @description
+#' Reloads a previously checkpointed `pc_batch()` run and executes pending or
+#' failed chunks.
+#'
 #' @param fn Function to run on each pending chunk.
 #' @param checkpoint_dir Directory containing checkpoint manifest/files.
 #' @param checkpoint_id Checkpoint run id.
@@ -1191,7 +1374,30 @@ pc_batch <- function(ids,
 #' @param rerun_failed Logical; rerun chunks previously marked as failed.
 #' @param ... Additional arguments passed into `fn`.
 #'
+#' @details
+#' This helper reads the batch manifest created by `pc_batch()` and preserves
+#' the original chunking strategy.
+#'
 #' @return A typed `PubChemBatchResult` object.
+#'
+#' @examples
+#' cp_dir <- tempdir()
+#' cp_id <- "pc-doc-example"
+#'
+#' pc_batch(
+#'   ids = 1:4,
+#'   fn = function(chunk_ids, ...) sum(chunk_ids),
+#'   chunk_size = 2,
+#'   checkpoint_dir = cp_dir,
+#'   checkpoint_id = cp_id
+#' )
+#'
+#' resumed <- pc_resume_batch(
+#'   fn = function(chunk_ids, ...) sum(chunk_ids),
+#'   checkpoint_dir = cp_dir,
+#'   checkpoint_id = cp_id
+#' )
+#' resumed$checkpoint$resumed
 #' @export
 pc_resume_batch <- function(fn,
                             checkpoint_dir,
@@ -1238,6 +1444,10 @@ pc_resume_batch <- function(fn,
 
 #' Benchmark Chunked PubChem Workflows
 #'
+#' @description
+#' Evaluates `pc_batch()` execution under multiple chunk-size and parallel
+#' settings and returns runtime and failure metrics.
+#'
 #' @param ids Identifier vector.
 #' @param fn Function applied by `pc_batch()`.
 #' @param chunk_sizes Integer vector of chunk sizes.
@@ -1245,7 +1455,20 @@ pc_resume_batch <- function(fn,
 #' @param workers Number of workers used when parallel is enabled.
 #' @param ... Additional arguments passed to `fn`.
 #'
+#' @details
+#' This benchmark is intended for tuning operational parameters before running
+#' large production queries.
+#'
 #' @return A tibble with runtime and success metrics for each benchmark scenario.
+#'
+#' @examples
+#' bm <- pc_benchmark(
+#'   ids = 1:20,
+#'   fn = function(chunk_ids, ...) sum(chunk_ids),
+#'   chunk_sizes = c(5, 10),
+#'   parallel_options = FALSE
+#' )
+#' nrow(bm)
 #' @export
 pc_benchmark <- function(ids,
                          fn,
@@ -1435,6 +1658,7 @@ pc_calibrate_benchmark_thresholds <- function(history,
 
 #' Benchmark Harness for Scale Scenarios
 #'
+#' @description
 #' Executes benchmark scenarios (defaults: 10, 1000, 100000 identifiers),
 #' evaluates threshold gates, and optionally writes a report artifact.
 #'
@@ -1453,8 +1677,22 @@ pc_calibrate_benchmark_thresholds <- function(history,
 #' @param report_format One of `"markdown"`, `"csv"`, or `"rds"`.
 #' @param ... Additional arguments passed to `fn`.
 #'
+#' @details
+#' Scenario-level summaries include elapsed-time and failed-chunk-ratio gates,
+#' making this helper useful for CI performance regression checks.
+#'
 #' @return An object of class `PubChemBenchmarkReport` containing
 #'   `details` and `summary` tibbles.
+#'
+#' @examples
+#' report <- pc_benchmark_harness(
+#'   fn = function(chunk_ids, ...) sum(chunk_ids),
+#'   ids = 1:50,
+#'   scenario_sizes = c(10L, 20L),
+#'   chunk_sizes = c(5L),
+#'   parallel_options = FALSE
+#' )
+#' class(report)
 #' @export
 pc_benchmark_harness <- function(fn,
                                  ids = NULL,
@@ -1569,9 +1807,25 @@ pc_extract_listkey <- function(x) {
 
 #' Submit an Asynchronous PubChem Query
 #'
+#' @description
+#' Submits a potentially asynchronous PubChem request and returns a query object
+#' containing the initial response and listkey metadata.
+#'
 #' @inheritParams pc_request
 #'
+#' @details
+#' If PubChem responds with a waiting payload, `listkey` is captured and can be
+#' polled later using `pc_poll()` or `pc_collect()`.
+#'
 #' @return An object of class `PubChemAsyncQuery`.
+#'
+#' @examples
+#' q <- pc_submit(identifier = 2244, offline = TRUE)
+#' inherits(q, "PubChemAsyncQuery")
+#'
+#' \dontrun{
+#' pc_submit(identifier = 2244)
+#' }
 #' @export
 pc_submit <- function(domain = "compound",
                       namespace = "cid",
@@ -1607,6 +1861,10 @@ pc_submit <- function(domain = "compound",
 
 #' Poll an Asynchronous PubChem ListKey
 #'
+#' @description
+#' Polls PubChem listkey endpoints until results are ready or the attempt limit
+#' is reached.
+#'
 #' @param x A `PubChemAsyncQuery` object or listkey string.
 #' @param domain Domain for polling.
 #' @param operation Operation for polling.
@@ -1616,7 +1874,15 @@ pc_submit <- function(domain = "compound",
 #' @param max_attempts Maximum polling attempts.
 #' @param ... Additional arguments passed to `pc_request`.
 #'
+#' @details
+#' Polling stops early once `pending = FALSE`. On timeout, a structured
+#' `PubChemResult` failure with code `PollingTimeout` is returned.
+#'
 #' @return A `PubChemResult` object.
+#'
+#' @examples
+#' polled <- pc_poll("example-listkey", max_attempts = 1, offline = TRUE)
+#' polled$success
 #' @export
 pc_poll <- function(x,
                     domain = "compound",
@@ -1676,10 +1942,33 @@ pc_poll <- function(x,
 
 #' Collect Results From an Async PubChem Query
 #'
+#' @description
+#' Resolves a `PubChemAsyncQuery` object to a final `PubChemResult` by polling
+#' when a listkey is present, or returning the initial response otherwise.
+#'
 #' @param x A `PubChemAsyncQuery` object.
 #' @param ... Additional arguments passed to `pc_poll`.
 #'
+#' @details
+#' This helper simplifies asynchronous flow control by encapsulating the
+#' listkey/no-listkey branching logic in one call.
+#'
 #' @return A `PubChemResult` object.
+#'
+#' @examples
+#' q <- structure(
+#'   list(
+#'     initial = pc_request(identifier = 2244, offline = TRUE),
+#'     listkey = NULL,
+#'     domain = "compound",
+#'     operation = NULL,
+#'     output = "JSON",
+#'     options = NULL
+#'   ),
+#'   class = "PubChemAsyncQuery"
+#' )
+#' out <- pc_collect(q)
+#' inherits(out, "PubChemResult")
 #' @export
 pc_collect <- function(x, ...) {
   if (!inherits(x, "PubChemAsyncQuery")) {

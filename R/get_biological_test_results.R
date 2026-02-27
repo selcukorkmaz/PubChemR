@@ -1,5 +1,6 @@
 #' Retrieve "Biological Test Results" Section from PubChem Contents
 #'
+#' @description
 #' This helper fetches a PUG View record and extracts section(s) with heading
 #' `"Biological Test Results"` (or a custom heading) from the PubChem
 #' `CONTENTS` structure.
@@ -16,6 +17,11 @@
 #' @param .verbose Logical. If \code{TRUE}, prints the returned section object
 #'   and returns it invisibly.
 #' @param ... Additional arguments passed to \code{\link{get_pug_view}}.
+#'
+#' @details
+#' This is a targeted utility built on top of \code{\link{get_pug_view}},
+#' \code{\link{retrieve}}, and \code{\link{sectionList}} to simplify extraction
+#' of deeply nested biological testing sections from PUG View records.
 #'
 #' @return A \code{PugViewSection} object (default) or \code{PugViewSectionList}
 #'   when \code{.all = TRUE}. If no section is found, a failed

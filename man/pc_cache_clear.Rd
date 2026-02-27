@@ -17,5 +17,15 @@ pc_cache_clear(cache_dir = NULL, memory = TRUE, disk = TRUE)
 Invisibly returns `TRUE`.
 }
 \description{
-Clear PubChemR Request Cache
+Clears request cache entries stored in memory and/or on disk.
+}
+\details{
+Use this helper before reproducible reruns or after changing transport
+settings when you want to avoid stale cached responses.
+}
+\examples{
+tmp_dir <- tempdir()
+pc_cache_info(cache_dir = tmp_dir)
+pc_cache_clear(cache_dir = tmp_dir, memory = TRUE, disk = FALSE)
+pc_cache_info(cache_dir = tmp_dir)
 }

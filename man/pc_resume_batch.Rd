@@ -33,5 +33,29 @@ pc_resume_batch(
 A typed `PubChemBatchResult` object.
 }
 \description{
-Resume a Checkpointed Batch Workflow
+Reloads a previously checkpointed `pc_batch()` run and executes pending or
+failed chunks.
+}
+\details{
+This helper reads the batch manifest created by `pc_batch()` and preserves
+the original chunking strategy.
+}
+\examples{
+cp_dir <- tempdir()
+cp_id <- "pc-doc-example"
+
+pc_batch(
+  ids = 1:4,
+  fn = function(chunk_ids, ...) sum(chunk_ids),
+  chunk_size = 2,
+  checkpoint_dir = cp_dir,
+  checkpoint_id = cp_id
+)
+
+resumed <- pc_resume_batch(
+  fn = function(chunk_ids, ...) sum(chunk_ids),
+  checkpoint_dir = cp_dir,
+  checkpoint_id = cp_id
+)
+resumed$checkpoint$resumed
 }

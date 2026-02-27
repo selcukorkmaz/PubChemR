@@ -52,3 +52,17 @@ An object of class `PubChemBenchmarkReport` containing
 Executes benchmark scenarios (defaults: 10, 1000, 100000 identifiers),
 evaluates threshold gates, and optionally writes a report artifact.
 }
+\details{
+Scenario-level summaries include elapsed-time and failed-chunk-ratio gates,
+making this helper useful for CI performance regression checks.
+}
+\examples{
+report <- pc_benchmark_harness(
+  fn = function(chunk_ids, ...) sum(chunk_ids),
+  ids = 1:50,
+  scenario_sizes = c(10L, 20L),
+  chunk_sizes = c(5L),
+  parallel_options = FALSE
+)
+class(report)
+}

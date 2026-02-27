@@ -36,5 +36,18 @@ pc_submit(
 An object of class `PubChemAsyncQuery`.
 }
 \description{
-Submit an Asynchronous PubChem Query
+Submits a potentially asynchronous PubChem request and returns a query object
+containing the initial response and listkey metadata.
+}
+\details{
+If PubChem responds with a waiting payload, `listkey` is captured and can be
+polled later using `pc_poll()` or `pc_collect()`.
+}
+\examples{
+q <- pc_submit(identifier = 2244, offline = TRUE)
+inherits(q, "PubChemAsyncQuery")
+
+\dontrun{
+pc_submit(identifier = 2244)
+}
 }

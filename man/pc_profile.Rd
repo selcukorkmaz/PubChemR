@@ -15,5 +15,13 @@ pc_profile(profile = c("default", "cloud", "high_throughput"), ...)
 A named list with active transport configuration.
 }
 \description{
-Apply a Predefined Execution Profile
+Applies a named transport profile and optional overrides to `pc_config()`.
+}
+\details{
+Profiles provide baseline settings for rate limits, retries, and cache TTL.
+Any named overrides supplied in `...` replace the selected profile values.
+}
+\examples{
+cfg <- pc_profile("default")
+cfg$rate_limit
 }

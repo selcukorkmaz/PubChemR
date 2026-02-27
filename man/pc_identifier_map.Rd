@@ -33,5 +33,18 @@ pc_identifier_map(
 A typed `PubChemIdMap` object.
 }
 \description{
-Map Identifiers via the Next-Generation API
+Converts one identifier type to another (`CID`, `SID`, `AID`) using PubChem
+identifier mapping endpoints.
+}
+\details{
+This is commonly used to bridge domains, for example mapping names to CIDs
+before downstream property or assay workflows.
+}
+\examples{
+id_map <- pc_identifier_map("aspirin", namespace = "name", to = "cids", offline = TRUE)
+inherits(id_map, "PubChemIdMap")
+
+\dontrun{
+pc_identifier_map("aspirin", namespace = "name", to = "cids")
+}
 }

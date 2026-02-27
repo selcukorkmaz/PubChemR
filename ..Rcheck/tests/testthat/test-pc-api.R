@@ -10,6 +10,33 @@ test_that("pc_config get/set works for known keys", {
   pc_config(rate_limit = 5)
 })
 
+test_that("pc_config validates finite numeric rate_limit and cache_ttl", {
+  expect_error(
+    pc_config(rate_limit = NA_real_),
+    "rate_limit"
+  )
+  expect_error(
+    pc_config(rate_limit = Inf),
+    "rate_limit"
+  )
+  expect_error(
+    pc_config(rate_limit = 0),
+    "rate_limit"
+  )
+  expect_error(
+    pc_config(cache_ttl = NA_real_),
+    "cache_ttl"
+  )
+  expect_error(
+    pc_config(cache_ttl = Inf),
+    "cache_ttl"
+  )
+  expect_error(
+    pc_config(cache_ttl = -1),
+    "cache_ttl"
+  )
+})
+
 test_that("pc_response creates PubChemResult from fault payload", {
   payload <- '{"Fault":{"Code":"PUGREST.BadRequest","Message":"Invalid request"}}'
   res <- pc_response(payload, request = list(url = "https://example.org"))
@@ -35,6 +62,29 @@ test_that("pc_batch chunks and summarizes execution", {
   expect_equal(nrow(tbl), 3)
 })
 
+test_that("pc_batch validates integer chunk_size and workers", {
+  dummy <- function(ids) {
+    pc_response('{"IdentifierList":{"CID":[2244]}}', request = list(identifier = ids))
+  }
+
+  expect_error(
+    pc_batch(ids = 1:5, fn = dummy, chunk_size = 0.5),
+    "chunk_size"
+  )
+  expect_error(
+    pc_batch(ids = 1:5, fn = dummy, chunk_size = 2, workers = 0),
+    "workers"
+  )
+  expect_error(
+    pc_batch(ids = 1:5, fn = dummy, chunk_size = 2, workers = 1.5),
+    "workers"
+  )
+  expect_error(
+    pc_batch(ids = 1:5, fn = dummy, chunk_size = 2, workers = Inf),
+    "workers"
+  )
+})
+
 test_that("pc_benchmark returns scenario metrics", {
   dummy <- function(ids) {
     pc_response('{"IdentifierList":{"CID":[2244]}}', request = list(identifier = ids))
@@ -50,6 +100,32 @@ test_that("pc_benchmark returns scenario metrics", {
   expect_s3_class(bm, "tbl_df")
   expect_equal(nrow(bm), 2)
   expect_true(all(c("chunk_size", "elapsed_sec", "successful_chunks") %in% names(bm)))
+})
+
+test_that("pc_benchmark validates chunk_sizes and workers", {
+  dummy <- function(ids) {
+    pc_response('{"IdentifierList":{"CID":[2244]}}', request = list(identifier = ids))
+  }
+
+  expect_error(
+    pc_benchmark(
+      ids = 1:10,
+      fn = dummy,
+      chunk_sizes = c(2, 2.5),
+      parallel_options = FALSE
+    ),
+    "chunk_sizes"
+  )
+  expect_error(
+    pc_benchmark(
+      ids = 1:10,
+      fn = dummy,
+      chunk_sizes = 2,
+      parallel_options = TRUE,
+      workers = 0
+    ),
+    "workers"
+  )
 })
 
 test_that("pc_benchmark_harness supports 10/1000/100000 scenarios", {
@@ -190,6 +266,35 @@ test_that("pc_benchmark_harness validates key inputs", {
       thresholds = 1
     ),
     "thresholds"
+  )
+
+  expect_error(
+    pc_benchmark_harness(
+      fn = dummy,
+      ids = 1:10,
+      scenario_sizes = 10L,
+      chunk_sizes = 2.5
+    ),
+    "chunk_sizes"
+  )
+
+  expect_error(
+    pc_benchmark_harness(
+      fn = dummy,
+      ids = 1:10,
+      scenario_sizes = 10.5
+    ),
+    "scenario_sizes"
+  )
+
+  expect_error(
+    pc_benchmark_harness(
+      fn = dummy,
+      ids = 1:10,
+      scenario_sizes = 10L,
+      workers = 0
+    ),
+    "workers"
   )
 })
 
@@ -364,6 +469,29 @@ test_that("pc_request offline mode returns cache-miss error when absent", {
   expect_s3_class(out, "PubChemResult")
   expect_false(out$success)
   expect_equal(out$error$code, "OfflineCacheMiss")
+})
+
+test_that("pc_request validates cache_ttl and rate_limit", {
+  expect_error(
+    pc_request(cache_ttl = NA_real_, offline = TRUE),
+    "cache_ttl"
+  )
+  expect_error(
+    pc_request(cache_ttl = Inf, offline = TRUE),
+    "cache_ttl"
+  )
+  expect_error(
+    pc_request(rate_limit = NA_real_, offline = TRUE),
+    "rate_limit"
+  )
+  expect_error(
+    pc_request(rate_limit = Inf, offline = TRUE),
+    "rate_limit"
+  )
+  expect_error(
+    pc_request(rate_limit = 0, offline = TRUE),
+    "rate_limit"
+  )
 })
 
 test_that("pc_cache_info returns a diagnostics tibble", {

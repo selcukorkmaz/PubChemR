@@ -21,6 +21,16 @@ case-insensitively after trimming.}
 Numeric vector aligned with `values`.
 }
 \description{
+Converts textual activity outcomes (for example, `Active`/`Inactive`) into
+numeric values for matrix and modeling workflows.
+
 Maps textual activity outcomes (for example, `Active`/`Inactive`) to
 numeric values for modeling workflows.
+}
+\details{
+Matching is case-insensitive after trimming whitespace. Custom maps augment
+the built-in defaults unless names overlap.
+}
+\examples{
+pc_activity_outcome_map(c("Active", "Inactive", "Unknown"))
 }

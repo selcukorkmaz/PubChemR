@@ -44,6 +44,11 @@ This helper fetches a PUG View record and extracts section(s) with heading
 `"Biological Test Results"` (or a custom heading) from the PubChem
 `CONTENTS` structure.
 }
+\details{
+This is a targeted utility built on top of \code{\link{get_pug_view}},
+\code{\link{retrieve}}, and \code{\link{sectionList}} to simplify extraction
+of deeply nested biological testing sections from PUG View records.
+}
 \examples{
 \donttest{
 bio <- get_biological_test_results(identifier = "2244", domain = "compound")

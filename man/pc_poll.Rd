@@ -36,5 +36,14 @@ pc_poll(
 A `PubChemResult` object.
 }
 \description{
-Poll an Asynchronous PubChem ListKey
+Polls PubChem listkey endpoints until results are ready or the attempt limit
+is reached.
+}
+\details{
+Polling stops early once `pending = FALSE`. On timeout, a structured
+`PubChemResult` failure with code `PollingTimeout` is returned.
+}
+\examples{
+polled <- pc_poll("example-listkey", max_attempts = 1, offline = TRUE)
+polled$success
 }

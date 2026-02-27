@@ -30,5 +30,15 @@ pc_cross_domain_join(
 A joined tibble suitable for downstream analysis workflows.
 }
 \description{
-Join Compound, Substance, Assay, and Target Tables
+Joins cross-domain PubChem tables into a single analysis-ready tibble using
+configurable key mappings and join type.
+}
+\details{
+Join steps are applied in order: compounds-substances, compounds-assays, then
+assays-targets when corresponding tables are supplied.
+}
+\examples{
+compounds <- tibble::tibble(CID = c("1", "2"), MW = c(100, 200))
+assays <- tibble::tibble(CID = c("1", "2"), AID = c("10", "11"))
+pc_cross_domain_join(compounds, assays = assays)
 }

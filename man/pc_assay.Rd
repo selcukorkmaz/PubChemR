@@ -30,5 +30,17 @@ pc_assay(
 A typed `PubChemRecord` object.
 }
 \description{
-Query Assay Records via the Next-Generation API
+Convenience wrapper around `pc_request()` for assay retrieval workflows.
+}
+\details{
+Defaults are tuned for assay description retrieval while preserving all
+transport controls via `...`.
+}
+\examples{
+assay_rec <- pc_assay(367, offline = TRUE)
+inherits(assay_rec, "PubChemRecord")
+
+\dontrun{
+pc_assay(367)
+}
 }

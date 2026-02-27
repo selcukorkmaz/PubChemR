@@ -33,5 +33,18 @@ pc_compound(
 A typed `PubChemRecord` object.
 }
 \description{
-Query Compound Records via the Next-Generation API
+Convenience wrapper around `pc_request()` for `compound` domain record
+retrieval.
+}
+\details{
+Returns a typed `PubChemRecord` object and preserves transport metadata such
+as `success`, `status`, and cache flags.
+}
+\examples{
+cmp <- pc_compound(2244, offline = TRUE)
+inherits(cmp, "PubChemRecord")
+
+\dontrun{
+pc_compound(2244)
+}
 }

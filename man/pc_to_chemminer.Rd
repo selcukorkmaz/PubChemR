@@ -15,5 +15,18 @@ pc_to_chemminer(x, smiles_col = "CanonicalSMILES")
 A `ChemmineR` SDF object.
 }
 \description{
-Convert PubChem Tables to ChemmineR SDF Objects
+Converts SMILES strings from a PubChem table to a `ChemmineR` SDF object.
+}
+\details{
+Requires the optional `ChemmineR` package with an available `smiles2sdf()`
+function.
+}
+\examples{
+names(formals(pc_to_chemminer))
+
+\dontrun{
+ex_tbl <- tibble::tibble(CanonicalSMILES = "CCO")
+sdf <- pc_to_chemminer(ex_tbl)
+class(sdf)
+}
 }

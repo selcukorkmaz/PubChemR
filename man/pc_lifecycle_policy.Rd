@@ -10,5 +10,13 @@ pc_lifecycle_policy()
 A tibble describing PubChemR compatibility and deprecation guarantees.
 }
 \description{
-Versioning and Deprecation Policy
+Returns the compatibility policy table used for PubChemR legacy and
+next-generation APIs.
+}
+\details{
+The table summarizes expected support windows and deprecation notice
+guarantees by API stream.
+}
+\examples{
+pc_lifecycle_policy()
 }

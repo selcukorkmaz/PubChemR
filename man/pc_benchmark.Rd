@@ -30,5 +30,19 @@ pc_benchmark(
 A tibble with runtime and success metrics for each benchmark scenario.
 }
 \description{
-Benchmark Chunked PubChem Workflows
+Evaluates `pc_batch()` execution under multiple chunk-size and parallel
+settings and returns runtime and failure metrics.
+}
+\details{
+This benchmark is intended for tuning operational parameters before running
+large production queries.
+}
+\examples{
+bm <- pc_benchmark(
+  ids = 1:20,
+  fn = function(chunk_ids, ...) sum(chunk_ids),
+  chunk_sizes = c(5, 10),
+  parallel_options = FALSE
+)
+nrow(bm)
 }

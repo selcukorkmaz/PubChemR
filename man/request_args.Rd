@@ -21,6 +21,10 @@ A list or string vector containing the options used in the function call.
 \description{
 This function retrieves the input arguments from a specified PubChem database request object.
 }
+\details{
+This accessor is useful for auditing request provenance when downstream
+objects are passed through multiple transformation steps.
+}
 \examples{
 \donttest{
 request <- get_cids("aspirin", namespace = "name")

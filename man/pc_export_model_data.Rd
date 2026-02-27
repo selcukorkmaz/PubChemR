@@ -32,3 +32,13 @@ Invisibly returns a list with `path`, `format`, and output dimensions.
 Writes model-ready data to disk from either a `PubChemModelMatrix`
 object or a tabular object.
 }
+\details{
+Output format is selected by `format`; `csv` is written with
+`utils::write.csv()` and `rds` with `saveRDS()`.
+}
+\examples{
+out_file <- tempfile(fileext = ".csv")
+x <- tibble::tibble(CID = c("1", "2"), x1 = c(0.1, 0.2))
+meta <- pc_export_model_data(x, path = out_file, format = "csv")
+file.exists(meta$path)
+}

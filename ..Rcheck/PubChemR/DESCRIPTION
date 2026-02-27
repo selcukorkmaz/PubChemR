@@ -18,14 +18,13 @@ Description: Provides an interface to the 'PubChem' database via the PUG REST <h
             Functions are available to retrieve data in different formats, perform searches, and access detailed annotations.
 License: GPL (>= 2)
 Encoding: UTF-8
-LazyData: true
 RoxygenNote: 7.3.3
 URL: https://selcukorkmaz.github.io/pubchemr-tutorial/,
         https://github.com/selcukorkmaz/PubChemR
 BugReports: https://github.com/selcukorkmaz/PubChemR/issues
-Imports: dplyr, tibble, magrittr, stringr, tidyr, RJSONIO, httr, utils,
-        RCurl, magick, rsvg, png
-Suggests: testthat (>= 3.0.0), Matrix, knitr, rmarkdown
+Imports: dplyr, tibble, magrittr, stringr, tidyr, RJSONIO, httr, utils
+Suggests: magick, rsvg, png, testthat (>= 3.0.0), Matrix, knitr,
+        rmarkdown
 VignetteBuilder: knitr
 Config/testthat/edition: 3
-Built: R 4.5.2; ; 2026-02-23 17:42:49 UTC; unix
+Built: R 4.5.1; ; 2026-02-27 13:08:06 UTC; windows

@@ -1,9 +1,20 @@
 #' Apply a Predefined Execution Profile
 #'
+#' @description
+#' Applies a named transport profile and optional overrides to `pc_config()`.
+#'
 #' @param profile One of `"default"`, `"cloud"`, or `"high_throughput"`.
 #' @param ... Named overrides applied on top of the selected profile.
 #'
+#' @details
+#' Profiles provide baseline settings for rate limits, retries, and cache TTL.
+#' Any named overrides supplied in `...` replace the selected profile values.
+#'
 #' @return A named list with active transport configuration.
+#'
+#' @examples
+#' cfg <- pc_profile("default")
+#' cfg$rate_limit
 #' @export
 pc_profile <- function(profile = c("default", "cloud", "high_throughput"), ...) {
   profile <- match.arg(profile)
@@ -46,6 +57,10 @@ pc_profile <- function(profile = c("default", "cloud", "high_throughput"), ...) 
 
 #' Similarity-Driven Identifier Search
 #'
+#' @description
+#' Performs similarity search requests and returns mapped identifiers in a typed
+#' result object.
+#'
 #' @param identifier Query identifier(s) for similarity search.
 #' @param namespace Namespace for query identifiers.
 #' @param domain PubChem domain.
@@ -56,7 +71,19 @@ pc_profile <- function(profile = c("default", "cloud", "high_throughput"), ...) 
 #' @param options Optional named list of additional query options.
 #' @param ... Additional arguments passed to `pc_request()`.
 #'
+#' @details
+#' Similarity mode is controlled by `searchtype` and `threshold`. Optional
+#' `max_records` is translated to `list_return` and appended to query options.
+#'
 #' @return A typed object inheriting from `PubChemIdMap`.
+#'
+#' @examples
+#' sim <- pc_similarity_search("CC(=O)OC1=CC=CC=C1C(=O)O", namespace = "smiles", offline = TRUE)
+#' inherits(sim, "PubChemIdMap")
+#'
+#' \dontrun{
+#' pc_similarity_search("CC(=O)OC1=CC=CC=C1C(=O)O", namespace = "smiles")
+#' }
 #' @export
 pc_similarity_search <- function(identifier,
                                  namespace = c("smiles", "cid", "inchi", "sdf"),
@@ -121,6 +148,10 @@ pc_as_tibble_input <- function(x) {
 
 #' Harmonize Activity Outcome Labels
 #'
+#' @description
+#' Converts textual activity outcomes (for example, `Active`/`Inactive`) into
+#' numeric values for matrix and modeling workflows.
+#'
 #' Maps textual activity outcomes (for example, `Active`/`Inactive`) to
 #' numeric values for modeling workflows.
 #'
@@ -131,7 +162,14 @@ pc_as_tibble_input <- function(x) {
 #' @param unknown Numeric value assigned to unknown labels when
 #'   `strict = FALSE`.
 #'
+#' @details
+#' Matching is case-insensitive after trimming whitespace. Custom maps augment
+#' the built-in defaults unless names overlap.
+#'
 #' @return Numeric vector aligned with `values`.
+#'
+#' @examples
+#' pc_activity_outcome_map(c("Active", "Inactive", "Unknown"))
 #' @export
 pc_activity_outcome_map <- function(values,
                                     map = NULL,
@@ -200,6 +238,10 @@ pc_scale_matrix <- function(x) {
 
 #' Build an Assay Activity Matrix
 #'
+#' @description
+#' Converts long-form assay activity data into dense or sparse matrix-ready
+#' representations indexed by compound and assay identifiers.
+#'
 #' @param x A long-form table or `PubChemResult` with at least CID/AID/outcome columns.
 #' @param cid_col Column name containing compound identifiers.
 #' @param aid_col Column name containing assay identifiers.
@@ -212,8 +254,20 @@ pc_scale_matrix <- function(x) {
 #' @param aggregate Aggregation method for repeated CID/AID pairs.
 #' @param output Output type: `"tibble"` (default dense table) or `"sparse"` (Matrix backend).
 #'
+#' @details
+#' Character outcomes are normalized through `pc_activity_outcome_map()`. For
+#' repeated CID/AID pairs, values are aggregated using the selected strategy.
+#'
 #' @return A wide tibble (`output = "tibble"`) or a sparse matrix wrapper
 #'   object of class `PubChemSparseActivityMatrix` (`output = "sparse"`).
+#'
+#' @examples
+#' long_tbl <- tibble::tibble(
+#'   CID = c("1", "1", "2"),
+#'   AID = c("10", "11", "10"),
+#'   ActivityOutcome = c("Active", "Inactive", "Active")
+#' )
+#' pc_activity_matrix(long_tbl)
 #' @export
 pc_activity_matrix <- function(x,
                                cid_col = "CID",
@@ -327,6 +381,10 @@ pc_activity_matrix <- function(x,
 
 #' Join Compound, Substance, Assay, and Target Tables
 #'
+#' @description
+#' Joins cross-domain PubChem tables into a single analysis-ready tibble using
+#' configurable key mappings and join type.
+#'
 #' @param compounds Base compound table.
 #' @param substances Optional substance table.
 #' @param assays Optional assay table.
@@ -334,7 +392,16 @@ pc_activity_matrix <- function(x,
 #' @param by Named list of join keys for each join edge.
 #' @param join Join type (`"left"`, `"inner"`, `"full"`).
 #'
+#' @details
+#' Join steps are applied in order: compounds-substances, compounds-assays, then
+#' assays-targets when corresponding tables are supplied.
+#'
 #' @return A joined tibble suitable for downstream analysis workflows.
+#'
+#' @examples
+#' compounds <- tibble::tibble(CID = c("1", "2"), MW = c(100, 200))
+#' assays <- tibble::tibble(CID = c("1", "2"), AID = c("10", "11"))
+#' pc_cross_domain_join(compounds, assays = assays)
 #' @export
 pc_cross_domain_join <- function(compounds,
                                  substances = NULL,
@@ -390,13 +457,27 @@ pc_cross_domain_join <- function(compounds,
 
 #' Convert Feature Tables to Model Matrix Form
 #'
+#' @description
+#' Converts tabular PubChem features into a numeric model-matrix bundle with
+#' optional outcome and identifier metadata.
+#'
 #' @param x Input table or `PubChemResult`.
 #' @param outcome Optional outcome column name.
 #' @param id_cols Identifier columns excluded from predictors.
 #' @param na_fill Optional numeric value used to fill missing predictor values.
 #' @param scale Logical; center and scale predictor matrix.
 #'
+#' @details
+#' Non-numeric predictors are coerced when feasible, then filtered to numeric
+#' columns only. The returned object stores predictors, optional response, and
+#' identifier columns.
+#'
 #' @return An object of class `PubChemModelMatrix` with `x`, `y`, and metadata fields.
+#'
+#' @examples
+#' tbl <- tibble::tibble(CID = c("1", "2"), x1 = c("1.0", "2.0"), y = c(0, 1))
+#' mm <- pc_model_matrix(tbl, outcome = "y")
+#' class(mm)
 #' @export
 pc_model_matrix <- function(x,
                             outcome = NULL,
@@ -454,11 +535,27 @@ pc_model_matrix <- function(x,
 
 #' Convert PubChem Tables to rcdk Molecules
 #'
+#' @description
+#' Converts SMILES strings from a PubChem table into `rcdk` molecule objects.
+#'
 #' @param x Input table or `PubChemResult`.
 #' @param smiles_col Column with SMILES strings.
 #' @param id_col Optional identifier column used to name returned molecules.
 #'
+#' @details
+#' Requires the optional `rcdk` package. Empty or missing SMILES values are
+#' dropped before conversion.
+#'
 #' @return A list of `rcdk` molecule objects.
+#'
+#' @examples
+#' names(formals(pc_to_rcdk))
+#'
+#' \dontrun{
+#' ex_tbl <- tibble::tibble(CID = "1", CanonicalSMILES = "CCO")
+#' mols <- pc_to_rcdk(ex_tbl)
+#' length(mols)
+#' }
 #' @export
 pc_to_rcdk <- function(x, smiles_col = "CanonicalSMILES", id_col = "CID") {
   pkg <- "rcdk"
@@ -491,10 +588,26 @@ pc_to_rcdk <- function(x, smiles_col = "CanonicalSMILES", id_col = "CID") {
 
 #' Convert PubChem Tables to ChemmineR SDF Objects
 #'
+#' @description
+#' Converts SMILES strings from a PubChem table to a `ChemmineR` SDF object.
+#'
 #' @param x Input table or `PubChemResult`.
 #' @param smiles_col Column with SMILES strings.
 #'
+#' @details
+#' Requires the optional `ChemmineR` package with an available `smiles2sdf()`
+#' function.
+#'
 #' @return A `ChemmineR` SDF object.
+#'
+#' @examples
+#' names(formals(pc_to_chemminer))
+#'
+#' \dontrun{
+#' ex_tbl <- tibble::tibble(CanonicalSMILES = "CCO")
+#' sdf <- pc_to_chemminer(ex_tbl)
+#' class(sdf)
+#' }
 #' @export
 pc_to_chemminer <- function(x, smiles_col = "CanonicalSMILES") {
   pkg <- "ChemmineR"
@@ -523,7 +636,18 @@ pc_to_chemminer <- function(x, smiles_col = "CanonicalSMILES") {
 
 #' Versioning and Deprecation Policy
 #'
+#' @description
+#' Returns the compatibility policy table used for PubChemR legacy and
+#' next-generation APIs.
+#'
+#' @details
+#' The table summarizes expected support windows and deprecation notice
+#' guarantees by API stream.
+#'
 #' @return A tibble describing PubChemR compatibility and deprecation guarantees.
+#'
+#' @examples
+#' pc_lifecycle_policy()
 #' @export
 pc_lifecycle_policy <- function() {
   tibble::tibble(

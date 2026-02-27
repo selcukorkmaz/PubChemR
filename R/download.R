@@ -1,5 +1,6 @@
 #' Download Content from PubChem and Save to a File
 #'
+#' @description
 #' This function sends a request to PubChem to retrieve content in the specified format for a given identifier.
 #' It then writes the content to a specified file path.
 #'
@@ -20,6 +21,11 @@
 #' 'fastsimilarity_2d', 'fastsimilarity_3d', 'fastsubstructure', 'fastsuperstructure' with 'smiles', 'smarts', 'inchi', 'sdf', 'cid', or 'fastformula'.
 #' @param overwrite A logical value indicating whether to overwrite the file if it already exists. Default is FALSE.
 #' @param options Additional arguments.
+#'
+#' @details
+#' `download()` is a convenience wrapper around \code{get_pubchem()} for
+#' file-oriented workflows. The returned payload is written as bytes, so both
+#' text and binary outputs can be handled.
 #'
 #' @return No return value. The function writes the content to the specified file path and prints a message indicating the save location.
 #'

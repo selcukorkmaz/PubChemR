@@ -17,9 +17,17 @@ instance(object, ...)
 \item{.which}{A string specifying which instance's results to return. If NULL, the results of the first instance in
 the \code{object} are returned. The default value is NULL.}
 }
+\value{
+A single instance object extracted from \code{object}, typically of
+class \code{PubChemInstance}.
+}
 \description{
 This function extracts the results of a PubChem instance from an \code{object}. It is designed to retrieve
 information about a compound from a comprehensive list where multiple elements (such as assay, compound, etc.) are requested.
+}
+\details{
+`instance()` is a lightweight accessor that selects one requested identifier
+result from a multi-request container.
 }
 \examples{
 \donttest{

@@ -1,54 +1,74 @@
-* using log directory ‘/Users/selcuk/Documents/GitHub/PubChemR/..Rcheck’
-* using R version 4.5.2 (2025-10-31)
-* using platform: aarch64-apple-darwin20
+* using log directory 'C:/Users/Selçuk/Documents/GitHub/PubChemR/..Rcheck'
+* using R version 4.5.1 (2025-06-13 ucrt)
+* using platform: x86_64-w64-mingw32
 * R was compiled by
-    Apple clang version 16.0.0 (clang-1600.0.26.6)
+    gcc.exe (GCC) 14.2.0
     GNU Fortran (GCC) 14.2.0
-* running under: macOS Sequoia 15.7.3
+* running under: Windows 11 x64 (build 26200)
 * using session charset: UTF-8
-* using option ‘--no-manual’
-* checking for file ‘./DESCRIPTION’ ... OK
+* using option '--no-manual'
+* checking for file './DESCRIPTION' ... OK
 * checking extension type ... Package
-* this is package ‘PubChemR’ version ‘3.0.0’
+* this is package 'PubChemR' version '3.0.0'
 * package encoding: UTF-8
 * checking package namespace information ... OK
 * checking package dependencies ... OK
 * checking if this is a source package ... NOTE
-Subdirectory ‘PubChemR.Rcheck/PubChemR’ seems to contain an installed version of the package.
+Subdirectory 'PubChemR.Rcheck/PubChemR' seems to contain an installed version of the package.
 * checking if there is a namespace ... OK
-* checking for executable files ... OK
+* checking for .dll and .exe files ... OK
 * checking for hidden files and directories ... NOTE
 Found the following hidden files and directories:
-  .DS_Store
+  .Rhistory
   .gitignore
   docker/.env
-  tests/.DS_Store
   ..Rcheck
-  .claude
+  ..Rcheck/vign_test/PubChemR/..Rcheck
+  ..Rcheck/vign_test/PubChemR/..Rcheck/vign_test/PubChemR/.git
+  ..Rcheck/vign_test/PubChemR/.git
+  .Rproj.user
+  .cache
   .git
   .github
-  .Rproj.user
-These were most likely included in error. See section ‘Package
-structure’ in the ‘Writing R Extensions’ manual.
-* checking for portable file names ... OK
-* checking for sufficient/correct file permissions ... OK
-* checking whether package ‘PubChemR’ can be installed ... OK
-* checking installed package size ... OK
+These were most likely included in error. See section 'Package
+structure' in the 'Writing R Extensions' manual.
+* checking for portable file names ... NOTE
+Found the following non-portable file paths:
+  PubChemR/..Rcheck/vign_test/PubChemR/..Rcheck/vign_test/PubChemR/.git/objects/pack/pack-54e37c491a53103c48d72e7618590e6308634e46.idx
+  PubChemR/..Rcheck/vign_test/PubChemR/..Rcheck/vign_test/PubChemR/.git/objects/pack/pack-54e37c491a53103c48d72e7618590e6308634e46.pack
+  PubChemR/..Rcheck/vign_test/PubChemR/..Rcheck/vign_test/PubChemR/.git/objects/pack/pack-54e37c491a53103c48d72e7618590e6308634e46.rev
+  PubChemR/..Rcheck/vign_test/PubChemR/.git/objects/pack/pack-54e37c491a53103c48d72e7618590e6308634e46.idx
+  PubChemR/..Rcheck/vign_test/PubChemR/.git/objects/pack/pack-54e37c491a53103c48d72e7618590e6308634e46.pack
+  PubChemR/..Rcheck/vign_test/PubChemR/.git/objects/pack/pack-54e37c491a53103c48d72e7618590e6308634e46.rev
+  PubChemR/.Rproj.user/shared/notebooks/1D525900-compound-to-assay-workflow/1/1E13380D78806d95/chunks.json
+  PubChemR/.Rproj.user/shared/notebooks/1D525900-compound-to-assay-workflow/1/s/c7zt1a03mku60/00000f.csv
+  PubChemR/.Rproj.user/shared/notebooks/1D525900-compound-to-assay-workflow/1/s/c7zt1a03mku60/000010.error
+  PubChemR/.Rproj.user/shared/notebooks/1D525900-compound-to-assay-workflow/1/s/c7zt1a03mku60/000011.csv
+  PubChemR/.Rproj.user/shared/notebooks/1D525900-compound-to-assay-workflow/1/s/c7zt1a03mku60/execution.lock
+  PubChemR/.Rproj.user/shared/notebooks/1D525900-compound-to-assay-workflow/1/s/csetup_chunk/00000f.csv
+  PubChemR/.Rproj.user/shared/notebooks/1D525900-compound-to-assay-workflow/1/s/csetup_chunk/execution.lock
+
+Tarballs are only required to store paths of up to 100 bytes and cannot
+store those of more than 256 bytes, with restrictions including to 100
+bytes for the final component.
+See section 'Package structure' in the 'Writing R Extensions' manual.
+* checking whether package 'PubChemR' can be installed ... OK
 * checking package directory ... OK
 * checking DESCRIPTION meta-information ... NOTE
-Checking should be performed on sources prepared by ‘R CMD build’.
+Checking should be performed on sources prepared by 'R CMD build'.
 * checking top-level files ... OK
 * checking for left-over files ... OK
 * checking index information ... OK
 * checking package subdirectories ... WARNING
 Found the following directories with names of check directories:
   ./..Rcheck
+  ./..Rcheck/vign_test/PubChemR/..Rcheck
   ./PubChemR.Rcheck
 Most likely, these were included erroneously.
 Found the following CITATION files in a non-standard place:
   PubChemR.Rcheck/00_pkg_src/PubChemR/inst/CITATION
   PubChemR.Rcheck/PubChemR/CITATION
-Most likely ‘inst/CITATION’ should be used instead.
+Most likely 'inst/CITATION' should be used instead.
 * checking code files for non-ASCII characters ... OK
 * checking R files for syntax errors ... OK
 * checking whether the package can be loaded ... OK
@@ -56,91 +76,38 @@ Most likely ‘inst/CITATION’ should be used instead.
 * checking whether the package can be unloaded cleanly ... OK
 * checking whether the namespace can be loaded with stated dependencies ... OK
 * checking whether the namespace can be unloaded cleanly ... OK
+* checking loading without being on the library search path ... OK
 * checking dependencies in R code ... OK
 * checking S3 generic/method consistency ... OK
 * checking replacement functions ... OK
 * checking foreign function calls ... OK
 * checking R code for possible problems ... OK
 * checking Rd files ... OK
-* checking Rd metadata ... WARNING
-Rd files with duplicated alias 'pc_activity_matrix':
-  ‘pc_activity_matrix.Rd’ ‘pc_phase3.Rd’
-Rd files with duplicated alias 'pc_assay':
-  ‘pc_api.Rd’ ‘pc_assay.Rd’
-Rd files with duplicated alias 'pc_assay_activity_long':
-  ‘pc_assay_activity_long.Rd’ ‘pc_phase4.Rd’
-Rd files with duplicated alias 'pc_batch':
-  ‘pc_api.Rd’ ‘pc_batch.Rd’
-Rd files with duplicated alias 'pc_benchmark':
-  ‘pc_api.Rd’ ‘pc_benchmark.Rd’
-Rd files with duplicated alias 'pc_cache_clear':
-  ‘pc_api.Rd’ ‘pc_cache_clear.Rd’
-Rd files with duplicated alias 'pc_cache_info':
-  ‘pc_api.Rd’ ‘pc_cache_info.Rd’
-Rd files with duplicated alias 'pc_collect':
-  ‘pc_api.Rd’ ‘pc_collect.Rd’
-Rd files with duplicated alias 'pc_compound':
-  ‘pc_api.Rd’ ‘pc_compound.Rd’
-Rd files with duplicated alias 'pc_config':
-  ‘pc_api.Rd’ ‘pc_config.Rd’
-Rd files with duplicated alias 'pc_cross_domain_join':
-  ‘pc_cross_domain_join.Rd’ ‘pc_phase3.Rd’
-Rd files with duplicated alias 'pc_export_model_data':
-  ‘pc_export_model_data.Rd’ ‘pc_phase4.Rd’
-Rd files with duplicated alias 'pc_feature_table':
-  ‘pc_api.Rd’ ‘pc_feature_table.Rd’
-Rd files with duplicated alias 'pc_identifier_map':
-  ‘pc_api.Rd’ ‘pc_identifier_map.Rd’
-Rd files with duplicated alias 'pc_lifecycle_policy':
-  ‘pc_lifecycle_policy.Rd’ ‘pc_phase3.Rd’
-Rd files with duplicated alias 'pc_model_matrix':
-  ‘pc_model_matrix.Rd’ ‘pc_phase3.Rd’
-Rd files with duplicated alias 'pc_poll':
-  ‘pc_api.Rd’ ‘pc_poll.Rd’
-Rd files with duplicated alias 'pc_profile':
-  ‘pc_phase3.Rd’ ‘pc_profile.Rd’
-Rd files with duplicated alias 'pc_property':
-  ‘pc_api.Rd’ ‘pc_property.Rd’
-Rd files with duplicated alias 'pc_request':
-  ‘pc_api.Rd’ ‘pc_request.Rd’
-Rd files with duplicated alias 'pc_response':
-  ‘pc_api.Rd’ ‘pc_response.Rd’
-Rd files with duplicated alias 'pc_resume_batch':
-  ‘pc_api.Rd’ ‘pc_resume_batch.Rd’
-Rd files with duplicated alias 'pc_similarity_search':
-  ‘pc_phase3.Rd’ ‘pc_similarity_search.Rd’
-Rd files with duplicated alias 'pc_submit':
-  ‘pc_api.Rd’ ‘pc_submit.Rd’
-Rd files with duplicated alias 'pc_substance':
-  ‘pc_api.Rd’ ‘pc_substance.Rd’
-Rd files with duplicated alias 'pc_to_chemminer':
-  ‘pc_phase3.Rd’ ‘pc_to_chemminer.Rd’
-Rd files with duplicated alias 'pc_to_rcdk':
-  ‘pc_phase3.Rd’ ‘pc_to_rcdk.Rd’
+* checking Rd metadata ... OK
 * checking Rd cross-references ... OK
 * checking for missing documentation entries ... OK
 * checking for code/documentation mismatches ... OK
 * checking Rd \usage sections ... OK
 * checking Rd contents ... OK
 * checking for unstated dependencies in examples ... OK
-* checking LazyData ... INFO
-  'LazyData' is specified without a 'data' directory
-* checking files in ‘vignettes’ ... WARNING
+* checking files in 'vignettes' ... WARNING
 Files in the 'vignettes' directory but no files in 'inst/doc':
-  ‘compound-to-assay-workflow.Rmd’ ‘phase4-analysis-layer-workflow.Rmd’
-  ‘pubchemr-workflow.Rmd’ ‘reproducible-cached-workflow.Rmd’
+  'advanced-nextgen-workflows.Rmd' 'compound-to-assay-workflow.Rmd'
+  'phase4-analysis-layer-workflow.Rmd' 'pubchemr-workflow.Rmd'
+  'reproducible-cached-workflow.Rmd'
 * checking examples ... OK
-* checking for unstated dependencies in ‘tests’ ... OK
+* checking for unstated dependencies in 'tests' ... OK
 * checking tests ... OK
-  Running ‘testthat.R’
+  Running 'testthat.R'
 * checking for unstated dependencies in vignettes ... OK
 * checking package vignettes ... WARNING
 Directory 'inst/doc' does not exist.
 Package vignettes without corresponding single PDF/HTML:
-  ‘compound-to-assay-workflow.Rmd’
-  ‘phase4-analysis-layer-workflow.Rmd’
-  ‘pubchemr-workflow.Rmd’
-  ‘reproducible-cached-workflow.Rmd’
+  'advanced-nextgen-workflows.Rmd'
+  'compound-to-assay-workflow.Rmd'
+  'phase4-analysis-layer-workflow.Rmd'
+  'pubchemr-workflow.Rmd'
+  'reproducible-cached-workflow.Rmd'
 * checking re-building of vignette outputs ... OK
 * DONE
-Status: 4 WARNINGs, 3 NOTEs
+Status: 3 WARNINGs, 4 NOTEs

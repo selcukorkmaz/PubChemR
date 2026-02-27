@@ -15,5 +15,18 @@ pc_response(response, request = list())
 An object of class `PubChemResult`.
 }
 \description{
-Normalize an HTTP Response Into a Typed PubChem Result
+Parses PubChem response payloads and standardizes them into a typed
+`PubChemResult` object with success, error, and metadata fields.
+}
+\details{
+JSON and plain-text payloads are supported. Fault payloads and non-2xx HTTP
+statuses are normalized into structured error entries rather than raising
+immediate transport exceptions.
+}
+\examples{
+ok <- pc_response('{"IdentifierList":{"CID":[2244]}}', request = list(domain = "compound"))
+ok$success
+
+fail <- pc_response('{"Fault":{"Code":"PUGREST.NotFound","Message":"Not found"}}')
+fail$success
 }

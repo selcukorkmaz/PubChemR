@@ -32,8 +32,15 @@ and \link{get_sids}.}
 If failed to convert into a data.frame, a list will be returned with a warning. Be careful for complicated lists
 (i.e., many elements nested within each other) since it may be time consuming to convert such lists into a data frame.}
 }
+\value{
+A tibble (default) or list containing mapped identifier outputs.
+}
 \description{
 These functions are used to retrieve identification information for assays, substances, and compounds from the PubChem database.
+}
+\details{
+The generic dispatches to class-specific methods and returns either a compact
+identifier table (\code{.to.data.frame = TRUE}) or raw nested payloads.
 }
 \examples{
 \donttest{

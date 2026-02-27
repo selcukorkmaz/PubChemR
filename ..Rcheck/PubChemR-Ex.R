@@ -1,6 +1,7 @@
 pkgname <- "PubChemR"
 source(file.path(R.home("share"), "R", "examples-header.R"))
 options(warn = 1)
+options(pager = "console")
 library('PubChemR')
 
 base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
@@ -259,55 +260,624 @@ flush(stderr()); flush(stdout())
 
 
 cleanEx()
-nameEx("pc_api")
-### * pc_api
+nameEx("pc_activity_matrix")
+### * pc_activity_matrix
 
 flush(stderr()); flush(stdout())
 
-### Name: pc_api
-### Title: Next-Generation PubChemR API
-### Aliases: pc_api pc_config pc_cache_clear pc_cache_info pc_request
-###   pc_response pc_compound pc_substance pc_assay pc_property
-###   pc_feature_table pc_identifier_map pc_batch pc_resume_batch
-###   pc_benchmark pc_submit pc_poll pc_collect print.PubChemResult
-###   print.PubChemBatchResult as_tibble.PubChemResult
-###   as_tibble.PubChemRecord as_tibble.PubChemIdMap
-###   as_tibble.PubChemBatchResult
+### Name: pc_activity_matrix
+### Title: Build an Assay Activity Matrix
+### Aliases: pc_activity_matrix
 
 ### ** Examples
+
+long_tbl <- tibble::tibble(
+  CID = c("1", "1", "2"),
+  AID = c("10", "11", "10"),
+  ActivityOutcome = c("Active", "Inactive", "Active")
+)
+pc_activity_matrix(long_tbl)
+
+
+
+cleanEx()
+nameEx("pc_activity_outcome_map")
+### * pc_activity_outcome_map
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_activity_outcome_map
+### Title: Harmonize Activity Outcome Labels
+### Aliases: pc_activity_outcome_map
+
+### ** Examples
+
+pc_activity_outcome_map(c("Active", "Inactive", "Unknown"))
+
+
+
+cleanEx()
+nameEx("pc_assay")
+### * pc_assay
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_assay
+### Title: Query Assay Records via the Next-Generation API
+### Aliases: pc_assay
+
+### ** Examples
+
+assay_rec <- pc_assay(367, offline = TRUE)
+inherits(assay_rec, "PubChemRecord")
+
+## Not run: 
+##D pc_assay(367)
+## End(Not run)
+
+
+
+cleanEx()
+nameEx("pc_assay_activity_long")
+### * pc_assay_activity_long
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_assay_activity_long
+### Title: Convert PubChem Assay Summary to Long Activity Table
+### Aliases: pc_assay_activity_long
+
+### ** Examples
+
+payload <- list(
+  Table = list(
+    Columns = list(Column = c("CID", "AID", "Activity Outcome")),
+    Row = list(
+      list(Cell = c("2244", "367", "Active")),
+      list(Cell = c("2244", "368", "Inactive"))
+    )
+  )
+)
+pc_assay_activity_long(x = payload)
+
+
+
+cleanEx()
+nameEx("pc_batch")
+### * pc_batch
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_batch
+### Title: Batch-Orchestrate PubChem Workflows
+### Aliases: pc_batch
+
+### ** Examples
+
+batch <- pc_batch(
+  ids = 1:6,
+  fn = function(chunk_ids, ...) sum(chunk_ids),
+  chunk_size = 2
+)
+length(batch$results)
+
+
+
+cleanEx()
+nameEx("pc_benchmark")
+### * pc_benchmark
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_benchmark
+### Title: Benchmark Chunked PubChem Workflows
+### Aliases: pc_benchmark
+
+### ** Examples
+
+bm <- pc_benchmark(
+  ids = 1:20,
+  fn = function(chunk_ids, ...) sum(chunk_ids),
+  chunk_sizes = c(5, 10),
+  parallel_options = FALSE
+)
+nrow(bm)
+
+
+
+cleanEx()
+nameEx("pc_benchmark_harness")
+### * pc_benchmark_harness
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_benchmark_harness
+### Title: Benchmark Harness for Scale Scenarios
+### Aliases: pc_benchmark_harness
+
+### ** Examples
+
+report <- pc_benchmark_harness(
+  fn = function(chunk_ids, ...) sum(chunk_ids),
+  ids = 1:50,
+  scenario_sizes = c(10L, 20L),
+  chunk_sizes = c(5L),
+  parallel_options = FALSE
+)
+class(report)
+
+
+
+cleanEx()
+nameEx("pc_cache_clear")
+### * pc_cache_clear
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_cache_clear
+### Title: Clear PubChemR Request Cache
+### Aliases: pc_cache_clear
+
+### ** Examples
+
+tmp_dir <- tempdir()
+pc_cache_info(cache_dir = tmp_dir)
+pc_cache_clear(cache_dir = tmp_dir, memory = TRUE, disk = FALSE)
+pc_cache_info(cache_dir = tmp_dir)
+
+
+
+cleanEx()
+nameEx("pc_cache_info")
+### * pc_cache_info
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_cache_info
+### Title: Cache Diagnostics for PubChemR
+### Aliases: pc_cache_info
+
+### ** Examples
+
+pc_cache_info(cache_dir = tempdir())
+
+
+
+cleanEx()
+nameEx("pc_collect")
+### * pc_collect
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_collect
+### Title: Collect Results From an Async PubChem Query
+### Aliases: pc_collect
+
+### ** Examples
+
+q <- structure(
+  list(
+    initial = pc_request(identifier = 2244, offline = TRUE),
+    listkey = NULL,
+    domain = "compound",
+    operation = NULL,
+    output = "JSON",
+    options = NULL
+  ),
+  class = "PubChemAsyncQuery"
+)
+out <- pc_collect(q)
+inherits(out, "PubChemResult")
+
+
+
+cleanEx()
+nameEx("pc_compound")
+### * pc_compound
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_compound
+### Title: Query Compound Records via the Next-Generation API
+### Aliases: pc_compound
+
+### ** Examples
+
+cmp <- pc_compound(2244, offline = TRUE)
+inherits(cmp, "PubChemRecord")
+
+## Not run: 
+##D pc_compound(2244)
+## End(Not run)
+
+
+
+cleanEx()
+nameEx("pc_config")
+### * pc_config
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_config
+### Title: Configure PubChemR Next-Gen API Defaults
+### Aliases: pc_config
+
+### ** Examples
+
+cfg <- pc_config()
+names(cfg)
+pc_config(rate_limit = cfg$rate_limit)$rate_limit
+
+
+
+cleanEx()
+nameEx("pc_cross_domain_join")
+### * pc_cross_domain_join
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_cross_domain_join
+### Title: Join Compound, Substance, Assay, and Target Tables
+### Aliases: pc_cross_domain_join
+
+### ** Examples
+
+compounds <- tibble::tibble(CID = c("1", "2"), MW = c(100, 200))
+assays <- tibble::tibble(CID = c("1", "2"), AID = c("10", "11"))
+pc_cross_domain_join(compounds, assays = assays)
+
+
+
+cleanEx()
+nameEx("pc_export_model_data")
+### * pc_export_model_data
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_export_model_data
+### Title: Export Model-Ready Data
+### Aliases: pc_export_model_data
+
+### ** Examples
+
+out_file <- tempfile(fileext = ".csv")
+x <- tibble::tibble(CID = c("1", "2"), x1 = c(0.1, 0.2))
+meta <- pc_export_model_data(x, path = out_file, format = "csv")
+file.exists(meta$path)
+
+
+
+cleanEx()
+nameEx("pc_feature_table")
+### * pc_feature_table
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_feature_table
+### Title: Build a Modeling-Ready Feature Table
+### Aliases: pc_feature_table
+
+### ** Examples
+
+names(formals(pc_feature_table))
+
+## Not run: 
+##D pc_feature_table(2244, properties = c("MolecularWeight", "XLogP"))
+## End(Not run)
+
+
+
+cleanEx()
+nameEx("pc_identifier_map")
+### * pc_identifier_map
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_identifier_map
+### Title: Map Identifiers via the Next-Generation API
+### Aliases: pc_identifier_map
+
+### ** Examples
+
+id_map <- pc_identifier_map("aspirin", namespace = "name", to = "cids", offline = TRUE)
+inherits(id_map, "PubChemIdMap")
+
+## Not run: 
+##D pc_identifier_map("aspirin", namespace = "name", to = "cids")
+## End(Not run)
+
+
+
+cleanEx()
+nameEx("pc_lifecycle_policy")
+### * pc_lifecycle_policy
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_lifecycle_policy
+### Title: Versioning and Deprecation Policy
+### Aliases: pc_lifecycle_policy
+
+### ** Examples
+
+pc_lifecycle_policy()
+
+
+
+cleanEx()
+nameEx("pc_model_matrix")
+### * pc_model_matrix
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_model_matrix
+### Title: Convert Feature Tables to Model Matrix Form
+### Aliases: pc_model_matrix
+
+### ** Examples
+
+tbl <- tibble::tibble(CID = c("1", "2"), x1 = c("1.0", "2.0"), y = c(0, 1))
+mm <- pc_model_matrix(tbl, outcome = "y")
+class(mm)
+
+
+
+cleanEx()
+nameEx("pc_poll")
+### * pc_poll
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_poll
+### Title: Poll an Asynchronous PubChem ListKey
+### Aliases: pc_poll
+
+### ** Examples
+
+polled <- pc_poll("example-listkey", max_attempts = 1, offline = TRUE)
+polled$success
+
+
+
+cleanEx()
+nameEx("pc_profile")
+### * pc_profile
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_profile
+### Title: Apply a Predefined Execution Profile
+### Aliases: pc_profile
+
+### ** Examples
+
+cfg <- pc_profile("default")
+cfg$rate_limit
+
+
+
+cleanEx()
+nameEx("pc_property")
+### * pc_property
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_property
+### Title: Query Compound Properties via the Next-Generation API
+### Aliases: pc_property
+
+### ** Examples
+
+prop_rec <- pc_property(2244, properties = c("MolecularWeight"), offline = TRUE)
+inherits(prop_rec, "PubChemRecord")
+
+## Not run: 
+##D pc_property(2244, properties = c("MolecularWeight", "XLogP"))
+## End(Not run)
+
+
+
+cleanEx()
+nameEx("pc_request")
+### * pc_request
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_request
+### Title: Unified Transport Layer for PubChem Requests
+### Aliases: pc_request
+
+### ** Examples
+
+# Fast, network-free call: returns cache hit or structured cache-miss result.
+res <- pc_request(identifier = 2244, offline = TRUE)
+res$success
+
+## Not run: 
+##D pc_request(identifier = 2244)
+## End(Not run)
+
+
+
+cleanEx()
+nameEx("pc_response")
+### * pc_response
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_response
+### Title: Normalize an HTTP Response Into a Typed PubChem Result
+### Aliases: pc_response
+
+### ** Examples
+
+ok <- pc_response('{"IdentifierList":{"CID":[2244]}}', request = list(domain = "compound"))
+ok$success
+
+fail <- pc_response('{"Fault":{"Code":"PUGREST.NotFound","Message":"Not found"}}')
+fail$success
+
+
+
+cleanEx()
+nameEx("pc_resume_batch")
+### * pc_resume_batch
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_resume_batch
+### Title: Resume a Checkpointed Batch Workflow
+### Aliases: pc_resume_batch
+
+### ** Examples
+
+cp_dir <- tempdir()
+cp_id <- "pc-doc-example"
+
+pc_batch(
+  ids = 1:4,
+  fn = function(chunk_ids, ...) sum(chunk_ids),
+  chunk_size = 2,
+  checkpoint_dir = cp_dir,
+  checkpoint_id = cp_id
+)
+
+resumed <- pc_resume_batch(
+  fn = function(chunk_ids, ...) sum(chunk_ids),
+  checkpoint_dir = cp_dir,
+  checkpoint_id = cp_id
+)
+resumed$checkpoint$resumed
+
+
+
+cleanEx()
+nameEx("pc_sdq_bioactivity")
+### * pc_sdq_bioactivity
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_sdq_bioactivity
+### Title: Retrieve Full Biological Test Results from PubChem SDQ
+### Aliases: pc_sdq_bioactivity
+
+### ** Examples
+
+names(formals(pc_sdq_bioactivity))
+
+## Not run: 
+##D   # Retrieve bioactivity data for aspirin (CID 2244)
+##D   bio <- pc_sdq_bioactivity(2244)
+##D   head(bio)
+## End(Not run)
 
 
 
 
 cleanEx()
-nameEx("pc_phase3")
-### * pc_phase3
+nameEx("pc_similarity_search")
+### * pc_similarity_search
 
 flush(stderr()); flush(stdout())
 
-### Name: pc_phase3
-### Title: Phase 3 Analytical and Integration API
-### Aliases: pc_phase3 pc_profile pc_similarity_search pc_activity_matrix
-###   pc_cross_domain_join pc_model_matrix pc_to_rcdk pc_to_chemminer
-###   pc_lifecycle_policy print.PubChemModelMatrix
+### Name: pc_similarity_search
+### Title: Similarity-Driven Identifier Search
+### Aliases: pc_similarity_search
 
 ### ** Examples
 
+sim <- pc_similarity_search("CC(=O)OC1=CC=CC=C1C(=O)O", namespace = "smiles", offline = TRUE)
+inherits(sim, "PubChemIdMap")
+
+## Not run: 
+##D pc_similarity_search("CC(=O)OC1=CC=CC=C1C(=O)O", namespace = "smiles")
+## End(Not run)
 
 
 
 cleanEx()
-nameEx("pc_phase4")
-### * pc_phase4
+nameEx("pc_submit")
+### * pc_submit
 
 flush(stderr()); flush(stdout())
 
-### Name: pc_phase4
-### Title: Phase 4 Analysis-Layer Helpers
-### Aliases: pc_phase4 pc_assay_activity_long pc_export_model_data
+### Name: pc_submit
+### Title: Submit an Asynchronous PubChem Query
+### Aliases: pc_submit
 
 ### ** Examples
 
+q <- pc_submit(identifier = 2244, offline = TRUE)
+inherits(q, "PubChemAsyncQuery")
+
+## Not run: 
+##D pc_submit(identifier = 2244)
+## End(Not run)
+
+
+
+cleanEx()
+nameEx("pc_substance")
+### * pc_substance
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_substance
+### Title: Query Substance Records via the Next-Generation API
+### Aliases: pc_substance
+
+### ** Examples
+
+sub_rec <- pc_substance(5360534, offline = TRUE)
+inherits(sub_rec, "PubChemRecord")
+
+## Not run: 
+##D pc_substance(5360534)
+## End(Not run)
+
+
+
+cleanEx()
+nameEx("pc_to_chemminer")
+### * pc_to_chemminer
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_to_chemminer
+### Title: Convert PubChem Tables to ChemmineR SDF Objects
+### Aliases: pc_to_chemminer
+
+### ** Examples
+
+names(formals(pc_to_chemminer))
+
+## Not run: 
+##D ex_tbl <- tibble::tibble(CanonicalSMILES = "CCO")
+##D sdf <- pc_to_chemminer(ex_tbl)
+##D class(sdf)
+## End(Not run)
+
+
+
+cleanEx()
+nameEx("pc_to_rcdk")
+### * pc_to_rcdk
+
+flush(stderr()); flush(stdout())
+
+### Name: pc_to_rcdk
+### Title: Convert PubChem Tables to rcdk Molecules
+### Aliases: pc_to_rcdk
+
+### ** Examples
+
+names(formals(pc_to_rcdk))
+
+## Not run: 
+##D ex_tbl <- tibble::tibble(CID = "1", CanonicalSMILES = "CCO")
+##D mols <- pc_to_rcdk(ex_tbl)
+##D length(mols)
+## End(Not run)
 
 
 

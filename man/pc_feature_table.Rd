@@ -28,5 +28,18 @@ pc_feature_table(
 A tibble of compound features suitable for downstream modeling workflows.
 }
 \description{
-Build a Modeling-Ready Feature Table
+Retrieves compound property fields and returns them in a flat table intended
+for feature engineering and modeling workflows.
+}
+\details{
+Transport metadata columns are removed from the returned table. With
+`numeric_only = TRUE`, feature columns are opportunistically converted to
+numeric where conversion yields at least one finite value.
+}
+\examples{
+names(formals(pc_feature_table))
+
+\dontrun{
+pc_feature_table(2244, properties = c("MolecularWeight", "XLogP"))
+}
 }

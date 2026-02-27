@@ -58,8 +58,16 @@ See Notes/Details.}
 \item{.idx}{An integer indicating which substance result should be returned. A PubChem request may return multiple
 substances in the output. \code{.idx} specifies the index of the substance to be extracted from the complete list.}
 }
+\value{
+Retrieved slot contents as a vector, list, or tabular object,
+depending on method and arguments.
+}
 \description{
 This generic function extracts a specific slot from a PubChem instance.
+}
+\details{
+`retrieve()` is a generic extractor that targets result slots across several
+PubChemR object classes and can optionally coerce outputs to tabular form.
 }
 \note{
 If the object is from the \code{'PC_Properties'} class, the \code{.slot} can be defined as NULL. If \code{.slot = NULL}, \code{retrieve()} will return all available properties. If \code{'object'} is of class other than \code{'PC_Properties'}, \code{.slot} should be length of 1.

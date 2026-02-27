@@ -17,5 +17,18 @@ pc_to_rcdk(x, smiles_col = "CanonicalSMILES", id_col = "CID")
 A list of `rcdk` molecule objects.
 }
 \description{
-Convert PubChem Tables to rcdk Molecules
+Converts SMILES strings from a PubChem table into `rcdk` molecule objects.
+}
+\details{
+Requires the optional `rcdk` package. Empty or missing SMILES values are
+dropped before conversion.
+}
+\examples{
+names(formals(pc_to_rcdk))
+
+\dontrun{
+ex_tbl <- tibble::tibble(CID = "1", CanonicalSMILES = "CCO")
+mols <- pc_to_rcdk(ex_tbl)
+length(mols)
+}
 }

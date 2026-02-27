@@ -1,5 +1,6 @@
 #' Convert PubChem Assay Summary to Long Activity Table
 #'
+#' @description
 #' Builds a normalized long-form table from the PubChem
 #' `compound/*/assaysummary/JSON` payload, suitable for
 #' `pc_activity_matrix()`.
@@ -20,8 +21,25 @@
 #'   `strict_outcome = FALSE`.
 #' @param ... Additional arguments forwarded to `pc_request()` when `x` is `NULL`.
 #'
+#' @details
+#' Input can be fetched directly from PubChem or provided as an already parsed
+#' payload. Column names are normalized to stable identifiers and optional
+#' numeric activity outcomes can be added for modeling workflows.
+#'
 #' @return A tibble with normalized fields including `CID`, `AID`,
 #'   and `ActivityOutcome` when available.
+#'
+#' @examples
+#' payload <- list(
+#'   Table = list(
+#'     Columns = list(Column = c("CID", "AID", "Activity Outcome")),
+#'     Row = list(
+#'       list(Cell = c("2244", "367", "Active")),
+#'       list(Cell = c("2244", "368", "Inactive"))
+#'     )
+#'   )
+#' )
+#' pc_assay_activity_long(x = payload)
 #' @export
 pc_assay_activity_long <- function(identifier = NULL,
                                    namespace = "cid",
@@ -231,6 +249,7 @@ pc_assay_activity_long <- function(identifier = NULL,
 
 #' Export Model-Ready Data
 #'
+#' @description
 #' Writes model-ready data to disk from either a `PubChemModelMatrix`
 #' object or a tabular object.
 #'
@@ -242,7 +261,17 @@ pc_assay_activity_long <- function(identifier = NULL,
 #' @param include_ids Logical. Include ID columns from `PubChemModelMatrix`.
 #' @param include_outcome Logical. Include outcome vector from `PubChemModelMatrix`.
 #'
+#' @details
+#' Output format is selected by `format`; `csv` is written with
+#' `utils::write.csv()` and `rds` with `saveRDS()`.
+#'
 #' @return Invisibly returns a list with `path`, `format`, and output dimensions.
+#'
+#' @examples
+#' out_file <- tempfile(fileext = ".csv")
+#' x <- tibble::tibble(CID = c("1", "2"), x1 = c(0.1, 0.2))
+#' meta <- pc_export_model_data(x, path = out_file, format = "csv")
+#' file.exists(meta$path)
 #' @export
 pc_export_model_data <- function(x,
                                  path,
@@ -285,6 +314,7 @@ pc_export_model_data <- function(x,
 
 #' Retrieve Full Biological Test Results from PubChem SDQ
 #'
+#' @description
 #' Queries the PubChem SDQ (Structured Data Query) agent to retrieve the full
 #' biological test results table for a compound. Uses the \code{download} query
 #' mode to return all available columns for each record. The number and names
@@ -315,10 +345,17 @@ pc_export_model_data <- function(x,
 #' @param force_refresh Logical. If \code{TRUE}, bypass any cached result.
 #'   Default \code{FALSE}.
 #'
+#' @details
+#' When \code{namespace != "cid"}, the identifier is first resolved to CID via
+#' \code{\link{pc_request}} before querying SDQ. Returned columns depend on
+#' source availability for the requested compound.
+#'
 #' @return A tibble of class \code{PubChemTable} containing the full
 #'   bioactivity results.
 #'
 #' @examples
+#' names(formals(pc_sdq_bioactivity))
+#'
 #' \dontrun{
 #'   # Retrieve bioactivity data for aspirin (CID 2244)
 #'   bio <- pc_sdq_bioactivity(2244)

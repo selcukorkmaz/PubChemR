@@ -11,6 +11,10 @@
 #' @param ... Additional arguments. These have no effect on the returned outputs and are included for
 #' compatibility with S3 methods in the PubChemR package.
 #'
+#' @details
+#' This accessor is useful for auditing request provenance when downstream
+#' objects are passed through multiple transformation steps.
+#'
 #' @return A list or string vector containing the options used in the function call.
 #'
 #' @examples
@@ -59,6 +63,13 @@ instance.PubChemInstanceList <- function(object, .which = NULL, ...){
 #' @param object An object of class \code{'PubChemInstanceList'} returned from a PubChem request.
 #' @param ... Additional arguments passed to other methods. Currently, these have no effect.
 #'
+#' @details
+#' `instance()` is a lightweight accessor that selects one requested identifier
+#' result from a multi-request container.
+#'
+#' @return A single instance object extracted from \code{object}, typically of
+#' class \code{PubChemInstance}.
+#'
 #' @rdname instance
 #' @name instance
 #' @order 1
@@ -87,6 +98,13 @@ instance <- function(object, ...){
 #' This generic function extracts a specific slot from a PubChem instance.
 #'
 #' @param object An object returned from a PubChem request.
+#'
+#' @details
+#' `retrieve()` is a generic extractor that targets result slots across several
+#' PubChemR object classes and can optionally coerce outputs to tabular form.
+#'
+#' @return Retrieved slot contents as a vector, list, or tabular object,
+#' depending on method and arguments.
 #'
 #' @rdname retrieve
 #' @name retrieve
@@ -923,6 +941,12 @@ AIDs.PubChemInstance_AIDs <- function(object, .to.data.frame = TRUE, ...) {
 #' and \link{get_sids}.
 #' @param ... Additional arguments passed to other methods. Currently, these arguments have no effect.
 #'
+#' @details
+#' The generic dispatches to class-specific methods and returns either a compact
+#' identifier table (\code{.to.data.frame = TRUE}) or raw nested payloads.
+#'
+#' @return A tibble (default) or list containing mapped identifier outputs.
+#'
 #' @rdname AIDs-SIDs-CIDs
 #' @name AIDs-SIDs-CIDs
 #' @order 1
@@ -1083,6 +1107,10 @@ synonyms.PubChemInstance_Synonyms <- function(object, .to.data.frame = TRUE, ...
 #' @param object An object of class \code{'PubChemInstance_Synonyms'}.
 #' @param ... Additional arguments passed to other methods. Currently, these have no effect.
 #'
+#' @details
+#' The method can return either a combined tibble or raw synonym payloads,
+#' depending on \code{.to.data.frame}.
+#'
 #' @rdname synonyms
 #' @name synonyms
 #' @order 1
@@ -1111,6 +1139,13 @@ synonyms <- function(object, ...){
 #'
 #' @param object an object returned from \link{get_pug_view}.
 #' @param ... other arguments. Currently has no effect on the outputs. Can be ignored.
+#'
+#' @details
+#' `section()` traverses nested PUG View section structures and supports
+#' recursive drill-down by section IDs.
+#'
+#' @return A \code{PugViewSection} object for a selected section, or \code{NULL}
+#' when section content is unavailable.
 #'
 #' @rdname section
 #' @name section
@@ -1278,6 +1313,9 @@ section.PugViewSection <- function(object, .id = "S1", .verbose = FALSE, ...){
 #'
 #' @param object an object of PubChem request, generally returned from \link{get_pug_view}.
 #' @param ... other arguments. Currently has no effect on the outputs. Can be ignored.
+#'
+#' @return A tibble with section IDs/headings, or \code{NULL} when no section
+#' data are available.
 #'
 #' @name sectionList
 #' @rdname sectionList
@@ -1451,10 +1489,14 @@ sectionList.PugViewSection <- function(object, .pattern = NULL, .match_type = c(
 #' @title Retrieve Raw Data from PUG REST Object
 #'
 #' @description
-#' A short description...
+#' Generic accessor returning raw payload data from a \code{PugRestInstance}.
 #'
 #' @param object an object of class 'PugRestInstance' returned from \link{get_pug_rest} function.
 #' @param ... additional arguments. Currently has no effect on results.
+#'
+#' @details
+#' This helper bypasses higher-level format-specific extractors and returns the
+#' underlying parsed result object as stored on the request instance.
 #'
 #' @name pubChemData
 #' @rdname pubChemData

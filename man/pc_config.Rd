@@ -13,5 +13,15 @@ pc_config(...)
 A named list of active configuration values.
 }
 \description{
-Configure PubChemR Next-Gen API Defaults
+Reads or updates global defaults used by the next-generation PubChemR
+transport helpers (timeouts, retries, cache settings, and rate limits).
+}
+\details{
+Call with no arguments to inspect the active configuration. Named arguments
+update only the provided keys and keep all other values unchanged.
+}
+\examples{
+cfg <- pc_config()
+names(cfg)
+pc_config(rate_limit = cfg$rate_limit)$rate_limit
 }

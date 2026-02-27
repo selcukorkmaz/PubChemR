@@ -24,8 +24,16 @@ section(object, ...)
 
 \item{.verbose}{A logical value. Should the resulting object be printed to the R console? If TRUE, the object is returned invisibly and the output is printed nicely to the R console. This option may not be available for some slots (or classes). See Notes/Details.}
 }
+\value{
+A \code{PugViewSection} object for a selected section, or \code{NULL}
+when section content is unavailable.
+}
 \description{
 \code{section} returns section details from a Pug View request.
+}
+\details{
+`section()` traverses nested PUG View section structures and supports
+recursive drill-down by section IDs.
 }
 \note{
 \subsection{Sections in a Pug View Request}{

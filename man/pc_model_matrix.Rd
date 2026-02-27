@@ -27,5 +27,16 @@ pc_model_matrix(
 An object of class `PubChemModelMatrix` with `x`, `y`, and metadata fields.
 }
 \description{
-Convert Feature Tables to Model Matrix Form
+Converts tabular PubChem features into a numeric model-matrix bundle with
+optional outcome and identifier metadata.
+}
+\details{
+Non-numeric predictors are coerced when feasible, then filtered to numeric
+columns only. The returned object stores predictors, optional response, and
+identifier columns.
+}
+\examples{
+tbl <- tibble::tibble(CID = c("1", "2"), x1 = c("1.0", "2.0"), y = c(0, 1))
+mm <- pc_model_matrix(tbl, outcome = "y")
+class(mm)
 }

@@ -34,6 +34,10 @@ sectionList(object, ...)
 
 \item{.match_type}{a string. How should search patterns (i.e., \code{.pattern}) matched with section names? Available options are "contain", "match", "start", and "end" which can be used for partial and/or exact pattern matching. Default is "contain". See Details below for more information.}
 }
+\value{
+A tibble with section IDs/headings, or \code{NULL} when no section
+data are available.
+}
 \description{
 This function may be used to list available sections (or subsections) of a PubChem request returned from \link{get_pug_view}. It is useful when one wants to extract a specific section (or subsection) from PubChem request. It supports patteern-specific searches within sections. See Detail/Note below for more information.
 }

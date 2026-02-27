@@ -46,5 +46,18 @@ A wide tibble (`output = "tibble"`) or a sparse matrix wrapper
   object of class `PubChemSparseActivityMatrix` (`output = "sparse"`).
 }
 \description{
-Build an Assay Activity Matrix
+Converts long-form assay activity data into dense or sparse matrix-ready
+representations indexed by compound and assay identifiers.
+}
+\details{
+Character outcomes are normalized through `pc_activity_outcome_map()`. For
+repeated CID/AID pairs, values are aggregated using the selected strategy.
+}
+\examples{
+long_tbl <- tibble::tibble(
+  CID = c("1", "1", "2"),
+  AID = c("10", "11", "10"),
+  ActivityOutcome = c("Active", "Inactive", "Active")
+)
+pc_activity_matrix(long_tbl)
 }

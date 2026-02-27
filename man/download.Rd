@@ -52,6 +52,11 @@ No return value. The function writes the content to the specified file path and 
 This function sends a request to PubChem to retrieve content in the specified format for a given identifier.
 It then writes the content to a specified file path.
 }
+\details{
+`download()` is a convenience wrapper around \code{get_pubchem()} for
+file-oriented workflows. The returned payload is written as bytes, so both
+text and binary outputs can be handled.
+}
 \examples{
 \donttest{
 # Download JSON file for the compound "aspirin" into "Aspirin.JSON"

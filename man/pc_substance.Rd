@@ -30,5 +30,17 @@ pc_substance(
 A typed `PubChemRecord` object.
 }
 \description{
-Query Substance Records via the Next-Generation API
+Convenience wrapper around `pc_request()` for `substance` domain retrieval.
+}
+\details{
+The function returns a typed record object without altering payload shape,
+making it suitable for downstream custom parsers.
+}
+\examples{
+sub_rec <- pc_substance(5360534, offline = TRUE)
+inherits(sub_rec, "PubChemRecord")
+
+\dontrun{
+pc_substance(5360534)
+}
 }

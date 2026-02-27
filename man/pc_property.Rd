@@ -30,5 +30,17 @@ pc_property(
 A typed `PubChemRecord` object.
 }
 \description{
-Query Compound Properties via the Next-Generation API
+Retrieves selected PubChem compound properties for one or more identifiers.
+}
+\details{
+`properties` is encoded into the PUG REST operation path. At least one
+property name is required.
+}
+\examples{
+prop_rec <- pc_property(2244, properties = c("MolecularWeight"), offline = TRUE)
+inherits(prop_rec, "PubChemRecord")
+
+\dontrun{
+pc_property(2244, properties = c("MolecularWeight", "XLogP"))
+}
 }

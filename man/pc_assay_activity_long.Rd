@@ -52,3 +52,20 @@ Builds a normalized long-form table from the PubChem
 `compound/*/assaysummary/JSON` payload, suitable for
 `pc_activity_matrix()`.
 }
+\details{
+Input can be fetched directly from PubChem or provided as an already parsed
+payload. Column names are normalized to stable identifiers and optional
+numeric activity outcomes can be added for modeling workflows.
+}
+\examples{
+payload <- list(
+  Table = list(
+    Columns = list(Column = c("CID", "AID", "Activity Outcome")),
+    Row = list(
+      list(Cell = c("2244", "367", "Active")),
+      list(Cell = c("2244", "368", "Inactive"))
+    )
+  )
+)
+pc_assay_activity_long(x = payload)
+}

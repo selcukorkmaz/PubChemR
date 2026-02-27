@@ -39,5 +39,18 @@ pc_similarity_search(
 A typed object inheriting from `PubChemIdMap`.
 }
 \description{
-Similarity-Driven Identifier Search
+Performs similarity search requests and returns mapped identifiers in a typed
+result object.
+}
+\details{
+Similarity mode is controlled by `searchtype` and `threshold`. Optional
+`max_records` is translated to `list_return` and appended to query options.
+}
+\examples{
+sim <- pc_similarity_search("CC(=O)OC1=CC=CC=C1C(=O)O", namespace = "smiles", offline = TRUE)
+inherits(sim, "PubChemIdMap")
+
+\dontrun{
+pc_similarity_search("CC(=O)OC1=CC=CC=C1C(=O)O", namespace = "smiles")
+}
 }

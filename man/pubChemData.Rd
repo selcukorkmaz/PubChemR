@@ -18,7 +18,11 @@ pubChemData(object, ...)
 a vector, list, or data.frame containing the raw data retrieved from Pub Chem database through PUG REST API.
 }
 \description{
-A short description...
+Generic accessor returning raw payload data from a \code{PugRestInstance}.
+}
+\details{
+This helper bypasses higher-level format-specific extractors and returns the
+underlying parsed result object as stored on the request instance.
 }
 \examples{
 \donttest{

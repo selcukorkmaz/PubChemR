@@ -13,5 +13,12 @@ pc_cache_info(cache_dir = NULL)
 A one-row tibble with memory and disk cache diagnostics.
 }
 \description{
-Cache Diagnostics for PubChemR
+Reports the current number and size of cached items in memory and on disk.
+}
+\details{
+This is a lightweight diagnostic utility for validating cache behavior in
+long-running workflows and CI jobs.
+}
+\examples{
+pc_cache_info(cache_dir = tempdir())
 }

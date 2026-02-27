@@ -15,5 +15,25 @@ pc_collect(x, ...)
 A `PubChemResult` object.
 }
 \description{
-Collect Results From an Async PubChem Query
+Resolves a `PubChemAsyncQuery` object to a final `PubChemResult` by polling
+when a listkey is present, or returning the initial response otherwise.
+}
+\details{
+This helper simplifies asynchronous flow control by encapsulating the
+listkey/no-listkey branching logic in one call.
+}
+\examples{
+q <- structure(
+  list(
+    initial = pc_request(identifier = 2244, offline = TRUE),
+    listkey = NULL,
+    domain = "compound",
+    operation = NULL,
+    output = "JSON",
+    options = NULL
+  ),
+  class = "PubChemAsyncQuery"
+)
+out <- pc_collect(q)
+inherits(out, "PubChemResult")
 }

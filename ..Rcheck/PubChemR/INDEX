@@ -1,4 +1,7 @@
 AIDs-SIDs-CIDs          Assay, Compound, and Substance Identifiers
+PubChemR-classes        'PubChemInstanceList' and 'PubChemInstance'
+                        Classes
+PugView-classes         Classes for Pug View Request
 download                Download Content from PubChem and Save to a
                         File
 get_aids                Retrieve Assay IDs (AIDs) from PubChem
@@ -20,7 +23,6 @@ instance                Retrieve Information for Requested Instances
 pc_activity_matrix      Build an Assay Activity Matrix
 pc_activity_outcome_map
                         Harmonize Activity Outcome Labels
-pc_api                  Next-Generation PubChemR API
 pc_assay                Query Assay Records via the Next-Generation API
 pc_assay_activity_long
                         Convert PubChem Assay Summary to Long Activity
@@ -41,8 +43,6 @@ pc_feature_table        Build a Modeling-Ready Feature Table
 pc_identifier_map       Map Identifiers via the Next-Generation API
 pc_lifecycle_policy     Versioning and Deprecation Policy
 pc_model_matrix         Convert Feature Tables to Model Matrix Form
-pc_phase3               Phase 3 Analytical and Integration API
-pc_phase4               Phase 4 Analysis-Layer Helpers
 pc_poll                 Poll an Asynchronous PubChem ListKey
 pc_profile              Apply a Predefined Execution Profile
 pc_property             Query Compound Properties via the
@@ -51,6 +51,8 @@ pc_request              Unified Transport Layer for PubChem Requests
 pc_response             Normalize an HTTP Response Into a Typed PubChem
                         Result
 pc_resume_batch         Resume a Checkpointed Batch Workflow
+pc_sdq_bioactivity      Retrieve Full Biological Test Results from
+                        PubChem SDQ
 pc_similarity_search    Similarity-Driven Identifier Search
 pc_submit               Submit an Asynchronous PubChem Query
 pc_substance            Query Substance Records via the Next-Generation
@@ -58,9 +60,6 @@ pc_substance            Query Substance Records via the Next-Generation
 pc_to_chemminer         Convert PubChem Tables to ChemmineR SDF Objects
 pc_to_rcdk              Convert PubChem Tables to rcdk Molecules
 pubChemData             Retrieve Raw Data from PUG REST Object
-PubChemR-classes        'PubChemInstanceList' and 'PubChemInstance'
-                        Classes
-PugView-classes         Classes for Pug View Request
 request_args            Retrieve Function Inputs
 retrieve                Retrieve Information from PubChem Instances
 section                 Extract Sections from Pug View Request

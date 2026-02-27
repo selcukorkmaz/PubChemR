@@ -75,5 +75,20 @@ pc_request(
 An object of class `PubChemResult`.
 }
 \description{
-Unified Transport Layer for PubChem Requests
+Executes PubChem API calls with unified handling for URL construction,
+retries, throttling, and optional cache replay.
+}
+\details{
+`pc_request()` is the low-level engine behind higher-level `pc_*` helpers.
+When `offline = TRUE`, requests are served from cache only and return a
+structured failure object on cache misses.
+}
+\examples{
+# Fast, network-free call: returns cache hit or structured cache-miss result.
+res <- pc_request(identifier = 2244, offline = TRUE)
+res$success
+
+\dontrun{
+pc_request(identifier = 2244)
+}
 }

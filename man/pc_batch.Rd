@@ -42,5 +42,18 @@ pc_batch(
 A typed `PubChemBatchResult` object.
 }
 \description{
-Batch-Orchestrate PubChem Workflows
+Splits identifier vectors into chunks, applies a worker function per chunk,
+and records per-chunk success and error metadata.
+}
+\details{
+Checkpoint files can be written to disk and resumed later. Parallel execution
+is available on supported platforms when checkpointing is disabled.
+}
+\examples{
+batch <- pc_batch(
+  ids = 1:6,
+  fn = function(chunk_ids, ...) sum(chunk_ids),
+  chunk_size = 2
+)
+length(batch$results)
 }

@@ -62,7 +62,14 @@ of columns vary by compound depending on available data (e.g. baid, aid,
 sid, cid, activityid, aidtypeid, aidname, targetname, cmpdname, acvalue,
 geneid, etc.).
 }
+\details{
+When \code{namespace != "cid"}, the identifier is first resolved to CID via
+\code{\link{pc_request}} before querying SDQ. Returned columns depend on
+source availability for the requested compound.
+}
 \examples{
+names(formals(pc_sdq_bioactivity))
+
 \dontrun{
   # Retrieve bioactivity data for aspirin (CID 2244)
   bio <- pc_sdq_bioactivity(2244)
