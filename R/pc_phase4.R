@@ -239,9 +239,8 @@ pc_assay_activity_long <- function(identifier = NULL,
     suppressWarnings({
       val <- as.numeric(df$ActivityValue_uM)
     })
-    if (sum(!is.na(val)) > 0) {
-      df$ActivityValue_uM <- val
-    }
+    # Keep a stable schema across chunked requests.
+    df$ActivityValue_uM <- val
   }
 
   tibble::as_tibble(df)

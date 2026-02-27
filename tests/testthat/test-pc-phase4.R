@@ -116,6 +116,51 @@ test_that("pc_assay_activity_long fails explicitly when chunked requests fail", 
   )
 })
 
+test_that("pc_assay_activity_long keeps ActivityValue_uM type stable across chunks", {
+  payload_num <- list(
+    Table = list(
+      Columns = list(Column = c("CID", "AID", "Activity Outcome", "Activity Value [uM]")),
+      Row = list(list(Cell = c("2244", "1001", "Active", "1.2")))
+    )
+  )
+  payload_chr <- list(
+    Table = list(
+      Columns = list(Column = c("CID", "AID", "Activity Outcome", "Activity Value [uM]")),
+      Row = list(list(Cell = c("3672", "1002", "Inactive", "not_reported")))
+    )
+  )
+
+  res_num <- pc_make_result(success = TRUE, request = list(identifier = "2244"), data = payload_num, status = 200)
+  res_chr <- pc_make_result(success = TRUE, request = list(identifier = "3672"), data = payload_chr, status = 200)
+
+  local_mocked_bindings(
+    pc_batch = function(ids, fn, chunk_size, ...) {
+      structure(
+        list(
+          ids = ids,
+          chunks = list(ids[[1]], ids[[2]]),
+          results = list(res_num, res_chr),
+          success = c(TRUE, TRUE),
+          error = c("", "")
+        ),
+        class = "PubChemBatchResult"
+      )
+    },
+    .package = "PubChemR"
+  )
+
+  out <- pc_assay_activity_long(
+    identifier = c("2244", "3672"),
+    namespace = "cid",
+    chunk_size = 1L
+  )
+
+  expect_true("ActivityValue_uM" %in% names(out))
+  expect_type(out$ActivityValue_uM, "double")
+  expect_equal(out$ActivityValue_uM[out$CID == "2244"][[1]], 1.2)
+  expect_true(is.na(out$ActivityValue_uM[out$CID == "3672"][[1]]))
+})
+
 test_that("pc_assay_activity_long live smoke on assaysummary", {
   skip_on_cran()
   skip_if_not_live_smoke()
